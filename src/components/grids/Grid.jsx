@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import styled from '@emotion/styled';
 
 import { ConfigMap, number } from '@/utils';
-import { down, up } from '@/assets/themes';
+import { down, menu_alt, up } from '@/assets/themes';
 
 import { defaultData } from './Grid.utils';
 
@@ -198,7 +198,20 @@ const defaultColumns = [
 	},
 ];
 
-function Grid(props) {
+const SortIndicatorTool = (props) => {
+	const { sorted = false, style, ...rest } = props;
+
+	if (sorted) {
+		const src = sorted === 'asc' ? up : down;
+		return <img alt={''} src={src} style={{ width: 16, ...style }} {...rest} />;
+	}
+};
+
+const Spacer = (props) => {
+	return <div style={{ flex: 1 }} {...props} />;
+};
+
+const Grid = (props) => {
 	const { columns: columnsProp = defaultColumns, columnTypes = defaultColumnTypes, data = defaultData } = props;
 	const columnMapRef = useRef(new ConfigMap(columnTypes));
 
@@ -253,33 +266,11 @@ function Grid(props) {
 										{flexRender(header.column.columnDef.header, header.getContext())}
 
 										{header.column.getCanSort() && (
-											<div className={'sortIndicator'} style={{ display: 'inline-flex' }}>
-												<img
-													alt={'Ascending'}
-													src={up}
-													style={{ width: 16 }}
-													className={clsx({
-														[classes.hidden]: header.column.getIsSorted() !== 'asc',
-													})}
-												/>
-												<img
-													alt={'Descending'}
-													src={down}
-													style={{ width: 16 }}
-													className={clsx({
-														[classes.hidden]: header.column.getIsSorted() !== 'desc',
-													})}
-												/>
-												<div
-													alt={'No Sort'}
-													style={{ height: 16, width: 16 }}
-													className={clsx({
-														[classes.hidden]:
-															typeof header.column.getIsSorted() === 'string',
-													})}
-												/>
-											</div>
+											<SortIndicatorTool sorted={header.column.getIsSorted()} />
 										)}
+
+										{/* <Spacer />
+										<img alt={'Menu'} src={menu_alt} style={{ width: 16 }} /> */}
 									</div>
 								</th>
 							);
@@ -307,6 +298,6 @@ function Grid(props) {
 			</tbody>
 		</GridRoot>
 	);
-}
+};
 
 export default Grid;
