@@ -33,30 +33,65 @@ const GridRoot = styled('table')(() => ({
 		'--ag-odd-row-background-color': '#F7F7F8',
 		'--ag-row-height': '28px',
 
+		// Custom variables.
+		'--ag-header-horizontal-padding': '6px',
+		'--eda-default-column-width': '150px',
+
 		borderCollapse: 'collapse',
 		fontFamily: 'var(--ag-font-family)',
 		fontSize: 'var(--ag-font-size)',
 		lineHeight: 'var(--ag-row-height)',
+		tableLayout: 'fixed', // Important for overflow ellipsis to work.
 		width: '100%',
 
 		'tr:nth-of-type(even)': {
-			backgroundColor: 'var(--ag-odd-row-background-color)',
+			td: {
+				// Applying to the cell to accommodate the "shim" column.
+				backgroundColor: 'var(--ag-odd-row-background-color)',
+			},
 		},
 
 		'td, th': {
 			border: '1px solid var(--ag-border-color)',
+			boxSizing: 'border-box',
 			padding: `0 var(--ag-cell-horizontal-padding)`,
+			width: 'var(--eda-default-column-width)',
+
+			// Overflow handling.
+			overflow: 'hidden',
+			textOverflow: 'ellipsis',
+			whiteSpace: 'nowrap',
+
+			// Shim column used to facilitate "table-layout: fixed" with ellipsis and to mirror AG Grid behavior.
+			'&.column-shim': {
+				border: 'none',
+				opacity: 0,
+				userSelect: 'none',
+				width: 'auto',
+			},
 
 			[`.${classes.headerCellWrapper}`]: {
 				display: 'flex',
 				flexDirection: 'row',
 				gap: 6,
 				justifyContent: 'flex-start',
+				position: 'relative',
 			},
 
 			'&.ag-center-aligned-header': {
 				[`.${classes.headerCellWrapper}`]: {
 					justifyContent: 'center',
+				},
+
+				'.menuTool': {
+					left: 0,
+					position: 'absolute',
+					top: '50%',
+					transform: 'translateY(-50%)',
+				},
+
+				'.spacer': {
+					display: 'none',
 				},
 			},
 
@@ -208,7 +243,7 @@ const SortIndicatorTool = (props) => {
 };
 
 const Spacer = (props) => {
-	return <div style={{ flex: 1 }} {...props} />;
+	return <div className={'spacer'} style={{ flex: 1 }} {...props} />;
 };
 
 const Grid = (props) => {
@@ -269,8 +304,8 @@ const Grid = (props) => {
 											<SortIndicatorTool sorted={header.column.getIsSorted()} />
 										)}
 
-										{/* <Spacer />
-										<img alt={'Menu'} src={menu_alt} style={{ width: 16 }} /> */}
+										<Spacer />
+										<img className={'menuTool'} alt={'Menu'} src={menu_alt} style={{ width: 16 }} />
 									</div>
 								</th>
 							);
@@ -293,6 +328,7 @@ const Grid = (props) => {
 								</td>
 							);
 						})}
+						<td className={'column-shim'}></td>
 					</tr>
 				))}
 			</tbody>
