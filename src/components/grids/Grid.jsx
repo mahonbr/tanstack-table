@@ -78,6 +78,13 @@ const GridRoot = styled('table')(() => ({
 				position: 'relative',
 			},
 
+			'.menuTool': {
+				background: 'transparent',
+				border: 'none',
+				cursor: 'pointer',
+				padding: 0,
+			},
+
 			'&.ag-center-aligned-header': {
 				[`.${classes.headerCellWrapper}`]: {
 					justifyContent: 'center',
@@ -233,6 +240,11 @@ const defaultColumns = [
 	},
 ];
 
+const onMenuClick = (event) => {
+	event.stopPropagation();
+	alert('Menu clicked!');
+};
+
 const SortIndicatorTool = (props) => {
 	const { sorted = false, style, ...rest } = props;
 
@@ -305,7 +317,10 @@ const Grid = (props) => {
 										)}
 
 										<Spacer />
-										<img className={'menuTool'} alt={'Menu'} src={menu_alt} style={{ width: 16 }} />
+
+										<button className={'menuTool'} onClick={onMenuClick}>
+											<img alt={'Menu'} src={menu_alt} style={{ width: 16 }} />
+										</button>
 									</div>
 								</th>
 							);
@@ -328,6 +343,7 @@ const Grid = (props) => {
 								</td>
 							);
 						})}
+
 						<td className={'column-shim'}></td>
 					</tr>
 				))}
