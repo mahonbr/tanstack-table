@@ -10,7 +10,7 @@ import { down, menu_alt, up } from '@/assets/themes';
 
 import { defaultData } from './Grid.utils';
 
-const PREFIX = 'TanStackGrid';
+const PREFIX = 'eda-grid';
 
 /**
  * @todo Add slots to classes.
@@ -56,6 +56,10 @@ const GridRoot = styled('table')(() => ({
 			boxSizing: 'border-box',
 			padding: `0 var(--ag-cell-horizontal-padding)`,
 			width: 'var(--eda-default-column-width)',
+
+			'&[colspan]': {
+				width: 'unset',
+			},
 
 			// Overflow handling.
 			overflow: 'hidden',
@@ -174,69 +178,80 @@ const defaultColumns = [
 		// wrapText
 	},
 	{
-		accessorKey: 'pmpmCurrent',
-		header: 'Current',
-		type: ['number'],
-		meta: {
-			format: '$0,0.00',
-		},
+		header: 'PMPM',
+		columns: [
+			{
+				accessorKey: 'pmpmCurrent',
+				header: 'Current',
+				type: ['number'],
+				meta: {
+					format: '$0,0.00',
+				},
+				cellClass: 'ag-left-aligned-cell',
+				headerClass: 'ag-left-aligned-header',
+			},
+			{
+				accessorKey: 'pmpmPrior',
+				header: 'Prior',
+				type: ['number'],
+				meta: {
+					format: '$0,0.00',
+				},
+			},
+			{
+				accessorKey: 'pmpmDiff',
+				header: 'Diff',
+				type: ['number'],
+				meta: {
+					format: '$0,0.00',
+				},
+			},
+			{
+				accessorKey: 'pmpmDiffPercent',
+				header: 'Diff %',
+				type: ['number'],
+				meta: {
+					format: '0,0.0%',
+				},
+			},
+		],
 	},
 	{
-		accessorKey: 'pmpmPrior',
-		header: 'Prior',
-		type: ['number'],
-		meta: {
-			format: '$0,0.00',
-		},
-	},
-	{
-		accessorKey: 'pmpmDiff',
-		header: 'Diff',
-		type: ['number'],
-		meta: {
-			format: '$0,0.00',
-		},
-	},
-	{
-		accessorKey: 'pmpmDiffPercent',
-		header: 'Diff %',
-		type: ['number'],
-		meta: {
-			format: '0,0.0%',
-		},
-	},
-
-	{
-		accessorKey: 'expenseCurrent',
-		header: 'Current',
-		type: ['number'],
-		meta: {
-			format: '$0,0',
-		},
-	},
-	{
-		accessorKey: 'expensePrior',
-		header: 'Prior',
-		type: ['number'],
-		meta: {
-			format: '$0,0',
-		},
-	},
-	{
-		accessorKey: 'expenseDiff',
-		header: 'Diff',
-		type: ['number'],
-		meta: {
-			format: '$0,0',
-		},
-	},
-	{
-		accessorKey: 'expenseDiffPercent',
-		header: 'Diff %',
-		type: ['number'],
-		meta: {
-			format: '0,0.0%',
-		},
+		header: 'Expenses',
+		columns: [
+			{
+				accessorKey: 'expenseCurrent',
+				header: 'Current',
+				type: ['number'],
+				meta: {
+					format: '$0,0',
+				},
+			},
+			{
+				accessorKey: 'expensePrior',
+				header: 'Prior',
+				type: ['number'],
+				meta: {
+					format: '$0,0',
+				},
+			},
+			{
+				accessorKey: 'expenseDiff',
+				header: 'Diff',
+				type: ['number'],
+				meta: {
+					format: '$0,0',
+				},
+			},
+			{
+				accessorKey: 'expenseDiffPercent',
+				header: 'Diff %',
+				type: ['number'],
+				meta: {
+					format: '0,0.0%',
+				},
+			},
+		],
 	},
 ];
 
@@ -291,62 +306,67 @@ const Grid = (props) => {
 	return (
 		<GridRoot className={clsx(classes.root)}>
 			<thead>
-				{table.getHeaderGroups().map((headerGroup) => (
-					<tr key={headerGroup.id}>
-						{headerGroup.headers.map((header) => {
-							// Guard clause for placeholder headers.
-							if (header.isPlaceholder) return <th key={header.id} />;
+				{table.getHeaderGroups().map((headerGroup) => {
+					return (
+						<tr key={headerGroup.id}>
+							{headerGroup.headers.map((header) => {
+								// Guard clause for placeholder headers.
+								if (header.isPlaceholder) return <th key={header.id} />;
 
-							const headerClass = header.column.columnDef?.headerClass
-								? castArray(header.column.columnDef?.headerClass)
-								: [];
+								const headerClass = header.column.columnDef?.headerClass
+									? castArray(header.column.columnDef?.headerClass)
+									: [];
 
-							return (
-								<th
-									key={header.id}
-									onClick={header.column.getToggleSortingHandler()}
-									className={clsx(...headerClass, {
-										[classes.sortable]: header.column.getCanSort(),
-									})}
-								>
-									<div className={clsx(classes.headerCellWrapper)}>
-										{flexRender(header.column.columnDef.header, header.getContext())}
+								return (
+									<th
+										key={header.id}
+										colSpan={header.colSpan}
+										onClick={header.column.getToggleSortingHandler()}
+										className={clsx(...headerClass, {
+											[classes.sortable]: header.column.getCanSort(),
+										})}
+									>
+										<div className={clsx(classes.headerCellWrapper)}>
+											{flexRender(header.column.columnDef.header, header.getContext())}
 
-										{header.column.getCanSort() && (
-											<SortIndicatorTool sorted={header.column.getIsSorted()} />
-										)}
+											{header.column.getCanSort() && (
+												<SortIndicatorTool sorted={header.column.getIsSorted()} />
+											)}
 
-										<Spacer />
+											<Spacer />
 
-										<button className={'menuTool'} onClick={onMenuClick}>
-											<img alt={'Menu'} src={menu_alt} style={{ width: 16 }} />
-										</button>
-									</div>
-								</th>
-							);
-						})}
-					</tr>
-				))}
+											<button className={'menuTool'} onClick={onMenuClick}>
+												<img alt={'Menu'} src={menu_alt} style={{ width: 16 }} />
+											</button>
+										</div>
+									</th>
+								);
+							})}
+						</tr>
+					);
+				})}
 			</thead>
 
 			<tbody>
-				{table.getRowModel().rows.map((row) => (
-					<tr key={row.id}>
-						{row.getVisibleCells().map((cell) => {
-							const cellClass = cell.column.columnDef?.cellClass
-								? castArray(cell.column.columnDef?.cellClass)
-								: [];
+				{table.getRowModel().rows.map((row) => {
+					return (
+						<tr key={row.id}>
+							{row.getVisibleCells().map((cell) => {
+								const cellClass = cell.column.columnDef?.cellClass
+									? castArray(cell.column.columnDef?.cellClass)
+									: [];
 
-							return (
-								<td key={cell.id} className={clsx(...cellClass)}>
-									{flexRender(cell.column.columnDef.cell, cell.getContext())}
-								</td>
-							);
-						})}
+								return (
+									<td key={cell.id} className={clsx(...cellClass)}>
+										{flexRender(cell.column.columnDef.cell, cell.getContext())}
+									</td>
+								);
+							})}
 
-						<td className={'column-shim'}></td>
-					</tr>
-				))}
+							<td className={'column-shim'}></td>
+						</tr>
+					);
+				})}
 			</tbody>
 		</GridRoot>
 	);
