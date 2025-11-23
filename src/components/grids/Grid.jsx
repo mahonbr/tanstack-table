@@ -10,7 +10,7 @@ import { down, menu_alt, up } from '@/assets/themes';
 
 import { defaultData } from './Grid.utils';
 
-const PREFIX = 'eda-grid';
+const PREFIX = 'eda-table';
 
 /**
  * @todo Add slots to classes.
@@ -57,8 +57,13 @@ const GridRoot = styled('table')(() => ({
 			padding: `0 var(--ag-cell-horizontal-padding)`,
 			width: 'var(--eda-default-column-width)',
 
-			'&[colspan]': {
+			// Style for the grouped header rows.
+			'&.ag-header-row-column-group': {
 				width: 'unset',
+
+				'&.placeholder': {
+					borderBottomColor: 'transparent',
+				},
 			},
 
 			// Overflow handling.
@@ -179,6 +184,7 @@ const defaultColumns = [
 	},
 	{
 		header: 'PMPM',
+		headerClass: 'ag-center-aligned-header',
 		columns: [
 			{
 				accessorKey: 'pmpmCurrent',
@@ -218,6 +224,7 @@ const defaultColumns = [
 	},
 	{
 		header: 'Expenses',
+		headerClass: 'ag-center-aligned-header',
 		columns: [
 			{
 				accessorKey: 'expenseCurrent',
@@ -306,12 +313,23 @@ const Grid = (props) => {
 	return (
 		<GridRoot className={clsx(classes.root)}>
 			<thead>
-				{table.getHeaderGroups().map((headerGroup) => {
+				{table.getHeaderGroups().map((headerGroup, i) => {
+					const headerGroups = table.getHeaderGroups();
+					const isLeafRow = i === headerGroups.length - 1;
+
 					return (
 						<tr key={headerGroup.id}>
 							{headerGroup.headers.map((header) => {
 								// Guard clause for placeholder headers.
-								if (header.isPlaceholder) return <th key={header.id} />;
+								if (header.isPlaceholder)
+									return (
+										<th
+											key={header.id}
+											className={clsx('placeholder', {
+												'ag-header-row-column-group': !isLeafRow,
+											})}
+										/>
+									);
 
 								const headerClass = header.column.columnDef?.headerClass
 									? castArray(header.column.columnDef?.headerClass)
@@ -324,20 +342,25 @@ const Grid = (props) => {
 										onClick={header.column.getToggleSortingHandler()}
 										className={clsx(...headerClass, {
 											[classes.sortable]: header.column.getCanSort(),
+											'ag-header-row-column-group': !isLeafRow,
 										})}
 									>
 										<div className={clsx(classes.headerCellWrapper)}>
 											{flexRender(header.column.columnDef.header, header.getContext())}
 
-											{header.column.getCanSort() && (
-												<SortIndicatorTool sorted={header.column.getIsSorted()} />
+											{isLeafRow && (
+												<>
+													{header.column.getCanSort() && (
+														<SortIndicatorTool sorted={header.column.getIsSorted()} />
+													)}
+
+													<Spacer />
+
+													<button className={'menuTool'} onClick={onMenuClick}>
+														<img alt={'Menu'} src={menu_alt} style={{ width: 16 }} />
+													</button>
+												</>
 											)}
-
-											<Spacer />
-
-											<button className={'menuTool'} onClick={onMenuClick}>
-												<img alt={'Menu'} src={menu_alt} style={{ width: 16 }} />
-											</button>
 										</div>
 									</th>
 								);
