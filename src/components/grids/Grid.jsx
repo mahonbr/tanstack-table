@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react';
 
-import { castArray, isEmpty } from 'lodash';
+import { castArray, isEmpty, isNaN } from 'lodash';
 import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import clsx from 'clsx';
 import styled from '@emotion/styled';
@@ -12,20 +12,19 @@ import { defaultData } from './Grid.utils';
 
 const PREFIX = 'eda-table';
 
-/**
- * @todo Add slots to classes.
- */
 export const classes = {
+	// Slot classes.
 	root: `${PREFIX}-root`,
-
 	headerCellWrapper: `${PREFIX}-headerCellWrapper`,
 
+	// Modifier classes.
 	sortable: `${PREFIX}-sortable`,
 	hidden: `${PREFIX}-hidden`,
 };
 
 const GridRoot = styled('table')(() => ({
 	[`&.${classes.root}`]: {
+		// AG Grid CSS variables.
 		'--ag-border-color': '#D9D9D9',
 		'--ag-cell-horizontal-padding': '10px',
 		'--ag-font-family': "'Open Sans', 'Roboto', 'Helvetica', 'Arial', sans-serif",
@@ -33,20 +32,19 @@ const GridRoot = styled('table')(() => ({
 		'--ag-odd-row-background-color': '#F7F7F8',
 		'--ag-row-height': '28px',
 
-		// Custom variables.
-		'--ag-header-horizontal-padding': '6px',
-		'--eda-default-column-width': '150px',
+		// Custom CSS variables.
+		'--eda-default-column-width': '125px',
 
 		borderCollapse: 'collapse',
 		fontFamily: 'var(--ag-font-family)',
 		fontSize: 'var(--ag-font-size)',
 		lineHeight: 'var(--ag-row-height)',
 		tableLayout: 'fixed', // Important for overflow ellipsis to work.
-		width: '100%',
+		width: 'fit-content', // We are adding the column groups for layout sizing.
 
+		// Row striping.
 		'tr:nth-of-type(even)': {
 			td: {
-				// Applying to the cell to accommodate the "shim" column.
 				backgroundColor: 'var(--ag-odd-row-background-color)',
 			},
 		},
@@ -59,8 +57,6 @@ const GridRoot = styled('table')(() => ({
 
 			// Style for the grouped header rows.
 			'&.ag-header-row-column-group': {
-				width: 'unset',
-
 				'&.placeholder': {
 					borderBottomColor: 'transparent',
 				},
@@ -70,14 +66,6 @@ const GridRoot = styled('table')(() => ({
 			overflow: 'hidden',
 			textOverflow: 'ellipsis',
 			whiteSpace: 'nowrap',
-
-			// Shim column used to facilitate "table-layout: fixed" with ellipsis and to mirror AG Grid behavior.
-			'&.column-shim': {
-				border: 'none',
-				opacity: 0,
-				userSelect: 'none',
-				width: 'auto',
-			},
 
 			[`.${classes.headerCellWrapper}`]: {
 				display: 'flex',
@@ -177,6 +165,7 @@ const defaultColumns = [
 		enableSorting: true,
 		header: 'Type of Service',
 		type: ['text'],
+		size: '200%', // 200,
 		// headerComponent
 		// headerTooltip
 		// wrapHeaderText
@@ -193,8 +182,6 @@ const defaultColumns = [
 				meta: {
 					format: '$0,0.00',
 				},
-				cellClass: 'ag-left-aligned-cell',
-				headerClass: 'ag-left-aligned-header',
 			},
 			{
 				accessorKey: 'pmpmPrior',
@@ -211,6 +198,9 @@ const defaultColumns = [
 				meta: {
 					format: '$0,0.00',
 				},
+				cellClass: 'ag-left-aligned-cell',
+				headerClass: 'ag-left-aligned-header',
+				size: '100%',
 			},
 			{
 				accessorKey: 'pmpmDiffPercent',
@@ -287,10 +277,12 @@ const Grid = (props) => {
 	const resolvedColumns = useMemo(() => {
 		const configs = columnMapRef.current;
 
-		/**
-		 * @todo Needs to handle grouped headers.
-		 */
-		return columnsProp.map((column) => {
+		// Recursively resolve columns and their type inheritence.
+		const fn = (column) => {
+			if (column.columns) {
+				column.columns = column.columns.map(fn);
+			}
+
 			if (isEmpty(column.type)) {
 				return column;
 			} else {
@@ -299,7 +291,9 @@ const Grid = (props) => {
 
 				return configs.get(accessorKey);
 			}
-		});
+		};
+
+		return columnsProp.map(fn);
 		// Need to note about stable references for columnTypes and columnsProp.
 	}, [columnsProp]);
 
@@ -308,10 +302,23 @@ const Grid = (props) => {
 		data,
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
+		defaultColumn: {
+			size: 125,
+		},
 	});
 
 	return (
 		<GridRoot className={clsx(classes.root)}>
+			{/* We create the colgroup so that we can support a version of column "flexing". */}
+			<colgroup>
+				{table.getAllLeafColumns().map((col, i) => {
+					const colSize = col.getSize();
+					const width = isNaN(colSize) ? col.columnDef.size : colSize;
+
+					return <col key={col.id} style={{ minWidth: '100px', width }} />;
+				})}
+			</colgroup>
+
 			<thead>
 				{table.getHeaderGroups().map((headerGroup, i) => {
 					const headerGroups = table.getHeaderGroups();
@@ -385,8 +392,6 @@ const Grid = (props) => {
 									</td>
 								);
 							})}
-
-							<td className={'column-shim'}></td>
 						</tr>
 					);
 				})}
