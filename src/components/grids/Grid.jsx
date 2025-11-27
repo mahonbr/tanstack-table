@@ -2,11 +2,11 @@ import { useMemo, useRef } from 'react';
 
 import { castArray, isEmpty, isNaN } from 'lodash';
 import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import { IconArrowDown, IconArrowUp, IconDotsVertical } from '@tabler/icons-react';
 import clsx from 'clsx';
 import styled from '@emotion/styled';
 
 import { ConfigMap, number } from '@/utils';
-import { down, menu_alt, up } from '@/assets/themes';
 
 import { defaultData } from './Grid.utils';
 
@@ -68,6 +68,7 @@ const GridRoot = styled('table')(() => ({
 			whiteSpace: 'nowrap',
 
 			[`.${classes.headerCellWrapper}`]: {
+				alignItems: 'center',
 				display: 'flex',
 				flexDirection: 'row',
 				gap: 6,
@@ -257,12 +258,9 @@ const onMenuClick = (event) => {
 	alert('Menu clicked!');
 };
 
-const SortIndicatorTool = (props) => {
-	const { sorted = false, style, ...rest } = props;
-
+const SortIndicatorTool = ({ sorted = false }) => {
 	if (sorted) {
-		const src = sorted === 'asc' ? up : down;
-		return <img alt={''} src={src} style={{ width: 16, ...style }} {...rest} />;
+		return sorted === 'asc' ? <IconArrowUp size={16} /> : <IconArrowDown size={16} />;
 	}
 };
 
@@ -364,7 +362,7 @@ const Grid = (props) => {
 													<Spacer />
 
 													<button className={'menuTool'} onClick={onMenuClick}>
-														<img alt={'Menu'} src={menu_alt} style={{ width: 16 }} />
+														<IconDotsVertical size={16} />
 													</button>
 												</>
 											)}
