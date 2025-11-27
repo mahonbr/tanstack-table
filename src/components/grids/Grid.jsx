@@ -1,8 +1,15 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
-import { castArray, isEmpty, isNaN } from 'lodash';
-import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
-import { IconArrowDown, IconArrowUp, IconDotsVertical } from '@tabler/icons-react';
+import {
+	flexRender,
+	getCoreRowModel,
+	getExpandedRowModel,
+	getSortedRowModel,
+	useReactTable,
+} from '@tanstack/react-table';
+
+import { isEmpty } from 'lodash';
+import { IconArrowDown, IconArrowUp, IconChevronDown, IconChevronRight, IconDotsVertical } from '@tabler/icons-react';
 import clsx from 'clsx';
 import styled from '@emotion/styled';
 
@@ -81,6 +88,13 @@ const GridRoot = styled('table')(() => ({
 				border: 'none',
 				cursor: 'pointer',
 				padding: 0,
+
+				borderRadius: 6,
+				marginRight: 2,
+
+				'&:hover': {
+					backgroundColor: 'rgba(0, 0, 0, 0.1)',
+				},
 			},
 
 			'&.ag-center-aligned-header': {
@@ -126,6 +140,14 @@ const GridRoot = styled('table')(() => ({
 			},
 		},
 
+		tr: {
+			'&:hover': {
+				td: {
+					backgroundColor: '#E6F7FF',
+				},
+			},
+		},
+
 		[`.${classes.hidden}`]: {
 			display: 'none',
 		},
@@ -151,8 +173,8 @@ const defaultColumnTypes = [
 	[
 		'text',
 		{
-			cellClass: 'ag-center-aligned-cell',
-			headerClass: 'ag-center-aligned-header',
+			cellClass: 'ag-left-aligned-cell',
+			headerClass: 'ag-left-aligned-header',
 		},
 	],
 ];
@@ -163,14 +185,39 @@ const defaultColumnTypes = [
 const defaultColumns = [
 	{
 		accessorKey: 'category',
-		enableSorting: true,
 		header: 'Type of Service',
 		type: ['text'],
 		size: '200%', // 200,
 		// headerComponent
 		// headerTooltip
 		// wrapHeaderText
-		// wrapText
+		// wrapText,
+		cell: ({ row, getValue }) => (
+			<div
+				style={{
+					overflow: 'hidden',
+					paddingLeft: `${row.depth * 2}rem`,
+					textOverflow: 'ellipsis',
+					whiteSpace: 'nowrap',
+				}}
+			>
+				{row.getCanExpand() && (
+					<button
+						className={'menuTool'}
+						onClick={row.getToggleExpandedHandler()}
+						style={{
+							alignItems: 'baseline',
+							display: 'inline-flex',
+							padding: 3,
+							verticalAlign: 'middle',
+						}}
+					>
+						{row.getIsExpanded() ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
+					</button>
+				)}
+				{getValue()}
+			</div>
+		),
 	},
 	{
 		header: 'PMPM',
@@ -199,9 +246,6 @@ const defaultColumns = [
 				meta: {
 					format: '$0,0.00',
 				},
-				cellClass: 'ag-left-aligned-cell',
-				headerClass: 'ag-left-aligned-header',
-				size: '100%',
 			},
 			{
 				accessorKey: 'pmpmDiffPercent',
@@ -258,7 +302,7 @@ const onMenuClick = (event) => {
 	alert('Menu clicked!');
 };
 
-const SortIndicatorTool = ({ sorted = false }) => {
+const SortIndicatorTool = ({ sorted }) => {
 	if (sorted) {
 		return sorted === 'asc' ? <IconArrowUp size={16} /> : <IconArrowDown size={16} />;
 	}
@@ -270,6 +314,8 @@ const Spacer = (props) => {
 
 const Grid = (props) => {
 	const { columns: columnsProp = defaultColumns, columnTypes = defaultColumnTypes, data = defaultData } = props;
+
+	const [expanded, setExpanded] = useState({});
 	const columnMapRef = useRef(new ConfigMap(columnTypes));
 
 	const resolvedColumns = useMemo(() => {
@@ -298,10 +344,19 @@ const Grid = (props) => {
 	const table = useReactTable({
 		columns: resolvedColumns,
 		data,
+		debugTable: true,
 		getCoreRowModel: getCoreRowModel(),
+		getExpandedRowModel: getExpandedRowModel(),
 		getSortedRowModel: getSortedRowModel(),
+		getSubRows: (row) => row.children, // return the children array as sub-rows
+		onExpandedChange: setExpanded,
 		defaultColumn: {
+			enableMultiSort: true,
+			enableSorting: true,
 			size: 125,
+		},
+		state: {
+			expanded, // Passing expanded state back to the table.
 		},
 	});
 
@@ -310,23 +365,20 @@ const Grid = (props) => {
 			{/* We create the colgroup so that we can support a version of column "flexing". */}
 			<colgroup>
 				{table.getAllLeafColumns().map((col, i) => {
-					const colSize = col.getSize();
-					const width = isNaN(colSize) ? col.columnDef.size : colSize;
-
+					const width = col.columnDef.size ?? col.getSize();
 					return <col key={col.id} style={{ minWidth: '100px', width }} />;
 				})}
 			</colgroup>
 
 			<thead>
-				{table.getHeaderGroups().map((headerGroup, i) => {
-					const headerGroups = table.getHeaderGroups();
+				{table.getHeaderGroups().map((headerGroup, i, headerGroups) => {
 					const isLeafRow = i === headerGroups.length - 1;
 
 					return (
 						<tr key={headerGroup.id}>
 							{headerGroup.headers.map((header) => {
 								// Guard clause for placeholder headers.
-								if (header.isPlaceholder)
+								if (header.isPlaceholder) {
 									return (
 										<th
 											key={header.id}
@@ -335,17 +387,14 @@ const Grid = (props) => {
 											})}
 										/>
 									);
-
-								const headerClass = header.column.columnDef?.headerClass
-									? castArray(header.column.columnDef?.headerClass)
-									: [];
+								}
 
 								return (
 									<th
 										key={header.id}
 										colSpan={header.colSpan}
 										onClick={header.column.getToggleSortingHandler()}
-										className={clsx(...headerClass, {
+										className={clsx(header.column.columnDef?.headerClass, {
 											[classes.sortable]: header.column.getCanSort(),
 											'ag-header-row-column-group': !isLeafRow,
 										})}
@@ -380,12 +429,8 @@ const Grid = (props) => {
 					return (
 						<tr key={row.id}>
 							{row.getVisibleCells().map((cell) => {
-								const cellClass = cell.column.columnDef?.cellClass
-									? castArray(cell.column.columnDef?.cellClass)
-									: [];
-
 								return (
-									<td key={cell.id} className={clsx(...cellClass)}>
+									<td key={cell.id} className={clsx(cell.column.columnDef?.cellClass)}>
 										{flexRender(cell.column.columnDef.cell, cell.getContext())}
 									</td>
 								);
