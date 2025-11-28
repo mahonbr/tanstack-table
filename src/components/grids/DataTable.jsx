@@ -15,7 +15,7 @@ import styled from '@emotion/styled';
 
 import { ConfigMap, number } from '@/utils';
 
-import { defaultData } from './Grid.utils';
+import { defaultData } from './DataTable.utils';
 
 const PREFIX = 'eda-table';
 
@@ -29,7 +29,7 @@ export const classes = {
 	hidden: `${PREFIX}-hidden`,
 };
 
-const GridRoot = styled('table')(() => ({
+const DataTableRoot = styled('table')(() => ({
 	[`&.${classes.root}`]: {
 		// AG Grid CSS variables.
 		'--ag-border-color': '#D9D9D9',
@@ -312,10 +312,11 @@ const Spacer = (props) => {
 	return <div className={'spacer'} style={{ flex: 1 }} {...props} />;
 };
 
-const Grid = (props) => {
+const DataTable = (props) => {
 	const { columns: columnsProp = defaultColumns, columnTypes = defaultColumnTypes, data = defaultData } = props;
 
 	const [expanded, setExpanded] = useState({});
+	const [sorting, setSorting] = useState([]);
 	const columnMapRef = useRef(new ConfigMap(columnTypes));
 
 	const resolvedColumns = useMemo(() => {
@@ -350,18 +351,20 @@ const Grid = (props) => {
 		getSortedRowModel: getSortedRowModel(),
 		getSubRows: (row) => row.children, // return the children array as sub-rows
 		onExpandedChange: setExpanded,
+		onSortingChange: setSorting,
 		defaultColumn: {
 			enableMultiSort: true,
 			enableSorting: true,
 			size: 125,
 		},
 		state: {
-			expanded, // Passing expanded state back to the table.
+			expanded,
+			sorting,
 		},
 	});
 
 	return (
-		<GridRoot className={clsx(classes.root)}>
+		<DataTableRoot className={clsx(classes.root)}>
 			{/* We create the colgroup so that we can support a version of column "flexing". */}
 			<colgroup>
 				{table.getAllLeafColumns().map((col, i) => {
@@ -439,8 +442,8 @@ const Grid = (props) => {
 					);
 				})}
 			</tbody>
-		</GridRoot>
+		</DataTableRoot>
 	);
 };
 
-export default Grid;
+export default DataTable;

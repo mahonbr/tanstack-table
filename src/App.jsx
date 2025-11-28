@@ -1,7 +1,7 @@
-import Grid from '@/components/grids/Grid';
+import DataTable from '@/components/grids/DataTable';
 
 function App(props) {
-	return <Grid />;
+	return <DataTable />;
 }
 
 export default App;
