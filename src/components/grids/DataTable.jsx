@@ -1,21 +1,15 @@
-import { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 
-import {
-	flexRender,
-	getCoreRowModel,
-	getExpandedRowModel,
-	getSortedRowModel,
-	useReactTable,
-} from '@tanstack/react-table';
-
+import { getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { isEmpty } from 'lodash';
-import { IconArrowDown, IconArrowUp, IconChevronDown, IconChevronRight, IconDotsVertical } from '@tabler/icons-react';
 import clsx from 'clsx';
 import styled from '@emotion/styled';
 
 import { ConfigMap, number } from '@/utils';
 
-import { defaultData } from './DataTable.utils';
+import DefaultColumnGroup from './components/ColumnGroup';
+import DefaultTableBody from './components/TableBody';
+import DefaultTableHead from './components/TableHead';
 
 const PREFIX = 'eda-table';
 
@@ -179,152 +173,23 @@ const defaultColumnTypes = [
 	],
 ];
 
-/**
- * Added "type" property to column definitions to allow for extension of predefined column types.
- */
-const defaultColumns = [
-	{
-		accessorKey: 'category',
-		header: 'Type of Service',
-		type: ['text'],
-		size: '200%', // 200,
-		// headerComponent
-		// headerTooltip
-		// wrapHeaderText
-		// wrapText,
-		cell: ({ row, getValue }) => (
-			<div
-				style={{
-					overflow: 'hidden',
-					paddingLeft: `${row.depth * 2}rem`,
-					textOverflow: 'ellipsis',
-					whiteSpace: 'nowrap',
-				}}
-			>
-				{row.getCanExpand() && (
-					<button
-						className={classes.headerMenuTool}
-						onClick={row.getToggleExpandedHandler()}
-						style={{
-							alignItems: 'baseline',
-							display: 'inline-flex',
-							padding: 3,
-							verticalAlign: 'middle',
-						}}
-					>
-						{row.getIsExpanded() ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
-					</button>
-				)}
-				{getValue()}
-			</div>
-		),
-	},
-	{
-		header: 'PMPM',
-		headerClass: 'ag-center-aligned-header',
-		columns: [
-			{
-				accessorKey: 'pmpmCurrent',
-				header: 'Current',
-				type: ['number'],
-				meta: {
-					format: '$0,0.00',
-				},
-			},
-			{
-				accessorKey: 'pmpmPrior',
-				header: 'Prior',
-				type: ['number'],
-				meta: {
-					format: '$0,0.00',
-				},
-			},
-			{
-				accessorKey: 'pmpmDiff',
-				header: 'Diff',
-				type: ['number'],
-				meta: {
-					format: '$0,0.00',
-				},
-			},
-			{
-				accessorKey: 'pmpmDiffPercent',
-				header: 'Diff %',
-				type: ['number'],
-				meta: {
-					format: '0,0.0%',
-				},
-			},
-		],
-	},
-	{
-		header: 'Expenses',
-		headerClass: 'ag-center-aligned-header',
-		columns: [
-			{
-				accessorKey: 'expenseCurrent',
-				header: 'Current',
-				type: ['number'],
-				meta: {
-					format: '$0,0',
-				},
-			},
-			{
-				accessorKey: 'expensePrior',
-				header: 'Prior',
-				type: ['number'],
-				meta: {
-					format: '$0,0',
-				},
-			},
-			{
-				accessorKey: 'expenseDiff',
-				header: 'Diff',
-				type: ['number'],
-				meta: {
-					format: '$0,0',
-				},
-			},
-			{
-				accessorKey: 'expenseDiffPercent',
-				header: 'Diff %',
-				type: ['number'],
-				meta: {
-					format: '0,0.0%',
-				},
-			},
-		],
-	},
-];
-
-const onMenuClick = (event) => {
-	event.stopPropagation();
-	alert('Menu clicked!');
-};
-
-const SortIndicatorTool = ({ sorted }) => {
-	if (sorted) {
-		return sorted === 'asc' ? <IconArrowUp size={16} /> : <IconArrowDown size={16} />;
-	}
-};
-
-const Spacer = (props) => {
-	return <div className={'spacer'} style={{ flex: 1 }} {...props} />;
-};
-
-const DataTable = (props) => {
+const DataTable = React.forwardRef((props, ref) => {
 	const {
-		columns: columnsProp = defaultColumns,
+		columns: columnsProp = props.columnDefs,
 		columnTypes = defaultColumnTypes,
-		data = defaultData,
+		data = props.rowData ?? [],
 		debugTable = false,
 		getSubRows = (row) => row.children, // return the children array as sub-rows
+		slots = {},
 		defaultColumn = {
 			enableMultiSort: true,
 			enableSorting: true,
 			size: 125,
+			suppressHeaderMenuButton: true, // custom
 		},
 	} = props;
+
+	const { ColumnGroup = DefaultColumnGroup, TableBody = DefaultTableBody, TableHead = DefaultTableHead } = slots;
 
 	const [expanded, setExpanded] = useState({});
 	const [sorting, setSorting] = useState([]);
@@ -364,6 +229,10 @@ const DataTable = (props) => {
 		getSubRows,
 		onExpandedChange: setExpanded,
 		onSortingChange: setSorting,
+		meta: {
+			classes,
+			props,
+		},
 		state: {
 			expanded,
 			sorting,
@@ -371,86 +240,13 @@ const DataTable = (props) => {
 	});
 
 	return (
-		<DataTableRoot className={clsx(classes.root)}>
+		<DataTableRoot ref={ref} className={clsx(classes.root)}>
 			{/* We create the colgroup so that we can support a version of column "flexing". */}
-			<colgroup>
-				{table.getAllLeafColumns().map((col, i) => {
-					const width = col.columnDef.size ?? col.getSize();
-					return <col key={col.id} style={{ minWidth: '100px', width }} />;
-				})}
-			</colgroup>
-
-			<thead>
-				{table.getHeaderGroups().map((headerGroup, i, headerGroups) => {
-					const isLeafRow = i === headerGroups.length - 1;
-
-					return (
-						<tr key={headerGroup.id}>
-							{headerGroup.headers.map((header) => {
-								// Guard clause for placeholder headers.
-								if (header.isPlaceholder) {
-									return (
-										<th
-											key={header.id}
-											className={clsx('placeholder', {
-												'ag-header-row-column-group': !isLeafRow,
-											})}
-										/>
-									);
-								}
-
-								return (
-									<th
-										key={header.id}
-										colSpan={header.colSpan}
-										onClick={header.column.getToggleSortingHandler()}
-										className={clsx(header.column.columnDef?.headerClass, {
-											[classes.sortable]: header.column.getCanSort(),
-											'ag-header-row-column-group': !isLeafRow,
-										})}
-									>
-										<div className={clsx(classes.headerCellWrapper)}>
-											{flexRender(header.column.columnDef.header, header.getContext())}
-
-											{isLeafRow && (
-												<>
-													{header.column.getCanSort() && (
-														<SortIndicatorTool sorted={header.column.getIsSorted()} />
-													)}
-
-													<Spacer />
-
-													<button className={classes.headerMenuTool} onClick={onMenuClick}>
-														<IconDotsVertical size={16} />
-													</button>
-												</>
-											)}
-										</div>
-									</th>
-								);
-							})}
-						</tr>
-					);
-				})}
-			</thead>
-
-			<tbody>
-				{table.getRowModel().rows.map((row) => {
-					return (
-						<tr key={row.id}>
-							{row.getVisibleCells().map((cell) => {
-								return (
-									<td key={cell.id} className={clsx(cell.column.columnDef?.cellClass)}>
-										{flexRender(cell.column.columnDef.cell, cell.getContext())}
-									</td>
-								);
-							})}
-						</tr>
-					);
-				})}
-			</tbody>
+			<ColumnGroup classes={classes} table={table} />
+			<TableHead classes={classes} table={table} />
+			<TableBody classes={classes} table={table} />
 		</DataTableRoot>
 	);
-};
+});
 
 export default DataTable;
