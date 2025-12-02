@@ -23,6 +23,7 @@ export const classes = {
 	// Slot classes.
 	root: `${PREFIX}-root`,
 	headerCellWrapper: `${PREFIX}-headerCellWrapper`,
+	headerMenuTool: `${PREFIX}-headerMenuTool`,
 
 	// Modifier classes.
 	sortable: `${PREFIX}-sortable`,
@@ -83,14 +84,13 @@ const DataTableRoot = styled('table')(() => ({
 				position: 'relative',
 			},
 
-			'.menuTool': {
+			[`.${classes.headerMenuTool}`]: {
 				background: 'transparent',
 				border: 'none',
-				cursor: 'pointer',
-				padding: 0,
-
 				borderRadius: 6,
+				cursor: 'pointer',
 				marginRight: 2,
+				padding: 0,
 
 				'&:hover': {
 					backgroundColor: 'rgba(0, 0, 0, 0.1)',
@@ -102,7 +102,7 @@ const DataTableRoot = styled('table')(() => ({
 					justifyContent: 'center',
 				},
 
-				'.menuTool': {
+				[`.${classes.headerMenuTool}`]: {
 					left: 0,
 					position: 'absolute',
 					top: '50%',
@@ -203,7 +203,7 @@ const defaultColumns = [
 			>
 				{row.getCanExpand() && (
 					<button
-						className={'menuTool'}
+						className={classes.headerMenuTool}
 						onClick={row.getToggleExpandedHandler()}
 						style={{
 							alignItems: 'baseline',
@@ -313,7 +313,18 @@ const Spacer = (props) => {
 };
 
 const DataTable = (props) => {
-	const { columns: columnsProp = defaultColumns, columnTypes = defaultColumnTypes, data = defaultData } = props;
+	const {
+		columns: columnsProp = defaultColumns,
+		columnTypes = defaultColumnTypes,
+		data = defaultData,
+		debugTable = false,
+		getSubRows = (row) => row.children, // return the children array as sub-rows
+		defaultColumn = {
+			enableMultiSort: true,
+			enableSorting: true,
+			size: 125,
+		},
+	} = props;
 
 	const [expanded, setExpanded] = useState({});
 	const [sorting, setSorting] = useState([]);
@@ -345,18 +356,14 @@ const DataTable = (props) => {
 	const table = useReactTable({
 		columns: resolvedColumns,
 		data,
-		debugTable: true,
+		debugTable,
+		defaultColumn,
 		getCoreRowModel: getCoreRowModel(),
 		getExpandedRowModel: getExpandedRowModel(),
 		getSortedRowModel: getSortedRowModel(),
-		getSubRows: (row) => row.children, // return the children array as sub-rows
+		getSubRows,
 		onExpandedChange: setExpanded,
 		onSortingChange: setSorting,
-		defaultColumn: {
-			enableMultiSort: true,
-			enableSorting: true,
-			size: 125,
-		},
 		state: {
 			expanded,
 			sorting,
@@ -413,7 +420,7 @@ const DataTable = (props) => {
 
 													<Spacer />
 
-													<button className={'menuTool'} onClick={onMenuClick}>
+													<button className={classes.headerMenuTool} onClick={onMenuClick}>
 														<IconDotsVertical size={16} />
 													</button>
 												</>
