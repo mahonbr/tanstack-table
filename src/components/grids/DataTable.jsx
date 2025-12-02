@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 
 import { getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
+import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
 import { isEmpty } from 'lodash';
 import clsx from 'clsx';
 import styled from '@emotion/styled';
@@ -171,6 +172,48 @@ const defaultColumnTypes = [
 			headerClass: 'ag-left-aligned-header',
 		},
 	],
+	[
+		'expander',
+		{
+			cellClass: 'ag-left-aligned-cell',
+			headerClass: 'ag-left-aligned-header',
+			cell: (info) => {
+				const { getValue, column, row, table } = info;
+				const { classes } = table.getMeta();
+				const { valueFormatter } = column.columnDef.meta;
+
+				return (
+					<div
+						style={{
+							overflow: 'hidden',
+							paddingLeft: `${row.depth * 2}rem`,
+							textOverflow: 'ellipsis',
+							whiteSpace: 'nowrap',
+						}}
+					>
+						{row.getCanExpand() && (
+							<button
+								className={classes?.headerMenuTool}
+								onClick={row.getToggleExpandedHandler()}
+								style={{
+									alignItems: 'baseline',
+									display: 'inline-flex',
+									padding: 3,
+									verticalAlign: 'middle',
+								}}
+							>
+								{row.getIsExpanded() ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
+							</button>
+						)}
+						{valueFormatter?.(info) ?? getValue()}
+					</div>
+				);
+			},
+			meta: {
+				valueFormatter: ({ getValue }) => getValue(),
+			},
+		},
+	],
 ];
 
 const DataTable = React.forwardRef((props, ref) => {
@@ -238,6 +281,8 @@ const DataTable = React.forwardRef((props, ref) => {
 			sorting,
 		},
 	});
+
+	table.getMeta = () => table.options.meta;
 
 	return (
 		<DataTableRoot ref={ref} className={clsx(classes.root)}>

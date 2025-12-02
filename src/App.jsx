@@ -1,4 +1,3 @@
-import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
 import DataTable from '@/components/grids/DataTable';
 
 const rowData = [
@@ -300,42 +299,12 @@ const columns = [
 	{
 		accessorKey: 'category',
 		header: 'Type of Service',
-		type: ['text'],
+		type: ['expander'],
 		size: '200%', // 200,
 		// headerComponent
 		// headerTooltip
 		// wrapHeaderText
 		// wrapText,
-		cell: ({ row, table, getValue }) => {
-			const classes = table.options.meta.classes;
-
-			return (
-				<div
-					style={{
-						overflow: 'hidden',
-						paddingLeft: `${row.depth * 2}rem`,
-						textOverflow: 'ellipsis',
-						whiteSpace: 'nowrap',
-					}}
-				>
-					{row.getCanExpand() && (
-						<button
-							className={classes?.headerMenuTool}
-							onClick={row.getToggleExpandedHandler()}
-							style={{
-								alignItems: 'baseline',
-								display: 'inline-flex',
-								padding: 3,
-								verticalAlign: 'middle',
-							}}
-						>
-							{row.getIsExpanded() ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
-						</button>
-					)}
-					{getValue()}
-				</div>
-			);
-		},
 	},
 	{
 		header: 'PMPM',
