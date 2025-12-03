@@ -19,7 +19,7 @@ const Spacer = (props) => {
 
 const TableHead = (props) => {
 	const { table } = props;
-	const classes = table.options.meta.classes;
+	const { classes } = table.getMeta();
 
 	return (
 		<thead>

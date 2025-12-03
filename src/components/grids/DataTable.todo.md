@@ -1,6 +1,6 @@
 # In Progress
 
--   [ ] Create an Expander Column Type
+-   [x] Create an Expander Column Type
 -   [ ] Create Row Span Handling for Header Columns
 
 # Grid Options > Column Definitions

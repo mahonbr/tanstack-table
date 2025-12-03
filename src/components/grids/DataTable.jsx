@@ -180,7 +180,7 @@ const defaultColumnTypes = [
 			cell: (info) => {
 				const { getValue, column, row, table } = info;
 				const { classes } = table.getMeta();
-				const { valueFormatter } = column.columnDef.meta;
+				const { valueFormatter } = column.getMeta();
 
 				return (
 					<div
@@ -216,10 +216,29 @@ const defaultColumnTypes = [
 	],
 ];
 
+/**
+ * HelperFeatures is a custom feature that injects helper methods to the table and column instances.
+ *
+ * - `createTable(table)`: Adds a `getMeta()` method to the table instance, returning `table.options.meta`.
+ * - `createColumn(column)`: Adds a `getMeta()` method to the column instance, returning `column.columnDef?.meta`.
+ *
+ * This allows convenient access to custom metadata (such as classes or value formatters) throughout
+ * the table and column lifecycle, especially in cell/column renderers.
+ */
+const HelperFeatures = {
+	createTable: (table) => {
+		table.getMeta = () => table.options.meta;
+	},
+
+	createColumn: (column) => {
+		column.getMeta = () => column.columnDef?.meta;
+	},
+};
+
 const DataTable = React.forwardRef((props, ref) => {
 	const {
 		columns: columnsProp = props.columnDefs,
-		columnTypes = defaultColumnTypes,
+		columnTypes = [],
 		data = props.rowData ?? [],
 		debugTable = false,
 		getSubRows = (row) => row.children, // return the children array as sub-rows
@@ -236,7 +255,7 @@ const DataTable = React.forwardRef((props, ref) => {
 
 	const [expanded, setExpanded] = useState({});
 	const [sorting, setSorting] = useState([]);
-	const columnMapRef = useRef(new ConfigMap(columnTypes));
+	const columnMapRef = useRef(new ConfigMap([...defaultColumnTypes, ...columnTypes]));
 
 	const resolvedColumns = useMemo(() => {
 		const configs = columnMapRef.current;
@@ -262,6 +281,7 @@ const DataTable = React.forwardRef((props, ref) => {
 	}, [columnsProp]);
 
 	const table = useReactTable({
+		_features: [HelperFeatures],
 		columns: resolvedColumns,
 		data,
 		debugTable,
@@ -281,8 +301,6 @@ const DataTable = React.forwardRef((props, ref) => {
 			sorting,
 		},
 	});
-
-	table.getMeta = () => table.options.meta;
 
 	return (
 		<DataTableRoot ref={ref} className={clsx(classes.root)}>
