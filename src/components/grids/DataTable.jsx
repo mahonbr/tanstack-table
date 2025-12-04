@@ -19,6 +19,7 @@ export const classes = {
 	root: `${PREFIX}-root`,
 	headerCellWrapper: `${PREFIX}-headerCellWrapper`,
 	headerMenuTool: `${PREFIX}-headerMenuTool`,
+	headerPlaceholder: `${PREFIX}-headerPlaceholder`,
 
 	// Modifier classes.
 	sortable: `${PREFIX}-sortable`,
@@ -60,7 +61,7 @@ const DataTableRoot = styled('table')(() => ({
 
 			// Style for the grouped header rows.
 			'&.ag-header-row-column-group': {
-				'&.placeholder': {
+				[`&.${classes.headerPlaceholder}`]: {
 					borderBottomColor: 'transparent',
 				},
 			},
@@ -92,6 +93,7 @@ const DataTableRoot = styled('table')(() => ({
 				},
 			},
 
+			/** Header Horizontal Alignment */
 			'&.ag-center-aligned-header': {
 				[`.${classes.headerCellWrapper}`]: {
 					justifyContent: 'center',
@@ -122,6 +124,20 @@ const DataTableRoot = styled('table')(() => ({
 				},
 			},
 
+			/** Header Vertical Alignment */
+			'&.ag-bottom-aligned-header': {
+				verticalAlign: 'bottom',
+			},
+
+			'&.ag-middle-aligned-header': {
+				verticalAlign: 'middle',
+			},
+
+			'&.ag-top-aligned-header': {
+				verticalAlign: 'top',
+			},
+
+			/** Cell Horizontal Alignment */
 			'&.ag-center-aligned-cell': {
 				textAlign: 'center',
 			},
@@ -140,6 +156,10 @@ const DataTableRoot = styled('table')(() => ({
 				td: {
 					backgroundColor: '#E6F7FF',
 				},
+			},
+
+			th: {
+				verticalAlign: 'bottom',
 			},
 		},
 

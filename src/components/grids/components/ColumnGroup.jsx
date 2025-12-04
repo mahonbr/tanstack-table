@@ -1,12 +1,11 @@
+const leafColumnRenderer = (col) => {
+	const width = col.columnDef.size ?? col.getSize();
+	return <col key={col.id} style={{ minWidth: '100px', width }} />;
+};
+
 const ColumnGroup = (props) => {
 	const { table } = props;
-
-	const ColumnGroupCallback = (col) => {
-		const width = col.columnDef.size ?? col.getSize();
-		return <col key={col.id} style={{ minWidth: '100px', width }} />;
-	};
-
-	return <colgroup>{table.getAllLeafColumns().map(ColumnGroupCallback)}</colgroup>;
+	return <colgroup>{table.getAllLeafColumns().map(leafColumnRenderer)}</colgroup>;
 };
 
 export default ColumnGroup;
