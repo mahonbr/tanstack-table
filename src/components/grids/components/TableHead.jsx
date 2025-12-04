@@ -1,20 +1,13 @@
 import { flexRender } from '@tanstack/react-table';
-import { IconArrowDown, IconArrowUp, IconDotsVertical } from '@tabler/icons-react';
+import { IconDotsVertical } from '@tabler/icons-react';
 import clsx from 'clsx';
+
+import SortIndicatorTool from './tools/SortIndicatorTool';
+import Spacer from '@/components/toolbars/Spacer';
 
 const onMenuClick = (event) => {
 	event.stopPropagation();
 	alert('Menu clicked!');
-};
-
-const SortIndicatorTool = ({ sorted }) => {
-	if (sorted) {
-		return sorted === 'asc' ? <IconArrowUp size={16} /> : <IconArrowDown size={16} />;
-	}
-};
-
-const Spacer = (props) => {
-	return <div className={'spacer'} style={{ flex: 1 }} {...props} />;
 };
 
 const TableHead = (props) => {
@@ -34,7 +27,7 @@ const TableHead = (props) => {
 								return (
 									<th
 										key={header.id}
-										className={clsx('placeholder', {
+										className={clsx(classes.headerPlaceholder, {
 											'ag-header-row-column-group': !isLeafRow,
 										})}
 									/>

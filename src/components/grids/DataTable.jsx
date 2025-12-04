@@ -181,7 +181,8 @@ const defaultColumnTypes = [
 			cellClass: 'ag-right-aligned-cell',
 			headerClass: 'ag-right-aligned-header',
 			cell: (info) => {
-				return number(info.getValue(), info.column.columnDef?.meta?.format ?? '0,0');
+				const { format = '0,0' } = info.column.getMeta();
+				return number(info.getValue(), format);
 			},
 		},
 	],
