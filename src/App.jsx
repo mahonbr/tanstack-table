@@ -300,11 +300,52 @@ const columns = [
 		accessorKey: 'category',
 		header: 'Type of Service',
 		type: ['expander'],
-		size: '200%', // 200,
+		size: '200%', // 200, // It is important to note that size needs to be on a leaf column.
 		// headerComponent
 		// headerTooltip
-		// wrapHeaderText
-		// wrapText,
+	},
+	{
+		accessorKey: 'test',
+		header: 'Test',
+		size: '200%',
+		columns: [
+			{
+				id: 'test1',
+				header: 'Test 1',
+				accessorKey: 'test',
+				// header: 'Type of Service 1',
+				columns: [
+					{
+						id: 'test2',
+						header: 'Test 2',
+						accessorKey: 'test',
+						// header: 'Type of Service 2',
+					},
+				],
+			},
+		],
+	},
+	{
+		accessorKey: 'retest',
+		header: 'Retest',
+		size: '200%', // 200,
+		columns: [
+			// {
+			// 	id: 'retest1',
+			// 	// header: 'Test 1',
+			// 	accessorKey: 'retest',
+			// 	// header: 'Type of Service 1',
+			// 	columns: [
+			{
+				id: 'retest2',
+				header: 'Retest 2',
+				accessorKey: 'retest',
+				// header: 'Type of Service 2',
+				size: '200%',
+			},
+			// 	],
+			// },
+		],
 	},
 	{
 		header: 'PMPM',

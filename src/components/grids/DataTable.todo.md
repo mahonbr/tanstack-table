@@ -1,7 +1,8 @@
 # In Progress
 
--   [x] Create an Expander Column Type
--   [ ] Create Row Span Handling for Header Columns
+-   [x] Create an Expander Column Type @2025-12-03
+-   [x] Create Row Span Handling for Header Columns @2025-12-04
+-   [ ] Synchronize Column Defs with Default Column Props
 
 # Grid Options > Column Definitions
 
