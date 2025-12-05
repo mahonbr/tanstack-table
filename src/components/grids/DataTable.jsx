@@ -17,7 +17,6 @@ const PREFIX = 'eda-table';
 export const classes = {
 	// Slot classes.
 	root: `${PREFIX}-root`,
-	headerCellWrapper: `${PREFIX}-headerCellWrapper`,
 	headerMenuTool: `${PREFIX}-headerMenuTool`,
 	headerPlaceholder: `${PREFIX}-headerPlaceholder`,
 
@@ -43,7 +42,7 @@ const DataTableRoot = styled('table')(() => ({
 		fontFamily: 'var(--ag-font-family)',
 		fontSize: 'var(--ag-font-size)',
 		lineHeight: 'var(--ag-row-height)',
-		tableLayout: 'fixed', // Important for overflow ellipsis to work.
+		tableLayout: 'fixed', // Important for the ellipsis overflow to work.
 		width: 'fit-content', // We are adding the column groups for layout sizing.
 
 		// Row striping.
@@ -59,6 +58,14 @@ const DataTableRoot = styled('table')(() => ({
 			padding: `0 var(--ag-cell-horizontal-padding)`,
 			width: 'var(--eda-default-column-width)',
 
+			overflow: 'hidden',
+			textAlign: 'left',
+			textOverflow: 'ellipsis',
+			whiteSpace: 'nowrap',
+			'&.wrapText': {
+				whiteSpace: 'break-spaces',
+			},
+
 			// Style for the grouped header rows.
 			'&.ag-header-row-column-group': {
 				[`&.${classes.headerPlaceholder}`]: {
@@ -66,61 +73,17 @@ const DataTableRoot = styled('table')(() => ({
 				},
 			},
 
-			// Overflow handling.
-			overflow: 'hidden',
-			textOverflow: 'ellipsis',
-			whiteSpace: 'nowrap',
-
-			[`.${classes.headerCellWrapper}`]: {
-				alignItems: 'center',
-				display: 'flex',
-				flexDirection: 'row',
-				gap: 6,
-				justifyContent: 'flex-start',
-				position: 'relative',
-			},
-
 			[`.${classes.headerMenuTool}`]: {
 				background: 'transparent',
 				border: 'none',
-				borderRadius: 6,
+				borderRadius: '50%',
 				cursor: 'pointer',
-				marginRight: 2,
+				height: 22,
 				padding: 0,
+				width: 22,
 
 				'&:hover': {
 					backgroundColor: 'rgba(0, 0, 0, 0.1)',
-				},
-			},
-
-			/** Header Horizontal Alignment */
-			'&.ag-center-aligned-header': {
-				[`.${classes.headerCellWrapper}`]: {
-					justifyContent: 'center',
-				},
-
-				[`.${classes.headerMenuTool}`]: {
-					left: 0,
-					position: 'absolute',
-					top: '50%',
-					transform: 'translateY(-50%)',
-				},
-
-				'.spacer': {
-					display: 'none',
-				},
-			},
-
-			'&.ag-left-aligned-header': {
-				[`.${classes.headerCellWrapper}`]: {
-					justifyContent: 'flex-start',
-				},
-			},
-
-			'&.ag-right-aligned-header': {
-				[`.${classes.headerCellWrapper}`]: {
-					flexDirection: 'row-reverse',
-					justifyContent: 'flex-start',
 				},
 			},
 
@@ -148,6 +111,58 @@ const DataTableRoot = styled('table')(() => ({
 
 			'&.ag-right-aligned-cell': {
 				textAlign: 'right',
+			},
+
+			'.ag-header-cell-label-container': {
+				display: 'block', // Important for the ellipsis overflow to work.
+
+				'.ag-header-cell-label': {
+					alignItems: 'center',
+					display: 'flex',
+					flexDirection: 'row',
+
+					'.ag-header-cell-text': {
+						overflow: 'hidden',
+						textAlign: 'left',
+						textOverflow: 'ellipsis',
+						whiteSpace: 'nowrap',
+
+						'&.wrapHeaderText': {
+							whiteSpace: 'break-spaces',
+						},
+					},
+				},
+			},
+
+			'&.ag-center-aligned-header': {
+				// Adding this for CSS specificity.
+				'.ag-header-cell-label': {
+					'.ag-header-cell-text': {
+						flex: 1,
+						textAlign: 'center',
+					},
+				},
+
+				'.spacer': {
+					display: 'none',
+				},
+			},
+
+			'&.ag-right-aligned-header': {
+				'.ag-header-cell-label': {
+					flexDirection: 'row-reverse',
+					justifyContent: 'flex-start',
+
+					'.ag-header-cell-text': {
+						textAlign: 'right',
+					},
+				},
+			},
+
+			'&.ag-left-aligned-header': {
+				'.ag-header-cell-text': {
+					textAlign: 'left',
+				},
 			},
 		},
 
@@ -268,7 +283,10 @@ const DataTable = React.forwardRef((props, ref) => {
 			enableMultiSort: true,
 			enableSorting: true,
 			size: 125,
-			suppressHeaderMenuButton: true, // custom
+			// Custom Properties
+			suppressHeaderMenuButton: false,
+			wrapHeaderText: false,
+			wrapText: false,
 		},
 	} = props;
 

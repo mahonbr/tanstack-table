@@ -30,6 +30,7 @@ const TableHead = (props) => {
 				return (
 					<tr key={headerGroup.id}>
 						{headerGroup.headers.map((header) => {
+							const { wrapHeaderText } = header.column.columnDef;
 							const headerProps = {};
 							const isRowSpanned = rowSpanColumnIds.includes(header.column.id);
 
@@ -63,29 +64,36 @@ const TableHead = (props) => {
 										'ag-header-row-column-group': !isLeafRow,
 									})}
 								>
-									<div className={clsx(classes?.headerCellWrapper)}>
-										{flexRender(header.column.columnDef.header, header.getContext())}
+									<div className={clsx('ag-header-cell-label-container')}>
+										<div className={clsx('ag-header-cell-label')}>
+											<div
+												className={clsx('ag-header-cell-text', {
+													wrapHeaderText: wrapHeaderText,
+												})}
+											>
+												{flexRender(header.column.columnDef.header, header.getContext())}
+											</div>
 
-										{(isLeafRow || forceSortIndicator) && (
-											<>
-												{header.column.getCanSort() && (
-													<SortIndicatorTool sorted={header.column.getIsSorted()} />
-												)}
+											{(isLeafRow || forceSortIndicator) && (
+												<>
+													{header.column.getCanSort() && (
+														<SortIndicatorTool sorted={header.column.getIsSorted()} />
+													)}
 
-												{header.column.columnDef.suppressHeaderMenuButton !== true && (
-													<>
-														<Spacer />
-
-														<button
-															className={classes?.headerMenuTool}
-															onClick={onMenuClick}
-														>
-															<IconDotsVertical size={16} />
-														</button>
-													</>
-												)}
-											</>
-										)}
+													{header.column.columnDef.suppressHeaderMenuButton !== true && (
+														<>
+															<Spacer style={{ minWidth: 6 }} />
+															<button
+																className={classes?.headerMenuTool}
+																onClick={onMenuClick}
+															>
+																<IconDotsVertical size={16} />
+															</button>
+														</>
+													)}
+												</>
+											)}
+										</div>
 									</div>
 								</th>
 							);
