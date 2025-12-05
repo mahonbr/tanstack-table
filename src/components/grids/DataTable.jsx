@@ -1,18 +1,17 @@
 import React, { useMemo, useRef, useState } from 'react';
 
 import { getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
-import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
 import { isEmpty } from 'lodash';
 import clsx from 'clsx';
 import styled from '@emotion/styled';
 
-import { ConfigMap, number } from '@/utils';
-
+import { ConfigMap } from '@/utils';
+import ColumnTypes from './ColumnTypes';
 import DefaultColumnGroup from './components/ColumnGroup';
 import DefaultTableBody from './components/TableBody';
 import DefaultTableHead from './components/TableHead';
 
-const PREFIX = 'eda-table';
+const PREFIX = 'eda-datatable';
 
 export const classes = {
 	// Slot classes.
@@ -189,69 +188,6 @@ const DataTableRoot = styled('table')(() => ({
 	},
 }));
 
-const defaultColumnTypes = [
-	[
-		'number',
-		{
-			cellClass: 'ag-right-aligned-cell',
-			headerClass: 'ag-right-aligned-header',
-			cell: (info) => {
-				const { format = '0,0' } = info.column.getMeta();
-				return number(info.getValue(), format);
-			},
-		},
-	],
-	[
-		'text',
-		{
-			cellClass: 'ag-left-aligned-cell',
-			headerClass: 'ag-left-aligned-header',
-		},
-	],
-	[
-		'expander',
-		{
-			cellClass: 'ag-left-aligned-cell',
-			headerClass: 'ag-left-aligned-header',
-			cell: (info) => {
-				const { getValue, column, row, table } = info;
-				const { classes } = table.getMeta();
-				const { valueFormatter } = column.getMeta();
-
-				return (
-					<div
-						style={{
-							overflow: 'hidden',
-							paddingLeft: `${row.depth * 2}rem`,
-							textOverflow: 'ellipsis',
-							whiteSpace: 'nowrap',
-						}}
-					>
-						{row.getCanExpand() && (
-							<button
-								className={classes?.headerMenuTool}
-								onClick={row.getToggleExpandedHandler()}
-								style={{
-									alignItems: 'baseline',
-									display: 'inline-flex',
-									padding: 3,
-									verticalAlign: 'middle',
-								}}
-							>
-								{row.getIsExpanded() ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
-							</button>
-						)}
-						{valueFormatter?.(info) ?? getValue()}
-					</div>
-				);
-			},
-			meta: {
-				valueFormatter: ({ getValue }) => getValue(),
-			},
-		},
-	],
-];
-
 /**
  * HelperFeatures is a custom feature that injects helper methods to the table and column instances.
  *
@@ -294,7 +230,7 @@ const DataTable = React.forwardRef((props, ref) => {
 
 	const [expanded, setExpanded] = useState({});
 	const [sorting, setSorting] = useState([]);
-	const columnMapRef = useRef(new ConfigMap([...defaultColumnTypes, ...columnTypes]));
+	const columnMapRef = useRef(new ConfigMap([...ColumnTypes, ...columnTypes]));
 
 	const resolvedColumns = useMemo(() => {
 		const configs = columnMapRef.current;

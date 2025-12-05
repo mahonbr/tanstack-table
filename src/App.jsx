@@ -299,7 +299,7 @@ const columns = [
 	{
 		accessorKey: 'category',
 		header: 'Type of Service Long Header Name 1',
-		type: ['text'],
+		type: ['expander'],
 		size: 200, // '200%', // 200, // It is important to note that size needs to be on a leaf column.
 		// headerTooltip
 	},
