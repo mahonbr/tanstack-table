@@ -16,12 +16,18 @@ const PREFIX = 'eda-datatable';
 export const classes = {
 	// Slot classes.
 	root: `${PREFIX}-root`,
+
+	// Header classes.
+	header: `${PREFIX}-header`,
 	headerMenuTool: `${PREFIX}-headerMenuTool`,
 	headerPlaceholder: `${PREFIX}-headerPlaceholder`,
 
 	// Modifier classes.
-	sortable: `${PREFIX}-sortable`,
 	hidden: `${PREFIX}-hidden`,
+	resizing: `${PREFIX}-resizing`,
+	sortable: `${PREFIX}-sortable`,
+	striped: `${PREFIX}-striped`,
+	wrapText: `${PREFIX}-wrapText`,
 };
 
 const DataTableRoot = styled('table')(() => ({
@@ -31,6 +37,9 @@ const DataTableRoot = styled('table')(() => ({
 		'--ag-cell-horizontal-padding': '10px',
 		'--ag-font-family': "'Open Sans', 'Roboto', 'Helvetica', 'Arial', sans-serif",
 		'--ag-font-size': '12px',
+		'--ag-header-column-resize-handle-color': '#DDE2EB',
+		'--ag-header-column-resize-handle-height': '30%',
+		'--ag-header-column-resize-handle-width': '2px',
 		'--ag-odd-row-background-color': '#F7F7F8',
 		'--ag-row-height': '28px',
 
@@ -54,16 +63,13 @@ const DataTableRoot = styled('table')(() => ({
 		'td, th': {
 			border: '1px solid var(--ag-border-color)',
 			boxSizing: 'border-box',
-			padding: `0 var(--ag-cell-horizontal-padding)`,
-			width: 'var(--eda-default-column-width)',
-
 			overflow: 'hidden',
+			padding: `0 var(--ag-cell-horizontal-padding)`,
+			position: 'relative',
 			textAlign: 'left',
 			textOverflow: 'ellipsis',
 			whiteSpace: 'nowrap',
-			'&.wrapText': {
-				whiteSpace: 'break-spaces',
-			},
+			width: 'var(--eda-default-column-width)',
 
 			// Style for the grouped header rows.
 			'&.ag-header-row-column-group': {
@@ -126,7 +132,7 @@ const DataTableRoot = styled('table')(() => ({
 						textOverflow: 'ellipsis',
 						whiteSpace: 'nowrap',
 
-						'&.wrapHeaderText': {
+						[`&.${classes.wrapText}`]: {
 							whiteSpace: 'break-spaces',
 						},
 					},
@@ -177,6 +183,14 @@ const DataTableRoot = styled('table')(() => ({
 			},
 		},
 
+		[`.${classes.header}`]: {
+			overflow: 'hidden',
+
+			[`&.${classes.resizing}`]: {
+				overflow: 'visible',
+			},
+		},
+
 		[`.${classes.hidden}`]: {
 			display: 'none',
 		},
@@ -184,6 +198,21 @@ const DataTableRoot = styled('table')(() => ({
 		[`.${classes.sortable}`]: {
 			cursor: 'pointer',
 			userSelect: 'none',
+		},
+
+		[`.${classes.wrapText}`]: {
+			whiteSpace: 'break-spaces',
+		},
+
+		/**
+		 * We want to "smooth out" the cursor when resizing columns in order to avoid the "flicker" effect.
+		 */
+		[`&:has(th.${classes.resizing})`]: {
+			cursor: 'ew-resize',
+
+			th: {
+				pointerEvents: 'none',
+			},
 		},
 	},
 }));
@@ -209,15 +238,21 @@ const HelperFeatures = {
 
 const DataTable = React.forwardRef((props, ref) => {
 	const {
+		columnResizeMode = 'onChange',
 		columns: columnsProp = props.columnDefs,
 		columnTypes = [],
 		data = props.rowData ?? [],
+		debugColumns = false,
+		debugHeaders = false,
 		debugTable = false,
 		getSubRows = (row) => row.children, // return the children array as sub-rows
 		slots = {},
 		defaultColumn = {
 			enableMultiSort: true,
+			enableResizing: true,
 			enableSorting: true,
+			maxSize: 800,
+			minSize: 50,
 			size: 125,
 			// Custom Properties
 			suppressHeaderMenuButton: false,
@@ -228,6 +263,7 @@ const DataTable = React.forwardRef((props, ref) => {
 
 	const { ColumnGroup = DefaultColumnGroup, TableBody = DefaultTableBody, TableHead = DefaultTableHead } = slots;
 
+	const [columnSizingInfo, setColumnSizingInfo] = useState({});
 	const [expanded, setExpanded] = useState({});
 	const [sorting, setSorting] = useState([]);
 	const columnMapRef = useRef(new ConfigMap([...ColumnTypes, ...columnTypes]));
@@ -257,14 +293,18 @@ const DataTable = React.forwardRef((props, ref) => {
 
 	const table = useReactTable({
 		_features: [HelperFeatures],
+		columnResizeMode,
 		columns: resolvedColumns,
 		data,
+		debugColumns,
+		debugHeaders,
 		debugTable,
 		defaultColumn,
 		getCoreRowModel: getCoreRowModel(),
 		getExpandedRowModel: getExpandedRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getSubRows,
+		onColumnSizingInfoChange: setColumnSizingInfo,
 		onExpandedChange: setExpanded,
 		onSortingChange: setSorting,
 		meta: {
@@ -272,6 +312,7 @@ const DataTable = React.forwardRef((props, ref) => {
 			props,
 		},
 		state: {
+			columnSizingInfo,
 			expanded,
 			sorting,
 		},

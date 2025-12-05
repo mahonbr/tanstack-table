@@ -1,19 +1,3 @@
-# In Progress
-
--   [x] Create an Expander Column Type @2025-12-03
--   [x] Create Row Span Handling for Header Columns @2025-12-04
--   [x] Implement `wrapText` and `wrapHeaderText` Column Definition
--   [ ] Implement Column Resizing
-
-# Backlog
-
--   [ ] Implement with MUI Table Component
--   [ ] Implement Pagination
--   [ ] Implement Row Selection
--   [ ] Implement Table Overlays
--   [ ] Synchronize Column Defs with Default Column Props
--   [ ] Create Header Tool Component Base Class
-
 # Grid Options > Column Definitions
 
 -   [x] columnDefs

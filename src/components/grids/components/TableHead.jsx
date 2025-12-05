@@ -1,9 +1,10 @@
 import { flexRender } from '@tanstack/react-table';
 import clsx from 'clsx';
 
+import MenuTool from './tools/MenuTool';
+import ResizeHandle from './ResizeHandle';
 import SortIndicatorTool from './tools/SortIndicatorTool';
 import Spacer from '@/components/toolbars/Spacer';
-import MenuTool from './tools/MenuTool';
 
 const TableHead = (props) => {
 	const { table } = props;
@@ -52,18 +53,22 @@ const TableHead = (props) => {
 								<th
 									key={header.id}
 									colSpan={header.colSpan}
-									onClick={header.column.getToggleSortingHandler()}
 									{...headerProps}
-									className={clsx(header.column.columnDef?.headerClass, {
-										[classes?.sortable]: header.column.getCanSort(),
+									className={clsx(classes.header, header.column.columnDef?.headerClass, {
 										'ag-header-row-column-group': !isLeafRow,
+										[classes?.resizing]: header.column.getIsResizing(),
 									})}
 								>
-									<div className={clsx('ag-header-cell-label-container')}>
+									<div
+										onClick={header.column.getToggleSortingHandler()}
+										className={clsx('ag-header-cell-label-container', {
+											[classes?.sortable]: header.column.getCanSort(),
+										})}
+									>
 										<div className={clsx('ag-header-cell-label')}>
 											<div
 												className={clsx('ag-header-cell-text', {
-													wrapHeaderText: wrapHeaderText,
+													[classes.wrapText]: wrapHeaderText,
 												})}
 											>
 												{flexRender(header.column.columnDef.header, header.getContext())}
@@ -85,6 +90,7 @@ const TableHead = (props) => {
 											)}
 										</div>
 									</div>
+									<ResizeHandle {...header.getContext()} />
 								</th>
 							);
 						})}

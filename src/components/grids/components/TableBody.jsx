@@ -2,13 +2,14 @@ import { flexRender } from '@tanstack/react-table';
 import clsx from 'clsx';
 
 const cellRenderer = (cell) => {
-	const { wrapText } = cell.column.columnDef;
+	const { table } = cell.getContext();
+	const { classes } = table.getMeta();
 
 	return (
 		<td
 			key={cell.id}
 			className={clsx(cell.column.columnDef?.cellClass, {
-				wrapText: wrapText,
+				[classes.wrapText]: cell.column.columnDef.wrapText,
 			})}
 		>
 			{flexRender(cell.column.columnDef.cell, cell.getContext())}
