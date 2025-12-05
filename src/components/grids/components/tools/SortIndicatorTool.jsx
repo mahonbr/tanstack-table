@@ -1,8 +1,9 @@
 import { IconArrowDown, IconArrowUp } from '@tabler/icons-react';
 
-const SortIndicatorTool = ({ sorted }) => {
+const SortIndicatorTool = ({ sorted, style, ...rest }) => {
 	if (sorted) {
-		return sorted === 'asc' ? <IconArrowUp size={16} /> : <IconArrowDown size={16} />;
+		const Icon = sorted === 'asc' ? IconArrowUp : IconArrowDown;
+		return <Icon size={16} style={{ minWidth: 24, ...style }} {...rest} />;
 	}
 };
 
