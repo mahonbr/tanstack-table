@@ -1,14 +1,9 @@
 import { flexRender } from '@tanstack/react-table';
-import { IconDotsVertical } from '@tabler/icons-react';
 import clsx from 'clsx';
 
 import SortIndicatorTool from './tools/SortIndicatorTool';
 import Spacer from '@/components/toolbars/Spacer';
-
-const onMenuClick = (event) => {
-	event.stopPropagation();
-	alert('Menu clicked!');
-};
+import MenuTool from './tools/MenuTool';
 
 const TableHead = (props) => {
 	const { table } = props;
@@ -83,12 +78,7 @@ const TableHead = (props) => {
 													{header.column.columnDef.suppressHeaderMenuButton !== true && (
 														<>
 															<Spacer style={{ minWidth: 6 }} />
-															<button
-																className={classes?.headerMenuTool}
-																onClick={onMenuClick}
-															>
-																<IconDotsVertical size={16} />
-															</button>
+															<MenuTool classes={classes} />
 														</>
 													)}
 												</>
