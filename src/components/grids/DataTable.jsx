@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 
 import { getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
-import { isEmpty } from 'lodash';
+import { isEmpty, omit } from 'lodash';
 import clsx from 'clsx';
 import styled from '@emotion/styled';
 
@@ -232,8 +232,29 @@ const HelperFeatures = {
 		table.getMeta = () => table.options.meta;
 	},
 
-	createColumn: (column) => {
+	createColumn: (column, table) => {
 		column.getMeta = () => column.columnDef?.meta;
+
+		/**
+		 * In order to implement resizing on "flex" columns I need to override the default getSize so
+		 * TanStack's column sizing API works as expected. The column sizing doesn't work if getSize
+		 * returns NaN. If you resize a "flex" column, it converts it to pixel based width.
+		 */
+		const _getSize = column.getSize;
+		column.getSize = () => {
+			const size = _getSize();
+
+			if (Number.isNaN(size)) {
+				const { tableRef } = table.getMeta();
+				const el = tableRef.current.querySelector?.(`[data-id=${column.id}]`);
+
+				if (el) {
+					return el.clientWidth;
+				}
+			}
+
+			return size;
+		};
 	},
 };
 

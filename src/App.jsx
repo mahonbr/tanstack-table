@@ -301,6 +301,7 @@ const columns = [
 		header: 'Type of Service Long Header Name 1',
 		type: ['expander'],
 		size: 200, // '200%', // 200, // It is important to note that size needs to be on a leaf column.
+		minSize: 200,
 		// headerTooltip
 	},
 	{
@@ -308,6 +309,7 @@ const columns = [
 		accessorKey: 'category',
 		header: 'Type of Service Long Header Name 2',
 		size: '200%',
+		minSize: 200,
 		type: ['text'],
 		wrapHeaderText: true,
 		wrapText: false,

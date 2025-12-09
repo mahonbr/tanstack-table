@@ -39,6 +39,13 @@ const ResizeHandle = (props) => {
 			onDoubleClick={() => header.column.resetSize()}
 			onMouseDown={header.getResizeHandler()}
 			style={{
+				/**
+				 * We want a smooth column resizing experience. Because of this, we "suspend" pointer
+				 * events for the table's TH tags if ANY column is being resized to avoid the "flickering"
+				 * of the cursor. However, if we do that then the onDoubleClick doesn't work as expected.
+				 * To enable onDoubleClick we have to have pointerEvents.
+				 */
+				pointerEvents: header.column.getIsResizing() ? 'auto' : '',
 				transform:
 					table.options.columnResizeMode === 'onEnd' && header.column.getIsResizing()
 						? `translateX(${table.getState().columnSizingInfo.deltaOffset}px)`
