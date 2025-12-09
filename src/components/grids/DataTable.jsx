@@ -263,6 +263,7 @@ const DataTable = React.forwardRef((props, ref) => {
 
 	const { ColumnGroup = DefaultColumnGroup, TableBody = DefaultTableBody, TableHead = DefaultTableHead } = slots;
 
+	const [columnSizing, setColumnSizing] = useState({});
 	const [columnSizingInfo, setColumnSizingInfo] = useState({});
 	const [expanded, setExpanded] = useState({});
 	const [sorting, setSorting] = useState([]);
@@ -304,6 +305,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		getExpandedRowModel: getExpandedRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getSubRows,
+		onColumnSizingChange: setColumnSizing,
 		onColumnSizingInfoChange: setColumnSizingInfo,
 		onExpandedChange: setExpanded,
 		onSortingChange: setSorting,
@@ -312,6 +314,7 @@ const DataTable = React.forwardRef((props, ref) => {
 			props,
 		},
 		state: {
+			columnSizing,
 			columnSizingInfo,
 			expanded,
 			sorting,
