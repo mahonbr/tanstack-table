@@ -255,6 +255,20 @@ const HelperFeatures = {
 
 			return size;
 		};
+
+		/**
+		 * If the column contains leaves, then we want to reset the leaf columns. Instead of iterating
+		 * through the columns, I'm updating state directly.
+		 */
+		const _resetSize = column.resetSize;
+		column.resetSize = () => {
+			if (column.columns.length > 0) {
+				const ids = column.columns.map((column) => column.id);
+				table.setColumnSizing((prevState) => omit({ ...prevState }, ids));
+			} else {
+				_resetSize();
+			}
+		};
 	},
 };
 
