@@ -10,6 +10,7 @@ import ColumnTypes from './ColumnTypes';
 import DefaultColumnGroup from './components/ColumnGroup';
 import DefaultTableBody from './components/TableBody';
 import DefaultTableHead from './components/TableHead';
+import useMergedRefs from '../../hooks/useMergedRefs';
 
 const PREFIX = 'eda-datatable';
 
@@ -269,6 +270,9 @@ const DataTable = React.forwardRef((props, ref) => {
 	const [sorting, setSorting] = useState([]);
 	const columnMapRef = useRef(new ConfigMap([...ColumnTypes, ...columnTypes]));
 
+	const tableRef = useRef();
+	const refs = useMergedRefs(ref, tableRef);
+
 	const resolvedColumns = useMemo(() => {
 		const configs = columnMapRef.current;
 
@@ -312,6 +316,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		meta: {
 			classes,
 			props,
+			tableRef,
 		},
 		state: {
 			columnSizing,
@@ -322,7 +327,7 @@ const DataTable = React.forwardRef((props, ref) => {
 	});
 
 	return (
-		<DataTableRoot ref={ref} className={clsx(classes.root)}>
+		<DataTableRoot ref={refs} className={clsx(classes.root)}>
 			{/* We create the colgroup so that we can support a version of column "flexing". */}
 			<ColumnGroup classes={classes} table={table} />
 			<TableHead classes={classes} table={table} />
