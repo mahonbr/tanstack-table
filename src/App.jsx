@@ -438,6 +438,7 @@ const columns = [
 
 function App(props) {
 	const [columnLines, setColumnLines] = useState(false);
+	const [hideHeaderBorder, setHideHeaderBorder] = useState(false);
 	const [hideHeaders, setHideHeaders] = useState(false);
 	const [rowLines, setRowLines] = useState(false);
 	const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
@@ -446,50 +447,66 @@ function App(props) {
 
 	return (
 		<div>
-			<form>
-				<input
-					type='checkbox'
-					checked={columnLines}
-					onChange={(event) => setColumnLines(event.target.checked)}
-				></input>
-				<label>Column Lines</label>
-				<br />
-				<input
-					type='checkbox'
-					checked={rowLines}
-					onChange={(event) => setRowLines(event.target.checked)}
-				></input>
-				<label>Row Lines</label>
-				<br />
-				<input type='checkbox' checked={striped} onChange={(event) => setStriped(event.target.checked)}></input>
-				<label>Striped</label>
-				<br />
-				<input
-					type='checkbox'
-					checked={hideHeaders}
-					onChange={(event) => setHideHeaders(event.target.checked)}
-				></input>
-				<label>Hide Headers</label>
-				<br />
-				<input
-					type='checkbox'
-					checked={showLoadingOverlay}
-					onChange={(event) => setShowLoadingOverlay(event.target.checked)}
-				></input>
-				<label>Show Loading Overlay</label>
-				<br />
-				<input
-					type='checkbox'
-					checked={showNoRowsOverlay}
-					onChange={(event) => setShowNoRowsOverlay(event.target.checked)}
-				></input>
-				<label>Show No Rows Overlay</label>
+			<form style={{ display: 'flex', fontFamily: '"Open Sans"', fontSize: 13, gap: 24, marginBottom: 24 }}>
+				<div>
+					<input
+						type='checkbox'
+						checked={columnLines}
+						onChange={(event) => setColumnLines(event.target.checked)}
+					></input>
+					<label>Column Lines</label>
+					<br />
+					<input
+						type='checkbox'
+						checked={rowLines}
+						onChange={(event) => setRowLines(event.target.checked)}
+					></input>
+					<label>Row Lines</label>
+					<br />
+					<input
+						type='checkbox'
+						checked={striped}
+						onChange={(event) => setStriped(event.target.checked)}
+					></input>
+					<label>Striped</label>
+				</div>
+				<div>
+					<input
+						type='checkbox'
+						checked={hideHeaderBorder}
+						onChange={(event) => setHideHeaderBorder(event.target.checked)}
+					></input>
+					<label>Hide Header Border</label>
+					<br />
+					<input
+						type='checkbox'
+						checked={hideHeaders}
+						onChange={(event) => setHideHeaders(event.target.checked)}
+					></input>
+					<label>Hide Headers</label>
+				</div>
+				<div>
+					<input
+						type='checkbox'
+						checked={showLoadingOverlay}
+						onChange={(event) => setShowLoadingOverlay(event.target.checked)}
+					></input>
+					<label>Show Loading Overlay</label>
+					<br />
+					<input
+						type='checkbox'
+						checked={showNoRowsOverlay}
+						onChange={(event) => setShowNoRowsOverlay(event.target.checked)}
+					></input>
+					<label>Show No Rows Overlay</label>
+				</div>
 			</form>
-			<p />
+
 			<DataTable
 				columnLines={columnLines}
 				columns={columns}
 				data={rowData}
+				hideHeaderBorder={hideHeaderBorder}
 				hideHeaders={hideHeaders}
 				rowLines={rowLines}
 				showLoadingOverlay={showLoadingOverlay}

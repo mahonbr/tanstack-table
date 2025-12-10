@@ -28,6 +28,7 @@ const classes = {
 	// Modifier classes.
 	columnLines: `${PREFIX}-columnLines`,
 	hidden: `${PREFIX}-hidden`,
+	hideHeaderBorder: `${PREFIX}-hideHeaderBorder`,
 	resizing: `${PREFIX}-resizing`,
 	rowLines: `${PREFIX}-rowLines`,
 	sortable: `${PREFIX}-sortable`,
@@ -225,17 +226,10 @@ const DataTableRoot = styled('table')(() => ({
 			},
 		},
 
-		[`.${classes.hidden}`]: {
-			display: 'none',
-		},
-
-		[`.${classes.sortable}`]: {
-			cursor: 'pointer',
-			userSelect: 'none',
-		},
-
-		[`.${classes.wrapText}`]: {
-			whiteSpace: 'break-spaces',
+		[`&.${classes.hideHeaderBorder}`]: {
+			th: {
+				borderBottom: 'none',
+			},
 		},
 
 		/**
@@ -247,6 +241,19 @@ const DataTableRoot = styled('table')(() => ({
 			th: {
 				pointerEvents: 'none',
 			},
+		},
+
+		[`.${classes.hidden}`]: {
+			display: 'none',
+		},
+
+		[`.${classes.sortable}`]: {
+			cursor: 'pointer',
+			userSelect: 'none',
+		},
+
+		[`.${classes.wrapText}`]: {
+			whiteSpace: 'break-spaces',
 		},
 	},
 }));
@@ -318,6 +325,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		debugHeaders = false,
 		debugTable = false,
 		getSubRows = (row) => row.children, // return the children array as sub-rows
+		hideHeaderBorder = false,
 		hideHeaders = false,
 		rowLines = false,
 		showLoadingOverlay = false,
@@ -408,6 +416,7 @@ const DataTable = React.forwardRef((props, ref) => {
 				ref={refs}
 				className={clsx(classes.root, {
 					[classes.columnLines]: columnLines,
+					[classes.hideHeaderBorder]: hideHeaderBorder,
 					[classes.rowLines]: rowLines,
 					[classes.striped]: striped,
 				})}
