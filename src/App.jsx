@@ -440,6 +440,8 @@ function App(props) {
 	const [columnLines, setColumnLines] = useState(false);
 	const [hideHeaders, setHideHeaders] = useState(false);
 	const [rowLines, setRowLines] = useState(false);
+	const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
+	const [showNoRowsOverlay, setShowNoRowsOverlay] = useState(false);
 	const [striped, setStriped] = useState(true);
 
 	return (
@@ -468,6 +470,20 @@ function App(props) {
 					onChange={(event) => setHideHeaders(event.target.checked)}
 				></input>
 				<label>Hide Headers</label>
+				<br />
+				<input
+					type='checkbox'
+					checked={showLoadingOverlay}
+					onChange={(event) => setShowLoadingOverlay(event.target.checked)}
+				></input>
+				<label>Show Loading Overlay</label>
+				<br />
+				<input
+					type='checkbox'
+					checked={showNoRowsOverlay}
+					onChange={(event) => setShowNoRowsOverlay(event.target.checked)}
+				></input>
+				<label>Show No Rows Overlay</label>
 			</form>
 			<p />
 			<DataTable
@@ -476,17 +492,11 @@ function App(props) {
 				data={rowData}
 				hideHeaders={hideHeaders}
 				rowLines={rowLines}
+				showLoadingOverlay={showLoadingOverlay}
+				showNoRowsOverlay={showNoRowsOverlay}
 				striped={striped}
 			/>
 			<p />
-			<DataTable
-				columnLines={columnLines}
-				columns={columns}
-				data={rowData}
-				hideHeaders={hideHeaders}
-				rowLines={rowLines}
-				striped={striped}
-			/>
 		</div>
 	);
 	// return <DataTable columnDefs={columns} rowData={rowData} />;

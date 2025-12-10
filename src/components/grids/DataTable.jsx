@@ -10,12 +10,14 @@ import ColumnTypes from './ColumnTypes';
 import DefaultColumnGroup from './components/ColumnGroup';
 import DefaultTableBody from './components/TableBody';
 import DefaultTableHead from './components/TableHead';
+import Overlay from './components/Overlay';
 import useMergedRefs from '../../hooks/useMergedRefs';
 
 const PREFIX = 'eda-datatable';
 
 const classes = {
 	// Slot classes.
+	wrapper: `${PREFIX}-wrapper`,
 	root: `${PREFIX}-root`,
 
 	// Header classes.
@@ -33,22 +35,34 @@ const classes = {
 	wrapText: `${PREFIX}-wrapText`,
 };
 
-const DataTableRoot = styled('table')(() => ({
-	[`&.${classes.root}`]: {
+const DataTableWrapper = styled('div')(() => ({
+	[`&.${classes.wrapper}`]: {
 		// AG Grid CSS variables.
+		'--ag-background-color': '#FFF',
 		'--ag-border-color': '#D9D9D9',
+		'--ag-border-radius': '3px',
+		'--ag-borders': 'solid 1px',
+		'--ag-card-shadow': '0 1px 4px 1px rgba(186, 191, 199, 0.4)',
 		'--ag-cell-horizontal-padding': '10px',
 		'--ag-font-family': "'Open Sans', 'Roboto', 'Helvetica', 'Arial', sans-serif",
 		'--ag-font-size': '12px',
+		'--ag-grid-size': '6px', // padding
 		'--ag-header-column-resize-handle-color': '#DDE2EB',
 		'--ag-header-column-resize-handle-height': '30%',
 		'--ag-header-column-resize-handle-width': '2px',
+		'--ag-modal-overlay-background-color': 'rgba(255, 255, 255, 0.66)',
 		'--ag-odd-row-background-color': '#F7F7F8',
 		'--ag-row-height': '28px',
 
 		// Custom CSS variables.
 		'--eda-default-column-width': '125px',
 
+		position: 'relative',
+	},
+}));
+
+const DataTableRoot = styled('table')(() => ({
+	[`&.${classes.root}`]: {
 		borderCollapse: 'collapse',
 		fontFamily: 'var(--ag-font-family)',
 		fontSize: 'var(--ag-font-size)',
@@ -58,7 +72,7 @@ const DataTableRoot = styled('table')(() => ({
 
 		// Column Lines.
 		[`&.${classes.columnLines}`]: {
-			td: {
+			'td, th': {
 				borderLeft: '1px solid var(--ag-border-color)',
 				borderRight: '1px solid var(--ag-border-color)',
 			},
@@ -306,6 +320,8 @@ const DataTable = React.forwardRef((props, ref) => {
 		getSubRows = (row) => row.children, // return the children array as sub-rows
 		hideHeaders = false,
 		rowLines = false,
+		showLoadingOverlay = false,
+		showNoRowsOverlay = false,
 		slots = {},
 		striped = true,
 		defaultColumn = {
@@ -387,19 +403,23 @@ const DataTable = React.forwardRef((props, ref) => {
 	});
 
 	return (
-		<DataTableRoot
-			ref={refs}
-			className={clsx(classes.root, {
-				[classes.columnLines]: columnLines,
-				[classes.rowLines]: rowLines,
-				[classes.striped]: striped,
-			})}
-		>
-			{/* We create the colgroup so that we can support a version of column "flexing". */}
-			<ColumnGroup classes={classes} table={table} />
-			{!hideHeaders && <TableHead classes={classes} table={table} />}
-			<TableBody classes={classes} table={table} />
-		</DataTableRoot>
+		<DataTableWrapper className={classes.wrapper}>
+			<DataTableRoot
+				ref={refs}
+				className={clsx(classes.root, {
+					[classes.columnLines]: columnLines,
+					[classes.rowLines]: rowLines,
+					[classes.striped]: striped,
+				})}
+			>
+				{/* We create the colgroup so that we can support a version of column "flexing". */}
+				<ColumnGroup classes={classes} table={table} />
+				{!hideHeaders && <TableHead classes={classes} table={table} />}
+				<TableBody classes={classes} table={table} />
+			</DataTableRoot>
+			{showLoadingOverlay && <Overlay message={'Loading...'} />}
+			{showNoRowsOverlay && <Overlay message={'No Rows to Show'} />}
+		</DataTableWrapper>
 	);
 });
 
