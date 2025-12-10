@@ -440,6 +440,7 @@ function App(props) {
 	const [columnLines, setColumnLines] = useState(false);
 	const [hideHeaderBorder, setHideHeaderBorder] = useState(false);
 	const [hideHeaders, setHideHeaders] = useState(false);
+	const [outlined, setOutlined] = useState(false);
 	const [rowLines, setRowLines] = useState(false);
 	const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
 	const [showNoRowsOverlay, setShowNoRowsOverlay] = useState(false);
@@ -469,6 +470,13 @@ function App(props) {
 						onChange={(event) => setStriped(event.target.checked)}
 					></input>
 					<label>Striped</label>
+					<br />
+					<input
+						type='checkbox'
+						checked={outlined}
+						onChange={(event) => setOutlined(event.target.checked)}
+					></input>
+					<label>Outlined</label>
 				</div>
 				<div>
 					<input
@@ -509,6 +517,7 @@ function App(props) {
 				hideHeaderBorder={hideHeaderBorder}
 				hideHeaders={hideHeaders}
 				onGridReady={(table) => console.log('onGridReady', table)}
+				outlined={outlined}
 				rowLines={rowLines}
 				showLoadingOverlay={showLoadingOverlay}
 				showNoRowsOverlay={showNoRowsOverlay}

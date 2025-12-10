@@ -29,6 +29,7 @@ const classes = {
 	columnLines: `${PREFIX}-columnLines`,
 	hidden: `${PREFIX}-hidden`,
 	hideHeaderBorder: `${PREFIX}-hideHeaderBorder`,
+	outlined: `${PREFIX}-outlined`,
 	resizing: `${PREFIX}-resizing`,
 	rowLines: `${PREFIX}-rowLines`,
 	sortable: `${PREFIX}-sortable`,
@@ -74,15 +75,20 @@ const DataTableRoot = styled('table')(() => ({
 		// Column Lines.
 		[`&.${classes.columnLines}`]: {
 			'td, th': {
-				borderLeft: '1px solid var(--ag-border-color)',
-				borderRight: '1px solid var(--ag-border-color)',
+				borderLeft: 'var(--ag-borders) var(--ag-border-color)',
+				borderRight: 'var(--ag-borders) var(--ag-border-color)',
 			},
+		},
+
+		// Table border(outline).
+		[`&.${classes.outlined}`]: {
+			border: 'var(--ag-borders) var(--ag-border-color)',
 		},
 
 		// Row Lines.
 		[`&.${classes.rowLines}`]: {
 			'td, th': {
-				borderBottom: '1px solid var(--ag-border-color)',
+				borderBottom: 'var(--ag-borders) var(--ag-border-color)',
 			},
 		},
 
@@ -213,7 +219,7 @@ const DataTableRoot = styled('table')(() => ({
 			},
 
 			th: {
-				borderBottom: '1px solid var(--ag-border-color)',
+				borderBottom: 'var(--ag-borders) var(--ag-border-color)',
 				verticalAlign: 'bottom',
 			},
 		},
@@ -328,6 +334,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		hideHeaderBorder = false,
 		hideHeaders = false,
 		onGridReady,
+		outlined = false,
 		rowLines = false,
 		showLoadingOverlay = false,
 		showNoRowsOverlay = false,
@@ -349,12 +356,15 @@ const DataTable = React.forwardRef((props, ref) => {
 
 	const { ColumnGroup = DefaultColumnGroup, TableBody = DefaultTableBody, TableHead = DefaultTableHead } = slots;
 
+	/**
+	 * @todo Add support for controlled vs. uncontrolled states.
+	 */
 	const [columnSizing, setColumnSizing] = useState({});
 	const [columnSizingInfo, setColumnSizingInfo] = useState({});
 	const [expanded, setExpanded] = useState({});
 	const [sorting, setSorting] = useState([]);
-	const columnMapRef = useRef(new ConfigMap([...ColumnTypes, ...columnTypes]));
 
+	const columnMapRef = useRef(new ConfigMap([...ColumnTypes, ...columnTypes]));
 	const tableRef = useRef();
 	const refs = useMergedRefs(ref, tableRef);
 
@@ -423,6 +433,7 @@ const DataTable = React.forwardRef((props, ref) => {
 				className={clsx(classes.root, {
 					[classes.columnLines]: columnLines,
 					[classes.hideHeaderBorder]: hideHeaderBorder,
+					[classes.outlined]: outlined,
 					[classes.rowLines]: rowLines,
 					[classes.striped]: striped,
 				})}
