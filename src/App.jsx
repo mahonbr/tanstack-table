@@ -1,4 +1,5 @@
 import DataTable from '@/components/grids/DataTable';
+import { useState } from 'react';
 
 const rowData = [
 	{
@@ -436,7 +437,58 @@ const columns = [
 ];
 
 function App(props) {
-	return <DataTable columns={columns} data={rowData} />;
+	const [columnLines, setColumnLines] = useState(false);
+	const [hideHeaders, setHideHeaders] = useState(false);
+	const [rowLines, setRowLines] = useState(false);
+	const [striped, setStriped] = useState(true);
+
+	return (
+		<div>
+			<form>
+				<input
+					type='checkbox'
+					checked={columnLines}
+					onChange={(event) => setColumnLines(event.target.checked)}
+				></input>
+				<label>Column Lines</label>
+				<br />
+				<input
+					type='checkbox'
+					checked={rowLines}
+					onChange={(event) => setRowLines(event.target.checked)}
+				></input>
+				<label>Row Lines</label>
+				<br />
+				<input type='checkbox' checked={striped} onChange={(event) => setStriped(event.target.checked)}></input>
+				<label>Striped</label>
+				<br />
+				<input
+					type='checkbox'
+					checked={hideHeaders}
+					onChange={(event) => setHideHeaders(event.target.checked)}
+				></input>
+				<label>Hide Headers</label>
+			</form>
+			<p />
+			<DataTable
+				columnLines={columnLines}
+				columns={columns}
+				data={rowData}
+				hideHeaders={hideHeaders}
+				rowLines={rowLines}
+				striped={striped}
+			/>
+			<p />
+			<DataTable
+				columnLines={columnLines}
+				columns={columns}
+				data={rowData}
+				hideHeaders={hideHeaders}
+				rowLines={rowLines}
+				striped={striped}
+			/>
+		</div>
+	);
 	// return <DataTable columnDefs={columns} rowData={rowData} />;
 }
 

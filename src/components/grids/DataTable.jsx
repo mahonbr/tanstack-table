@@ -24,8 +24,10 @@ const classes = {
 	headerPlaceholder: `${PREFIX}-headerPlaceholder`,
 
 	// Modifier classes.
+	columnLines: `${PREFIX}-columnLines`,
 	hidden: `${PREFIX}-hidden`,
 	resizing: `${PREFIX}-resizing`,
+	rowLines: `${PREFIX}-rowLines`,
 	sortable: `${PREFIX}-sortable`,
 	striped: `${PREFIX}-striped`,
 	wrapText: `${PREFIX}-wrapText`,
@@ -54,15 +56,31 @@ const DataTableRoot = styled('table')(() => ({
 		tableLayout: 'fixed', // Important for the ellipsis overflow to work.
 		width: 'fit-content', // We are adding the column groups for layout sizing.
 
-		// Row striping.
-		'tr:nth-of-type(even)': {
+		// Column Lines.
+		[`&.${classes.columnLines}`]: {
 			td: {
-				backgroundColor: 'var(--ag-odd-row-background-color)',
+				borderLeft: '1px solid var(--ag-border-color)',
+				borderRight: '1px solid var(--ag-border-color)',
+			},
+		},
+
+		// Row Lines.
+		[`&.${classes.rowLines}`]: {
+			'td, th': {
+				borderBottom: '1px solid var(--ag-border-color)',
+			},
+		},
+
+		// Row striping.
+		[`&.${classes.striped}`]: {
+			'tr:nth-of-type(even)': {
+				td: {
+					backgroundColor: 'var(--ag-odd-row-background-color)',
+				},
 			},
 		},
 
 		'td, th': {
-			border: '1px solid var(--ag-border-color)',
 			boxSizing: 'border-box',
 			overflow: 'hidden',
 			padding: `0 var(--ag-cell-horizontal-padding)`,
@@ -180,6 +198,7 @@ const DataTableRoot = styled('table')(() => ({
 			},
 
 			th: {
+				borderBottom: '1px solid var(--ag-border-color)',
 				verticalAlign: 'bottom',
 			},
 		},
@@ -276,6 +295,7 @@ const HelperFeatures = {
 
 const DataTable = React.forwardRef((props, ref) => {
 	const {
+		columnLines = false,
 		columnResizeMode = 'onChange',
 		columns: columnsProp = props.columnDefs,
 		columnTypes = [],
@@ -284,7 +304,10 @@ const DataTable = React.forwardRef((props, ref) => {
 		debugHeaders = false,
 		debugTable = false,
 		getSubRows = (row) => row.children, // return the children array as sub-rows
+		hideHeaders = false,
+		rowLines = false,
 		slots = {},
+		striped = true,
 		defaultColumn = {
 			enableMultiSort: true,
 			enableResizing: true,
@@ -364,10 +387,17 @@ const DataTable = React.forwardRef((props, ref) => {
 	});
 
 	return (
-		<DataTableRoot ref={refs} className={clsx(classes.root)}>
+		<DataTableRoot
+			ref={refs}
+			className={clsx(classes.root, {
+				[classes.columnLines]: columnLines,
+				[classes.rowLines]: rowLines,
+				[classes.striped]: striped,
+			})}
+		>
 			{/* We create the colgroup so that we can support a version of column "flexing". */}
 			<ColumnGroup classes={classes} table={table} />
-			<TableHead classes={classes} table={table} />
+			{!hideHeaders && <TableHead classes={classes} table={table} />}
 			<TableBody classes={classes} table={table} />
 		</DataTableRoot>
 	);
