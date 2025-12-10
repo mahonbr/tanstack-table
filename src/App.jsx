@@ -508,6 +508,7 @@ function App(props) {
 				data={rowData}
 				hideHeaderBorder={hideHeaderBorder}
 				hideHeaders={hideHeaders}
+				onGridReady={(table) => console.log('onGridReady', table)}
 				rowLines={rowLines}
 				showLoadingOverlay={showLoadingOverlay}
 				showNoRowsOverlay={showNoRowsOverlay}

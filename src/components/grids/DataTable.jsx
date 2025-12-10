@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { isEmpty, omit } from 'lodash';
@@ -327,6 +327,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		getSubRows = (row) => row.children, // return the children array as sub-rows
 		hideHeaderBorder = false,
 		hideHeaders = false,
+		onGridReady,
 		rowLines = false,
 		showLoadingOverlay = false,
 		showNoRowsOverlay = false,
@@ -409,6 +410,11 @@ const DataTable = React.forwardRef((props, ref) => {
 			sorting,
 		},
 	});
+
+	useEffect(() => {
+		onGridReady?.(table);
+		// eslint-disable-next-line
+	}, []);
 
 	return (
 		<DataTableWrapper className={classes.wrapper}>
