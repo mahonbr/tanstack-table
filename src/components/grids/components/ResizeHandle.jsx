@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 const PREFIX = 'eda-resizehandle';
 
-export const classes = {
+const classes = {
 	root: `${PREFIX}-root`,
 };
 

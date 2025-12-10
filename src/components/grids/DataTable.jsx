@@ -14,7 +14,7 @@ import useMergedRefs from '../../hooks/useMergedRefs';
 
 const PREFIX = 'eda-datatable';
 
-export const classes = {
+const classes = {
 	// Slot classes.
 	root: `${PREFIX}-root`,
 
@@ -241,6 +241,7 @@ const HelperFeatures = {
 		 * returns NaN. If you resize a "flex" column, it converts it to pixel based width.
 		 */
 		const _getSize = column.getSize;
+
 		column.getSize = () => {
 			const size = _getSize();
 
@@ -261,6 +262,7 @@ const HelperFeatures = {
 		 * through the columns, I'm updating state directly.
 		 */
 		const _resetSize = column.resetSize;
+
 		column.resetSize = () => {
 			if (column.columns.length > 0) {
 				const ids = column.columns.map((column) => column.id);
