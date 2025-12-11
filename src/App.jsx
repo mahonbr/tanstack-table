@@ -436,6 +436,15 @@ const columns = [
 	},
 ];
 
+const CheckboxField = ({ label, ...rest }) => {
+	return (
+		<>
+			<input type={'checkbox'} {...rest} />
+			<label>{label}</label>
+		</>
+	);
+};
+
 function App(props) {
 	const [columnLines, setColumnLines] = useState(false);
 	const [hideHeaderBorder, setHideHeaderBorder] = useState(false);
@@ -450,63 +459,55 @@ function App(props) {
 		<div>
 			<form style={{ display: 'flex', fontFamily: '"Open Sans"', fontSize: 13, gap: 24, marginBottom: 24 }}>
 				<div>
-					<input
-						type='checkbox'
+					<CheckboxField
 						checked={columnLines}
+						label={'Column Lines'}
 						onChange={(event) => setColumnLines(event.target.checked)}
-					></input>
-					<label>Column Lines</label>
+					/>
 					<br />
-					<input
-						type='checkbox'
+					<CheckboxField
 						checked={rowLines}
 						onChange={(event) => setRowLines(event.target.checked)}
-					></input>
-					<label>Row Lines</label>
+						label={'Row Lines'}
+					/>
 					<br />
-					<input
-						type='checkbox'
+					<CheckboxField
 						checked={striped}
 						onChange={(event) => setStriped(event.target.checked)}
-					></input>
-					<label>Striped</label>
+						label={'Striped'}
+					/>
 					<br />
-					<input
-						type='checkbox'
+					<CheckboxField
 						checked={outlined}
 						onChange={(event) => setOutlined(event.target.checked)}
-					></input>
-					<label>Outlined</label>
+						label={'Outlined'}
+					/>
 				</div>
 				<div>
-					<input
-						type='checkbox'
+					<CheckboxField
 						checked={hideHeaderBorder}
 						onChange={(event) => setHideHeaderBorder(event.target.checked)}
-					></input>
-					<label>Hide Header Border</label>
+						label={'Hide Header Border'}
+					/>
 					<br />
-					<input
-						type='checkbox'
+					<CheckboxField
 						checked={hideHeaders}
 						onChange={(event) => setHideHeaders(event.target.checked)}
-					></input>
-					<label>Hide Headers</label>
+						label={'Hide Headers'}
+					/>
 				</div>
 				<div>
-					<input
-						type='checkbox'
+					<CheckboxField
 						checked={showLoadingOverlay}
 						onChange={(event) => setShowLoadingOverlay(event.target.checked)}
-					></input>
-					<label>Show Loading Overlay</label>
+						label={'Show Loading Overlay'}
+					/>
 					<br />
-					<input
-						type='checkbox'
+					<CheckboxField
 						checked={showNoRowsOverlay}
 						onChange={(event) => setShowNoRowsOverlay(event.target.checked)}
-					></input>
-					<label>Show No Rows Overlay</label>
+						label={'Show No Rows Overlay'}
+					/>
 				</div>
 			</form>
 

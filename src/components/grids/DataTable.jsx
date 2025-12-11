@@ -55,9 +55,7 @@ const DataTableWrapper = styled('div')(() => ({
 		'--ag-modal-overlay-background-color': 'rgba(255, 255, 255, 0.66)',
 		'--ag-odd-row-background-color': '#F7F7F8',
 		'--ag-row-height': '28px',
-
-		// Custom CSS variables.
-		'--eda-default-column-width': '125px',
+		'--ag-row-hover-color': 'rgba(33, 150, 243, 0.1)',
 
 		position: 'relative',
 	},
@@ -90,6 +88,10 @@ const DataTableRoot = styled('table')(() => ({
 			'td, th': {
 				borderBottom: 'var(--ag-borders) var(--ag-border-color)',
 			},
+
+			td: {
+				borderTop: 'var(--ag-borders) var(--ag-border-color)',
+			},
 		},
 
 		// Row striping.
@@ -97,6 +99,12 @@ const DataTableRoot = styled('table')(() => ({
 			'tr:nth-of-type(even)': {
 				td: {
 					backgroundColor: 'var(--ag-odd-row-background-color)',
+				},
+
+				'&:hover': {
+					td: {
+						backgroundColor: 'var(--ag-row-hover-color)',
+					},
 				},
 			},
 		},
@@ -109,7 +117,6 @@ const DataTableRoot = styled('table')(() => ({
 			textAlign: 'left',
 			textOverflow: 'ellipsis',
 			whiteSpace: 'nowrap',
-			width: 'var(--eda-default-column-width)',
 
 			// Style for the grouped header rows.
 			'&.ag-header-row-column-group': {
@@ -214,7 +221,7 @@ const DataTableRoot = styled('table')(() => ({
 		tr: {
 			'&:hover': {
 				td: {
-					backgroundColor: '#E6F7FF',
+					backgroundColor: 'var(--ag-row-hover-color)',
 				},
 			},
 
