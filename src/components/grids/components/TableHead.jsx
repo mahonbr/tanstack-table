@@ -90,7 +90,7 @@ const TableHead = (props) => {
 											)}
 										</div>
 									</div>
-									<ResizeHandle {...header.getContext()} />
+									{header.column.getCanResize() && <ResizeHandle {...header.getContext()} />}
 								</th>
 							);
 						})}

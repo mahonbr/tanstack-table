@@ -438,6 +438,8 @@ const columns = [
 
 function App(props) {
 	const [columnLines, setColumnLines] = useState(false);
+	const [enableMultiRowSelection, setEnableMultiRowSelection] = useState(false);
+	const [enableRowSelection, setEnableRowSelection] = useState(true);
 	const [hideHeaderBorder, setHideHeaderBorder] = useState(false);
 	const [hideHeaders, setHideHeaders] = useState(false);
 	const [outlined, setOutlined] = useState(false);
@@ -481,6 +483,21 @@ function App(props) {
 				<div>
 					<input
 						type='checkbox'
+						checked={enableRowSelection}
+						onChange={(event) => setEnableRowSelection(event.target.checked)}
+					></input>
+					<label>Enable Row Selection</label>
+					<br />
+					<input
+						type='checkbox'
+						checked={enableMultiRowSelection}
+						onChange={(event) => setEnableMultiRowSelection(event.target.checked)}
+					></input>
+					<label>Enable Multi Row Selection</label>
+				</div>
+				<div>
+					<input
+						type='checkbox'
 						checked={hideHeaderBorder}
 						onChange={(event) => setHideHeaderBorder(event.target.checked)}
 					></input>
@@ -514,9 +531,16 @@ function App(props) {
 				columnLines={columnLines}
 				columns={columns}
 				data={rowData}
+				enableMultiRowSelection={enableMultiRowSelection}
+				enableRowSelection={enableRowSelection}
 				hideHeaderBorder={hideHeaderBorder}
 				hideHeaders={hideHeaders}
+				onCellClicked={(context) => console.log('onCellClicked', context)}
+				onCellDoubleClicked={(context) => console.log('onCellDoubleClicked', context)}
 				onGridReady={(table) => console.log('onGridReady', table)}
+				onRowClicked={(context) => console.log('onRowClicked', context)}
+				onRowDoubleClicked={(context) => console.log('onRowDoubleClicked', context)}
+				onSelectionChanged={(selection) => console.log('onSelectionChanged', selection)}
 				outlined={outlined}
 				rowLines={rowLines}
 				showLoadingOverlay={showLoadingOverlay}

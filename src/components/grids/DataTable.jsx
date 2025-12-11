@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { isEmpty, omit } from 'lodash';
+import { useUpdateEffect } from 'react-use';
 import clsx from 'clsx';
 import styled from '@emotion/styled';
 
@@ -32,6 +33,8 @@ const classes = {
 	outlined: `${PREFIX}-outlined`,
 	resizing: `${PREFIX}-resizing`,
 	rowLines: `${PREFIX}-rowLines`,
+	selectable: `${PREFIX}-selectable`,
+	selected: `${PREFIX}-selected`,
 	sortable: `${PREFIX}-sortable`,
 	striped: `${PREFIX}-striped`,
 	wrapText: `${PREFIX}-wrapText`,
@@ -55,9 +58,8 @@ const DataTableWrapper = styled('div')(() => ({
 		'--ag-modal-overlay-background-color': 'rgba(255, 255, 255, 0.66)',
 		'--ag-odd-row-background-color': '#F7F7F8',
 		'--ag-row-height': '28px',
-
-		// Custom CSS variables.
-		'--eda-default-column-width': '125px',
+		'--ag-row-hover-color': 'rgba(33, 150, 243, 0.1)',
+		'--ag-selected-row-background-color': 'rgba(33, 150, 243, 0.3)',
 
 		position: 'relative',
 	},
@@ -94,7 +96,7 @@ const DataTableRoot = styled('table')(() => ({
 
 		// Row striping.
 		[`&.${classes.striped}`]: {
-			'tr:nth-of-type(even)': {
+			[`tr:nth-of-type(even):not(.${classes.selected}):not(:hover)`]: {
 				td: {
 					backgroundColor: 'var(--ag-odd-row-background-color)',
 				},
@@ -109,7 +111,6 @@ const DataTableRoot = styled('table')(() => ({
 			textAlign: 'left',
 			textOverflow: 'ellipsis',
 			whiteSpace: 'nowrap',
-			width: 'var(--eda-default-column-width)',
 
 			// Style for the grouped header rows.
 			'&.ag-header-row-column-group': {
@@ -214,7 +215,17 @@ const DataTableRoot = styled('table')(() => ({
 		tr: {
 			'&:hover': {
 				td: {
-					backgroundColor: '#E6F7FF',
+					backgroundColor: 'var(--ag-row-hover-color)',
+				},
+			},
+
+			[`&.${classes.selectable}`]: {
+				cursor: 'pointer',
+			},
+
+			[`&.${classes.selected}`]: {
+				td: {
+					backgroundColor: 'var(--ag-selected-row-background-color)',
 				},
 			},
 
@@ -330,16 +341,23 @@ const DataTable = React.forwardRef((props, ref) => {
 		debugColumns = false,
 		debugHeaders = false,
 		debugTable = false,
+		enableMultiRowSelection = false,
+		enableRowSelection = false,
 		getSubRows = (row) => row.children, // return the children array as sub-rows
 		hideHeaderBorder = false,
 		hideHeaders = false,
+		onCellClicked,
+		onCellDoubleClicked,
 		onGridReady,
+		onRowClicked,
+		onRowDoubleClicked,
+		onSelectionChanged,
 		outlined = false,
 		rowLines = false,
 		showLoadingOverlay = false,
 		showNoRowsOverlay = false,
 		slots = {},
-		striped = true,
+		striped = false,
 		defaultColumn = {
 			enableMultiSort: true,
 			enableResizing: true,
@@ -362,6 +380,7 @@ const DataTable = React.forwardRef((props, ref) => {
 	const [columnSizing, setColumnSizing] = useState({});
 	const [columnSizingInfo, setColumnSizingInfo] = useState({});
 	const [expanded, setExpanded] = useState({});
+	const [rowSelection, setRowSelection] = useState({});
 	const [sorting, setSorting] = useState([]);
 
 	const columnMapRef = useRef(new ConfigMap([...ColumnTypes, ...columnTypes]));
@@ -407,9 +426,14 @@ const DataTable = React.forwardRef((props, ref) => {
 		onColumnSizingChange: setColumnSizing,
 		onColumnSizingInfoChange: setColumnSizingInfo,
 		onExpandedChange: setExpanded,
+		onRowSelectionChange: setRowSelection,
 		onSortingChange: setSorting,
 		meta: {
 			classes,
+			onCellClicked,
+			onCellDoubleClicked,
+			onRowClicked,
+			onRowDoubleClicked,
 			props,
 			tableRef,
 		},
@@ -417,14 +441,23 @@ const DataTable = React.forwardRef((props, ref) => {
 			columnSizing,
 			columnSizingInfo,
 			expanded,
+			rowSelection,
 			sorting,
 		},
+		enableMultiRowSelection: enableMultiRowSelection,
+		enableRowSelection: enableRowSelection, // (row) => row.original.age > 18
+		enableSubRowSelection: false,
+		// getRowId: (row) => row.uuid,
 	});
 
 	useEffect(() => {
 		onGridReady?.(table);
 		// eslint-disable-next-line
 	}, []);
+
+	useUpdateEffect(() => {
+		onSelectionChanged?.(rowSelection);
+	}, [rowSelection]);
 
 	return (
 		<DataTableWrapper className={classes.wrapper}>

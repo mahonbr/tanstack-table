@@ -3,24 +3,6 @@ import { number } from '@/utils';
 
 const ColumnTypes = [
 	[
-		'number',
-		{
-			cellClass: 'ag-right-aligned-cell',
-			headerClass: 'ag-right-aligned-header',
-			cell: (info) => {
-				const { format = '0,0' } = info.column.getMeta();
-				return number(info.getValue(), format);
-			},
-		},
-	],
-	[
-		'text',
-		{
-			cellClass: 'ag-left-aligned-cell',
-			headerClass: 'ag-left-aligned-header',
-		},
-	],
-	[
 		'expander',
 		{
 			cellClass: 'ag-left-aligned-cell',
@@ -42,7 +24,10 @@ const ColumnTypes = [
 						{row.getCanExpand() && (
 							<button
 								className={classes?.headerMenuTool}
-								onClick={row.getToggleExpandedHandler()}
+								onClick={(event) => {
+									event.stopPropagation();
+									row.getToggleExpandedHandler()(event);
+								}}
 								style={{
 									alignItems: 'baseline',
 									display: 'inline-flex',
@@ -60,6 +45,24 @@ const ColumnTypes = [
 			meta: {
 				valueFormatter: ({ getValue }) => getValue(),
 			},
+		},
+	],
+	[
+		'number',
+		{
+			cellClass: 'ag-right-aligned-cell',
+			headerClass: 'ag-right-aligned-header',
+			cell: (info) => {
+				const { format = '0,0' } = info.column.getMeta();
+				return number(info.getValue(), format);
+			},
+		},
+	],
+	[
+		'text',
+		{
+			cellClass: 'ag-left-aligned-cell',
+			headerClass: 'ag-left-aligned-header',
 		},
 	],
 ];

@@ -2,12 +2,14 @@ import { flexRender } from '@tanstack/react-table';
 import clsx from 'clsx';
 
 const cellRenderer = (cell) => {
-	const { table } = cell.getContext();
-	const { classes } = table.getMeta();
+	const context = cell.getContext();
+	const { classes, onCellClicked, onCellDoubleClicked } = context.table.getMeta();
 
 	return (
 		<td
 			key={cell.id}
+			onClick={(event) => onCellClicked?.({ event, ...context })}
+			onDoubleClick={(event) => onCellDoubleClicked?.({ event, ...context })}
 			className={clsx(cell.column.columnDef?.cellClass, {
 				[classes.wrapText]: cell.column.columnDef.wrapText,
 			})}
@@ -17,12 +19,37 @@ const cellRenderer = (cell) => {
 	);
 };
 
-const rowRenderer = (row) => {
-	return <tr key={row.id}>{row.getVisibleCells().map(cellRenderer)}</tr>;
+const createRowRenderer = (props) => {
+	const { table } = props;
+	const { classes, onRowClicked, onRowDoubleClicked } = table.getMeta();
+
+	return (row) => {
+		const onClickCallback = (event) => {
+			if (onRowClicked?.({ event, row, table }) !== false) {
+				row.getToggleSelectedHandler()(event);
+			}
+		};
+
+		return (
+			<tr
+				key={row.id}
+				onClick={onClickCallback}
+				onDoubleClick={(event) => onRowDoubleClicked?.({ event, row, table })}
+				className={clsx({
+					[classes.selectable]: row.getCanSelect(),
+					[classes.selected]: row.getIsSelected(),
+				})}
+			>
+				{row.getVisibleCells().map(cellRenderer)}
+			</tr>
+		);
+	};
 };
 
 const TableBody = (props) => {
 	const { table } = props;
+	const rowRenderer = createRowRenderer(props);
+
 	return <tbody>{table.getRowModel().rows.map(rowRenderer)}</tbody>;
 };
 
