@@ -598,11 +598,11 @@ function App(props) {
 					hideHeaders={hideHeaders}
 					loadingOverlayProps={{ overlayText: 'Loading data, please wait...' }}
 					noRowsOverlayProps={{ overlayText: 'No data available to display.' }}
-					onCellClicked={(context) => console.log('onCellClicked', context)}
-					onCellDoubleClicked={(context) => console.log('onCellDoubleClicked', context)}
+					onCellClicked={(event, context) => console.log('onCellClicked', context)}
+					onCellDoubleClicked={(event, context) => console.log('onCellDoubleClicked', context)}
 					onGridReady={(table) => console.log('onGridReady', table)}
-					onRowClicked={(context) => console.log('onRowClicked', context)}
-					onRowDoubleClicked={(context) => console.log('onRowDoubleClicked', context)}
+					onRowClicked={(event, context) => console.log('onRowClicked', context)}
+					onRowDoubleClicked={(event, context) => console.log('onRowDoubleClicked', context)}
 					onSelectionChanged={(selection) => console.log('onSelectionChanged', selection)}
 					outlined={outlined}
 					rowLines={rowLines}

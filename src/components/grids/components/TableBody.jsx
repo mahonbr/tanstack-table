@@ -6,14 +6,14 @@ import ErrorBoundary from '@/components/feedback/ErrorBoundary';
 const cellRenderer = (cell) => {
 	const context = cell.getContext();
 
+	const { cellClass, cellStyle, getCellClass, getCellStyle } = context.column.getMeta() ?? {};
 	const { classes, onCellClicked, onCellDoubleClicked } = context.table.getMeta() ?? {};
-	const { getCellClass, getCellStyle, cellClass, cellStyle } = context.column.getMeta() ?? {};
 
 	return (
 		<td
 			key={cell.id}
-			onClick={(event) => onCellClicked?.({ event, ...context })}
-			onDoubleClick={(event) => onCellDoubleClicked?.({ event, ...context })}
+			onClick={(event) => onCellClicked?.(event, context)}
+			onDoubleClick={(event) => onCellDoubleClicked?.(event, context)}
 			className={clsx(context.column.columnDef?.cellClass, cellClass, getCellClass?.(context), {
 				[classes.wrapText]: context.column.columnDef.wrapText,
 			})}
@@ -43,7 +43,7 @@ const createRowRenderer = (props) => {
 
 	return (row) => {
 		const onClickCallback = (event) => {
-			if (onRowClicked?.({ event, row, table }) !== false) {
+			if (onRowClicked?.(event, { row, table }) !== false) {
 				/**
 				 * If the row is selectable and checkbox selection is disabled, "force" toggle selection
 				 * on row click.
@@ -58,7 +58,7 @@ const createRowRenderer = (props) => {
 			<tr
 				key={row.id}
 				onClick={onClickCallback}
-				onDoubleClick={(event) => onRowDoubleClicked?.({ event, row, table })}
+				onDoubleClick={(event) => onRowDoubleClicked?.(event, { row, table })}
 				className={clsx(rowClass, getRowClass?.({ row, table }), {
 					[classes.selectable]: row.getCanSelect(),
 					[classes.selected]: row.getIsSelected(),
