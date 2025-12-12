@@ -1,18 +1,21 @@
 import React, { useMemo, useRef, useState } from 'react';
 
 import { getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
-import { isEmpty, omit } from 'lodash';
+import { isEmpty } from 'lodash';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
 import clsx from 'clsx';
 import styled from '@emotion/styled';
 
 import { ConfigMap } from '@/utils';
+import ErrorBoundary from '@/components/feedback/ErrorBoundary';
+import useMergedRefs from '@/hooks/useMergedRefs';
+
 import ColumnTypes from './ColumnTypes';
 import DefaultColumnGroup from './components/ColumnGroup';
 import DefaultTableBody from './components/TableBody';
 import DefaultTableHead from './components/TableHead';
 import Overlay from './components/Overlay';
-import useMergedRefs from '../../hooks/useMergedRefs';
+import TableFeatures from './TableFeatures';
 
 const PREFIX = 'eda-datatable';
 
@@ -275,62 +278,6 @@ const DataTableRoot = styled('table')(() => ({
 	},
 }));
 
-/**
- * HelperFeatures is a custom feature that injects helper methods to the table and column instances.
- *
- * - `createTable(table)`: Adds a `getMeta()` method to the table instance, returning `table.options.meta`.
- * - `createColumn(column)`: Adds a `getMeta()` method to the column instance, returning `column.columnDef?.meta`.
- *
- * This allows convenient access to custom metadata (such as classes or value formatters) throughout
- * the table and column lifecycle, especially in cell/column renderers.
- */
-const HelperFeatures = {
-	createTable: (table) => {
-		table.getMeta = () => table.options.meta;
-	},
-
-	createColumn: (column, table) => {
-		column.getMeta = () => column.columnDef?.meta;
-
-		/**
-		 * In order to implement resizing on "flex" columns I need to override the default getSize so
-		 * TanStack's column sizing API works as expected. The column sizing doesn't work if getSize
-		 * returns NaN. If you resize a "flex" column, it converts it to pixel based width.
-		 */
-		const _getSize = column.getSize;
-
-		column.getSize = () => {
-			const size = _getSize();
-
-			if (Number.isNaN(size)) {
-				const { tableRef } = table.getMeta();
-				const el = tableRef.current.querySelector?.(`[data-id=${column.id}]`);
-
-				if (el) {
-					return el.clientWidth;
-				}
-			}
-
-			return size;
-		};
-
-		/**
-		 * If the column contains leaves, then we want to reset the leaf columns. Instead of iterating
-		 * through the columns, I'm updating state directly.
-		 */
-		const _resetSize = column.resetSize;
-
-		column.resetSize = () => {
-			if (column.columns.length > 0) {
-				const ids = column.columns.map((column) => column.id);
-				table.setColumnSizing((prevState) => omit({ ...prevState }, ids));
-			} else {
-				_resetSize();
-			}
-		};
-	},
-};
-
 const DataTable = React.forwardRef((props, ref) => {
 	const {
 		columnLines = false,
@@ -401,9 +348,9 @@ const DataTable = React.forwardRef((props, ref) => {
 		}
 
 		// Recursively resolve columns and their type inheritence.
-		const fn = (column) => {
+		const callback = (column) => {
 			if (column.columns) {
-				column.columns = column.columns.map(fn);
+				column.columns = column.columns.map(callback);
 			}
 
 			if (isEmpty(column.type)) {
@@ -416,12 +363,12 @@ const DataTable = React.forwardRef((props, ref) => {
 			}
 		};
 
-		return columns.map(fn);
+		return columns.map(callback);
 		// Need to note about stable references for columnsProp.
 	}, [columnsProp, enableCheckboxSelection]);
 
 	const table = useReactTable({
-		_features: [HelperFeatures],
+		_features: [TableFeatures],
 		columnResizeMode,
 		columns: resolvedColumns,
 		data,
@@ -472,25 +419,27 @@ const DataTable = React.forwardRef((props, ref) => {
 	}, [rowSelection]);
 
 	return (
-		<DataTableWrapper className={classes.wrapper}>
-			<DataTableRoot
-				ref={refs}
-				className={clsx(classes.root, {
-					[classes.columnLines]: columnLines,
-					[classes.hideHeaderBorder]: hideHeaderBorder,
-					[classes.outlined]: outlined,
-					[classes.rowLines]: rowLines,
-					[classes.striped]: striped,
-				})}
-			>
-				{/* We create the colgroup so that we can support a version of column "flexing". */}
-				<ColumnGroup table={table} />
-				{!hideHeaders && <TableHead table={table} />}
-				<TableBody table={table} />
-			</DataTableRoot>
-			{showLoadingOverlay && <Overlay overlayText={'Loading...'} {...loadingOverlayProps} />}
-			{showNoRowsOverlay && <Overlay overlayText={'No Rows to Show'} {...noRowsOverlayProps} />}
-		</DataTableWrapper>
+		<ErrorBoundary>
+			<DataTableWrapper className={classes.wrapper}>
+				<DataTableRoot
+					ref={refs}
+					className={clsx(classes.root, {
+						[classes.columnLines]: columnLines,
+						[classes.hideHeaderBorder]: hideHeaderBorder,
+						[classes.outlined]: outlined,
+						[classes.rowLines]: rowLines,
+						[classes.striped]: striped,
+					})}
+				>
+					{/* We create the colgroup so that we can support a version of column "flexing". */}
+					<ColumnGroup table={table} />
+					{!hideHeaders && <TableHead table={table} />}
+					<TableBody table={table} />
+				</DataTableRoot>
+				{showLoadingOverlay && <Overlay overlayText={'Loading...'} {...loadingOverlayProps} />}
+				{showNoRowsOverlay && <Overlay overlayText={'No Rows to Show'} {...noRowsOverlayProps} />}
+			</DataTableWrapper>
+		</ErrorBoundary>
 	);
 });
 

@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 
+import ErrorBoundary from '@/components/feedback/ErrorBoundary';
+
 const createLeafColumnRenderer = ({ columnSizing, table }) => {
 	return (col) => {
 		const maxWidth = col.columnDef.maxSize ?? table.options.defaultColumn.maxSize;
@@ -28,7 +30,7 @@ const ColumnGroup = (props) => {
 		return <colgroup>{table.getAllLeafColumns().map(leafColumnRenderer)}</colgroup>;
 	}, [table.getAllLeafColumns().length, columnSizing]);
 
-	return colgroup;
+	return <ErrorBoundary>{colgroup}</ErrorBoundary>;
 };
 
 export default ColumnGroup;

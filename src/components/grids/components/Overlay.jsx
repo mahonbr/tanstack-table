@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import clsx from 'clsx';
 
+import ErrorBoundary from '@/components/feedback/ErrorBoundary';
+
 const PREFIX = 'eda-datatable-overlay';
 
 const classes = {
@@ -41,11 +43,13 @@ const Overlay = (props) => {
 	const { className: overlayTextClassName, ...overlayTextRest } = overlayTextProps;
 
 	return (
-		<OverlayRoot className={clsx(classes.root, className)} {...rest}>
-			<div className={clsx(classes.overlayText, overlayTextClassName)} {...overlayTextRest}>
-				{overlayText}
-			</div>
-		</OverlayRoot>
+		<ErrorBoundary>
+			<OverlayRoot className={clsx(classes.root, className)} {...rest}>
+				<div className={clsx(classes.overlayText, overlayTextClassName)} {...overlayTextRest}>
+					{overlayText}
+				</div>
+			</OverlayRoot>
+		</ErrorBoundary>
 	);
 };
 

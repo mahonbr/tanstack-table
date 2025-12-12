@@ -1,6 +1,8 @@
 import { flexRender } from '@tanstack/react-table';
 import clsx from 'clsx';
 
+import ErrorBoundary from '@/components/feedback/ErrorBoundary';
+
 const cellRenderer = (cell) => {
 	const context = cell.getContext();
 	const { classes, onCellClicked, onCellDoubleClicked } = context.table.getMeta();
@@ -14,7 +16,7 @@ const cellRenderer = (cell) => {
 				[classes.wrapText]: cell.column.columnDef.wrapText,
 			})}
 		>
-			{flexRender(cell.column.columnDef.cell, cell.getContext())}
+			{flexRender(cell.column.columnDef.cell, context)}
 		</td>
 	);
 };
@@ -57,7 +59,11 @@ const TableBody = (props) => {
 	const { table } = props;
 	const rowRenderer = createRowRenderer(props);
 
-	return <tbody>{table.getRowModel().rows.map(rowRenderer)}</tbody>;
+	return (
+		<ErrorBoundary>
+			<tbody>{table.getRowModel().rows.map(rowRenderer)}</tbody>
+		</ErrorBoundary>
+	);
 };
 
 export default TableBody;
