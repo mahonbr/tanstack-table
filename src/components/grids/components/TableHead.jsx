@@ -22,7 +22,7 @@ const TableHead = (props) => {
 
 	return (
 		<ErrorBoundary>
-			<thead>
+			<thead className={clsx(classes.header)}>
 				{table.getHeaderGroups().map((headerGroup, i, headerGroups) => {
 					const isLeafRow = i === headerGroups.length - 1;
 
@@ -57,7 +57,7 @@ const TableHead = (props) => {
 										key={header.id}
 										colSpan={header.colSpan}
 										{...headerProps}
-										className={clsx(classes.header, header.column.columnDef?.headerClass, {
+										className={clsx(classes.headerCell, header.column.columnDef?.headerClass, {
 											[classes.headerRowColumnGroup]: !isLeafRow,
 											[classes?.resizing]: header.column.getIsResizing(),
 										})}

@@ -26,6 +26,7 @@ const classes = {
 
 	// Header classes.
 	header: `${PREFIX}-header`,
+	headerCell: `${PREFIX}-headerCell`,
 	headerCellLabel: `${PREFIX}-headerCellLabel`,
 	headerCellLabelContainer: `${PREFIX}-headerCellLabelContainer`,
 	headerCellText: `${PREFIX}-headerCellText`,
@@ -34,6 +35,7 @@ const classes = {
 	headerRowColumnGroup: `${PREFIX}-headerRowColumnGroup`,
 
 	// Modifier classes.
+	autoHeight: `${PREFIX}-autoHeight`,
 	columnLines: `${PREFIX}-columnLines`,
 	hidden: `${PREFIX}-hidden`,
 	hideHeaderBorder: `${PREFIX}-hideHeaderBorder`,
@@ -50,7 +52,7 @@ const classes = {
 const DataTableWrapper = styled('div')(() => ({
 	[`&.${classes.wrapper}`]: {
 		// AG Grid CSS variables.
-		'--ag-background-color': '#FFF',
+		'--ag-background-color': '#FFFFFF',
 		'--ag-border-color': '#D9D9D9',
 		'--ag-border-radius': '3px',
 		'--ag-borders': 'solid 1px',
@@ -59,6 +61,7 @@ const DataTableWrapper = styled('div')(() => ({
 		'--ag-font-family': "'Open Sans', 'Roboto', 'Helvetica', 'Arial', sans-serif",
 		'--ag-font-size': '12px',
 		'--ag-grid-size': '6px', // padding
+		'--ag-header-background-color': '#FFFFFF',
 		'--ag-header-column-resize-handle-color': '#DDE2EB',
 		'--ag-header-column-resize-handle-height': '30%',
 		'--ag-header-column-resize-handle-width': '2px',
@@ -68,13 +71,28 @@ const DataTableWrapper = styled('div')(() => ({
 		'--ag-row-hover-color': 'rgba(33, 150, 243, 0.1)',
 		'--ag-selected-row-background-color': 'rgba(33, 150, 243, 0.3)',
 
+		boxSizing: 'border-box',
+		flex: 1,
+		height: '100%',
+		overflow: 'auto',
 		position: 'relative',
+		width: '100%',
+
+		[`&.${classes.autoHeight}`]: {
+			height: 'unset',
+			width: 'unset',
+		},
+
+		[`&.${classes.outlined}`]: {
+			border: 'var(--ag-borders) var(--ag-border-color)',
+		},
 	},
 }));
 
 const DataTableRoot = styled('table')(() => ({
 	[`&.${classes.root}`]: {
-		borderCollapse: 'collapse',
+		borderCollapse: 'separate',
+		borderSpacing: 0,
 		fontFamily: 'var(--ag-font-family)',
 		fontSize: 'var(--ag-font-size)',
 		lineHeight: 'var(--ag-row-height)',
@@ -84,20 +102,49 @@ const DataTableRoot = styled('table')(() => ({
 		// Column Lines.
 		[`&.${classes.columnLines}`]: {
 			'td, th': {
-				borderLeft: 'var(--ag-borders) var(--ag-border-color)',
 				borderRight: 'var(--ag-borders) var(--ag-border-color)',
+
+				'&:first-of-type': {
+					borderLeft: 'var(--ag-borders) var(--ag-border-color)',
+				},
 			},
 		},
 
 		// Table border(outline).
 		[`&.${classes.outlined}`]: {
-			border: 'var(--ag-borders) var(--ag-border-color)',
+			'td, th': {
+				'&:first-of-type': {
+					borderLeft: 'none',
+				},
+
+				'&:last-of-type': {
+					borderRight: 'none',
+				},
+			},
+
+			tbody: {
+				'tr:last-of-type': {
+					td: {
+						borderBottom: 'none',
+					},
+				},
+			},
 		},
 
 		// Row Lines.
 		[`&.${classes.rowLines}`]: {
 			'td, th': {
 				borderBottom: 'var(--ag-borders) var(--ag-border-color)',
+			},
+
+			[`&.${classes.hideHeaderBorder}`]: {
+				tbody: {
+					'tr:first-of-type': {
+						td: {
+							borderTop: 'var(--ag-borders) var(--ag-border-color)',
+						},
+					},
+				},
 			},
 		},
 
@@ -243,10 +290,17 @@ const DataTableRoot = styled('table')(() => ({
 		},
 
 		[`.${classes.header}`]: {
-			overflow: 'hidden',
+			backgroundColor: 'var(--ag-header-background-color)',
+			position: 'sticky',
+			top: 0,
+			zIndex: 2,
 
-			[`&.${classes.resizing}`]: {
-				overflow: 'visible',
+			[`.${classes.headerCell}`]: {
+				overflow: 'hidden',
+
+				[`&.${classes.resizing}`]: {
+					overflow: 'visible',
+				},
 			},
 		},
 
@@ -292,9 +346,10 @@ const DataTable = React.forwardRef((props, ref) => {
 		debugColumns = false,
 		debugHeaders = false,
 		debugTable = false,
-		enableExpanding = props.treeData ?? false,
+		domLayout = 'normal',
 		enableCheckboxSelection = false,
 		enableClickSelection = false,
+		enableExpanding = props.treeData ?? false,
 		enableMultiRowSelection = false,
 		enableRowSelection = false,
 		getSubRows = (row) => row.children, // return the children array as sub-rows
@@ -424,7 +479,12 @@ const DataTable = React.forwardRef((props, ref) => {
 
 	return (
 		<ErrorBoundary>
-			<DataTableWrapper className={classes.wrapper}>
+			<DataTableWrapper
+				className={clsx(classes.wrapper, {
+					[classes.autoHeight]: domLayout === 'autoHeight',
+					[classes.outlined]: outlined,
+				})}
+			>
 				<DataTableRoot
 					ref={refs}
 					className={clsx(classes.root, {

@@ -438,6 +438,7 @@ const columns = [
 
 function App(props) {
 	const [columnLines, setColumnLines] = useState(false);
+	const [domLayout, setDomLayout] = useState(false);
 	const [enableCheckboxSelection, setEnableCheckboxSelection] = useState(false);
 	const [enableClickSelection, setEnableClickSelection] = useState(false);
 	const [enableMultiRowSelection, setEnableMultiRowSelection] = useState(false);
@@ -489,6 +490,13 @@ function App(props) {
 						onChange={(event) => setTreeData(event.target.checked)}
 					></input>
 					<label>Tree Data</label>
+					<br />
+					<input
+						type='checkbox'
+						checked={domLayout}
+						onChange={(event) => setDomLayout(event.target.checked)}
+					></input>
+					<label>AutoHeight (domLayout)</label>
 				</div>
 				<div>
 					<input
@@ -552,31 +560,34 @@ function App(props) {
 				</div>
 			</form>
 
-			<DataTable
-				columnLines={columnLines}
-				columns={columns}
-				data={rowData}
-				enableCheckboxSelection={enableCheckboxSelection}
-				enableClickSelection={enableClickSelection}
-				enableMultiRowSelection={enableMultiRowSelection}
-				enableRowSelection={enableRowSelection}
-				hideHeaderBorder={hideHeaderBorder}
-				hideHeaders={hideHeaders}
-				loadingOverlayProps={{ overlayText: 'Loading data, please wait...' }}
-				noRowsOverlayProps={{ overlayText: 'No data available to display.' }}
-				onCellClicked={(context) => console.log('onCellClicked', context)}
-				onCellDoubleClicked={(context) => console.log('onCellDoubleClicked', context)}
-				onGridReady={(table) => console.log('onGridReady', table)}
-				onRowClicked={(context) => console.log('onRowClicked', context)}
-				onRowDoubleClicked={(context) => console.log('onRowDoubleClicked', context)}
-				onSelectionChanged={(selection) => console.log('onSelectionChanged', selection)}
-				outlined={outlined}
-				rowLines={rowLines}
-				showLoadingOverlay={showLoadingOverlay}
-				showNoRowsOverlay={showNoRowsOverlay}
-				striped={striped}
-				treeData={treeData}
-			/>
+			<div style={{ height: 500, _overflow: 'hidden' }}>
+				<DataTable
+					columnLines={columnLines}
+					columns={columns}
+					data={rowData}
+					domLayout={domLayout ? 'autoHeight' : 'normal'}
+					enableCheckboxSelection={enableCheckboxSelection}
+					enableClickSelection={enableClickSelection}
+					enableMultiRowSelection={enableMultiRowSelection}
+					enableRowSelection={enableRowSelection}
+					hideHeaderBorder={hideHeaderBorder}
+					hideHeaders={hideHeaders}
+					loadingOverlayProps={{ overlayText: 'Loading data, please wait...' }}
+					noRowsOverlayProps={{ overlayText: 'No data available to display.' }}
+					onCellClicked={(context) => console.log('onCellClicked', context)}
+					onCellDoubleClicked={(context) => console.log('onCellDoubleClicked', context)}
+					onGridReady={(table) => console.log('onGridReady', table)}
+					onRowClicked={(context) => console.log('onRowClicked', context)}
+					onRowDoubleClicked={(context) => console.log('onRowDoubleClicked', context)}
+					onSelectionChanged={(selection) => console.log('onSelectionChanged', selection)}
+					outlined={outlined}
+					rowLines={rowLines}
+					showLoadingOverlay={showLoadingOverlay}
+					showNoRowsOverlay={showNoRowsOverlay}
+					striped={striped}
+					treeData={treeData}
+				/>
+			</div>
 		</div>
 	);
 }
