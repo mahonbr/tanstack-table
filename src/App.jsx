@@ -441,7 +441,7 @@ function App(props) {
 	const [enableCheckboxSelection, setEnableCheckboxSelection] = useState(false);
 	const [enableClickSelection, setEnableClickSelection] = useState(false);
 	const [enableMultiRowSelection, setEnableMultiRowSelection] = useState(false);
-	const [enableRowSelection, setEnableRowSelection] = useState(true);
+	const [enableRowSelection, setEnableRowSelection] = useState(false);
 	const [hideHeaderBorder, setHideHeaderBorder] = useState(false);
 	const [hideHeaders, setHideHeaders] = useState(false);
 	const [outlined, setOutlined] = useState(false);
@@ -449,6 +449,7 @@ function App(props) {
 	const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
 	const [showNoRowsOverlay, setShowNoRowsOverlay] = useState(false);
 	const [striped, setStriped] = useState(true);
+	const [treeData, setTreeData] = useState(false);
 
 	return (
 		<div>
@@ -481,6 +482,13 @@ function App(props) {
 						onChange={(event) => setOutlined(event.target.checked)}
 					></input>
 					<label>Outlined</label>
+					<br />
+					<input
+						type='checkbox'
+						checked={treeData}
+						onChange={(event) => setTreeData(event.target.checked)}
+					></input>
+					<label>Tree Data</label>
 				</div>
 				<div>
 					<input
@@ -567,6 +575,7 @@ function App(props) {
 				showLoadingOverlay={showLoadingOverlay}
 				showNoRowsOverlay={showNoRowsOverlay}
 				striped={striped}
+				treeData={treeData}
 			/>
 			<p />
 		</div>

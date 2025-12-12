@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 
 import { getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { isEmpty, omit } from 'lodash';
@@ -341,6 +341,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		debugColumns = false,
 		debugHeaders = false,
 		debugTable = false,
+		enableExpanding = props.treeData ?? false,
 		enableCheckboxSelection = false,
 		enableClickSelection = false,
 		enableMultiRowSelection = false,
@@ -428,6 +429,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		debugHeaders,
 		debugTable,
 		defaultColumn,
+		enableExpanding: enableExpanding,
 		enableMultiRowSelection: enableMultiRowSelection,
 		enableRowSelection: enableRowSelection, // (row) => row.original.age > 18
 		enableSubRowSelection: false,
