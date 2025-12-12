@@ -23,8 +23,17 @@ const cellRenderer = (cell) => {
 
 const createRowRenderer = (props) => {
 	const { table } = props;
-	const { classes, enableCheckboxSelection, enableClickSelection, onRowClicked, onRowDoubleClicked } =
-		table.getMeta();
+	const {
+		classes,
+		enableCheckboxSelection,
+		enableClickSelection,
+		getRowClass,
+		getRowStyle,
+		onRowClicked,
+		onRowDoubleClicked,
+		rowClass,
+		rowStyle,
+	} = table.getMeta();
 
 	return (row) => {
 		const onClickCallback = (event) => {
@@ -44,10 +53,14 @@ const createRowRenderer = (props) => {
 				key={row.id}
 				onClick={onClickCallback}
 				onDoubleClick={(event) => onRowDoubleClicked?.({ event, row, table })}
-				className={clsx({
+				className={clsx(rowClass, getRowClass?.({ row, table }), {
 					[classes.selectable]: row.getCanSelect(),
 					[classes.selected]: row.getIsSelected(),
 				})}
+				style={{
+					...rowStyle,
+					...getRowStyle?.({ row, table }),
+				}}
 			>
 				{row.getVisibleCells().map(cellRenderer)}
 			</tr>

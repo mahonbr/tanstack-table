@@ -593,7 +593,9 @@ function App(props) {
 					showNoRowsOverlay={showNoRowsOverlay}
 					striped={striped}
 					treeData={treeData}
-					// Examples of controllable state usage.
+					/**
+					 * @examples of controllable state usage.
+					 */
 					// columnSizing={columnSizing}
 					// columnSizingInfo={columnSizingInfo}
 					// expanded={expanded}
@@ -604,6 +606,14 @@ function App(props) {
 					// onSortingChange={setSorting}
 					// rowSelection={rowSelection}
 					// sorting={sorting}
+					// Examples of row style props
+					/**
+					 * @examples of row style props
+					 */
+					// getRowClass={() => ['test', 'another-custom-row-class']}
+					// getRowStyle={() => ({ color: 'red' })}
+					// rowClass={'custom-row-class'}
+					// rowStyle={{ backgroundColor: 'rgba(255, 0, 0, 0.1)' }}
 				/>
 			</div>
 		</div>
