@@ -438,6 +438,8 @@ const columns = [
 
 function App(props) {
 	const [columnLines, setColumnLines] = useState(false);
+	const [enableCheckboxSelection, setEnableCheckboxSelection] = useState(false);
+	const [enableClickSelection, setEnableClickSelection] = useState(false);
 	const [enableMultiRowSelection, setEnableMultiRowSelection] = useState(false);
 	const [enableRowSelection, setEnableRowSelection] = useState(true);
 	const [hideHeaderBorder, setHideHeaderBorder] = useState(false);
@@ -494,6 +496,21 @@ function App(props) {
 						onChange={(event) => setEnableMultiRowSelection(event.target.checked)}
 					></input>
 					<label>Enable Multi Row Selection</label>
+					<br />
+					<input
+						type='checkbox'
+						checked={enableClickSelection}
+						onChange={(event) => setEnableClickSelection(event.target.checked)}
+					></input>
+					<label>Enable Click Selection</label>
+					<br />
+					<input
+						type='checkbox'
+						checked={enableCheckboxSelection}
+						onChange={(event) => setEnableCheckboxSelection(event.target.checked)}
+					></input>
+					<label>Enable Checkbox Selection</label>
+					<br />
 				</div>
 				<div>
 					<input
@@ -531,6 +548,8 @@ function App(props) {
 				columnLines={columnLines}
 				columns={columns}
 				data={rowData}
+				enableCheckboxSelection={enableCheckboxSelection}
+				enableClickSelection={enableClickSelection}
 				enableMultiRowSelection={enableMultiRowSelection}
 				enableRowSelection={enableRowSelection}
 				hideHeaderBorder={hideHeaderBorder}

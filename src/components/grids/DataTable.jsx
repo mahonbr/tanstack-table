@@ -341,6 +341,8 @@ const DataTable = React.forwardRef((props, ref) => {
 		debugColumns = false,
 		debugHeaders = false,
 		debugTable = false,
+		enableCheckboxSelection = false,
+		enableClickSelection = false,
 		enableMultiRowSelection = false,
 		enableRowSelection = false,
 		getSubRows = (row) => row.children, // return the children array as sub-rows
@@ -389,6 +391,14 @@ const DataTable = React.forwardRef((props, ref) => {
 
 	const resolvedColumns = useMemo(() => {
 		const configs = columnMapRef.current;
+		const columns = [...columnsProp];
+
+		if (enableCheckboxSelection) {
+			columns.unshift({
+				id: '__eda_selection_column__',
+				type: ['selection'],
+			});
+		}
 
 		// Recursively resolve columns and their type inheritence.
 		const fn = (column) => {
@@ -399,16 +409,16 @@ const DataTable = React.forwardRef((props, ref) => {
 			if (isEmpty(column.type)) {
 				return column;
 			} else {
-				const { accessorKey, type, ...rest } = column;
+				const { accessorKey = column.id, type, ...rest } = column;
 				configs.set(accessorKey, { ...rest, accessorKey, extends: type });
 
 				return configs.get(accessorKey);
 			}
 		};
 
-		return columnsProp.map(fn);
-		// Need to note about stable references for columnTypes and columnsProp.
-	}, [columnsProp]);
+		return columns.map(fn);
+		// Need to note about stable references for columnsProp.
+	}, [columnsProp, enableCheckboxSelection]);
 
 	const table = useReactTable({
 		_features: [HelperFeatures],
@@ -430,6 +440,8 @@ const DataTable = React.forwardRef((props, ref) => {
 		onSortingChange: setSorting,
 		meta: {
 			classes,
+			enableCheckboxSelection,
+			enableClickSelection,
 			onCellClicked,
 			onCellDoubleClicked,
 			onRowClicked,

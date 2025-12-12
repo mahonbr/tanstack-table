@@ -1,5 +1,7 @@
 import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
+
 import { number } from '@/utils';
+import IndeterminateCheckbox from '@/components/inputs/IndeterminateCheckbox';
 
 const ColumnTypes = [
 	[
@@ -56,6 +58,41 @@ const ColumnTypes = [
 				const { format = '0,0' } = info.column.getMeta();
 				return number(info.getValue(), format);
 			},
+		},
+	],
+	[
+		'selection',
+		{
+			id: '__eda_selection_column__',
+			cellClass: 'ag-center-aligned-cell',
+			enableResizing: false,
+			headerClass: 'ag-center-aligned-header',
+			size: 50,
+			suppressHeaderMenuButton: true,
+			header: ({ table }) => {
+				if (!table.options.enableMultiRowSelection) return;
+
+				return (
+					<IndeterminateCheckbox
+						{...{
+							checked: table.getIsAllRowsSelected(),
+							indeterminate: table.getIsSomeRowsSelected(),
+							onChange: table.getToggleAllRowsSelectedHandler(),
+							onClick: (event) => event.stopPropagation(),
+						}}
+					/>
+				);
+			},
+			cell: ({ row }) => (
+				<IndeterminateCheckbox
+					{...{
+						checked: row.getIsSelected(),
+						disabled: !row.getCanSelect(),
+						onChange: row.getToggleSelectedHandler(),
+						onClick: (event) => event.stopPropagation(),
+					}}
+				/>
+			),
 		},
 	],
 	[

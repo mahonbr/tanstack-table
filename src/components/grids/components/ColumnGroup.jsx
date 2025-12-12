@@ -20,9 +20,13 @@ const ColumnGroup = (props) => {
 	const { columnSizing } = table.getState();
 
 	const colgroup = useMemo(() => {
+		/**
+		 * I'm checking the length to ensure we recalc if columns are added/removed (e.g. via column
+		 * visibility or adding a checkbox selection column).
+		 */
 		const leafColumnRenderer = createLeafColumnRenderer({ columnSizing, table });
 		return <colgroup>{table.getAllLeafColumns().map(leafColumnRenderer)}</colgroup>;
-	}, [columnSizing]);
+	}, [table.getAllLeafColumns().length, columnSizing]);
 
 	return colgroup;
 };

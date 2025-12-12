@@ -21,11 +21,18 @@ const cellRenderer = (cell) => {
 
 const createRowRenderer = (props) => {
 	const { table } = props;
-	const { classes, onRowClicked, onRowDoubleClicked } = table.getMeta();
+	const { classes, enableCheckboxSelection, enableClickSelection, onRowClicked, onRowDoubleClicked } =
+		table.getMeta();
 
 	return (row) => {
 		const onClickCallback = (event) => {
 			if (onRowClicked?.({ event, row, table }) !== false) {
+				/**
+				 * If the row is selectable and checkbox selection is disabled, "force" toggle selection
+				 * on row click.
+				 */
+				if (row.getCanSelect() && enableCheckboxSelection && !enableClickSelection) return;
+
 				row.getToggleSelectedHandler()(event);
 			}
 		};
