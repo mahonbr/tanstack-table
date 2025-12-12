@@ -26,8 +26,12 @@ const classes = {
 
 	// Header classes.
 	header: `${PREFIX}-header`,
+	headerCellLabel: `${PREFIX}-headerCellLabel`,
+	headerCellLabelContainer: `${PREFIX}-headerCellLabelContainer`,
+	headerCellText: `${PREFIX}-headerCellText`,
 	headerMenuTool: `${PREFIX}-headerMenuTool`,
 	headerPlaceholder: `${PREFIX}-headerPlaceholder`,
+	headerRowColumnGroup: `${PREFIX}-headerRowColumnGroup`,
 
 	// Modifier classes.
 	columnLines: `${PREFIX}-columnLines`,
@@ -116,7 +120,7 @@ const DataTableRoot = styled('table')(() => ({
 			whiteSpace: 'nowrap',
 
 			// Style for the grouped header rows.
-			'&.ag-header-row-column-group': {
+			[`&.${classes.headerRowColumnGroup}`]: {
 				[`&.${classes.headerPlaceholder}`]: {
 					borderBottomColor: 'transparent',
 				},
@@ -162,15 +166,15 @@ const DataTableRoot = styled('table')(() => ({
 				textAlign: 'right',
 			},
 
-			'.ag-header-cell-label-container': {
+			[`.${classes.headerCellLabelContainer}`]: {
 				display: 'block', // Important for the ellipsis overflow to work.
 
-				'.ag-header-cell-label': {
+				[`.${classes.headerCellLabel}`]: {
 					alignItems: 'center',
 					display: 'flex',
 					flexDirection: 'row',
 
-					'.ag-header-cell-text': {
+					[`.${classes.headerCellText}`]: {
 						overflow: 'hidden',
 						textAlign: 'left',
 						textOverflow: 'ellipsis',
@@ -185,8 +189,8 @@ const DataTableRoot = styled('table')(() => ({
 
 			'&.ag-center-aligned-header': {
 				// Adding this for CSS specificity.
-				'.ag-header-cell-label': {
-					'.ag-header-cell-text': {
+				[`.${classes.headerCellLabel}`]: {
+					[`.${classes.headerCellText}`]: {
 						flex: 1,
 						textAlign: 'center',
 					},
@@ -198,18 +202,18 @@ const DataTableRoot = styled('table')(() => ({
 			},
 
 			'&.ag-right-aligned-header': {
-				'.ag-header-cell-label': {
+				[`.${classes.headerCellLabel}`]: {
 					flexDirection: 'row-reverse',
 					justifyContent: 'flex-start',
 
-					'.ag-header-cell-text': {
+					[`.${classes.headerCellText}`]: {
 						textAlign: 'right',
 					},
 				},
 			},
 
 			'&.ag-left-aligned-header': {
-				'.ag-header-cell-text': {
+				[`.${classes.headerCellText}`]: {
 					textAlign: 'left',
 				},
 			},

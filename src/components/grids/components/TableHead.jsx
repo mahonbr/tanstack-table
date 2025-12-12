@@ -46,7 +46,7 @@ const TableHead = (props) => {
 										<th
 											key={header.id}
 											className={clsx(classes.headerPlaceholder, {
-												'ag-header-row-column-group': !isLeafRow,
+												[classes.headerRowColumnGroup]: !isLeafRow,
 											})}
 										/>
 									);
@@ -58,19 +58,19 @@ const TableHead = (props) => {
 										colSpan={header.colSpan}
 										{...headerProps}
 										className={clsx(classes.header, header.column.columnDef?.headerClass, {
-											'ag-header-row-column-group': !isLeafRow,
+											[classes.headerRowColumnGroup]: !isLeafRow,
 											[classes?.resizing]: header.column.getIsResizing(),
 										})}
 									>
 										<div
 											onClick={header.column.getToggleSortingHandler()}
-											className={clsx('ag-header-cell-label-container', {
+											className={clsx(classes.headerCellLabelContainer, {
 												[classes?.sortable]: header.column.getCanSort(),
 											})}
 										>
-											<div className={clsx('ag-header-cell-label')}>
+											<div className={clsx(classes.headerCellLabel)}>
 												<div
-													className={clsx('ag-header-cell-text', {
+													className={clsx(classes.headerCellText, {
 														[classes.wrapText]: wrapHeaderText,
 													})}
 												>

@@ -577,10 +577,8 @@ function App(props) {
 				striped={striped}
 				treeData={treeData}
 			/>
-			<p />
 		</div>
 	);
-	// return <DataTable columnDefs={columns} rowData={rowData} />;
 }
 
 export default App;
