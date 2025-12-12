@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import { getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { isEmpty } from 'lodash';
@@ -8,6 +8,7 @@ import styled from '@emotion/styled';
 
 import { ConfigMap } from '@/utils';
 import ErrorBoundary from '@/components/feedback/ErrorBoundary';
+import useControllableState from '@/hooks/useControllableState';
 import useMergedRefs from '@/hooks/useMergedRefs';
 
 import ColumnTypes from './ColumnTypes';
@@ -341,6 +342,8 @@ const DataTable = React.forwardRef((props, ref) => {
 		columnLines = false,
 		columnResizeMode = 'onChange',
 		columns: columnsProp = props.columnDefs,
+		columnSizing: columnSizingProp,
+		columnSizingInfo: columnSizingInfoProp,
 		columnTypes = [],
 		data = props.rowData ?? [],
 		debugColumns = false,
@@ -352,6 +355,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		enableExpanding = props.treeData ?? false,
 		enableMultiRowSelection = false,
 		enableRowSelection = false,
+		expanded: expandedProp,
 		getSubRows = (row) => row.children, // return the children array as sub-rows
 		hideHeaderBorder = false,
 		hideHeaders = false,
@@ -359,15 +363,22 @@ const DataTable = React.forwardRef((props, ref) => {
 		noRowsOverlayProps = {},
 		onCellClicked,
 		onCellDoubleClicked,
+		onColumnSizingChange: onColumnSizingChangeProp,
+		onColumnSizingInfoChange: onColumnSizingInfoChangeProp,
+		onExpandedChange: onExpandedChangeProp,
 		onGridReady,
 		onRowClicked,
 		onRowDoubleClicked,
+		onRowSelectionChanged: onRowSelectionChangedProp,
 		onSelectionChanged,
+		onSortingChange: onSortingChangeProp,
 		outlined = false,
 		rowLines = false,
+		rowSelection: rowSelectionProp,
 		showLoadingOverlay = false,
 		showNoRowsOverlay = false,
 		slots = {},
+		sorting: sortingProp,
 		striped = false,
 		defaultColumn = {
 			enableMultiSort: true,
@@ -385,14 +396,35 @@ const DataTable = React.forwardRef((props, ref) => {
 
 	const { ColumnGroup = DefaultColumnGroup, TableBody = DefaultTableBody, TableHead = DefaultTableHead } = slots;
 
-	/**
-	 * @todo Add support for controlled vs. uncontrolled states.
-	 */
-	const [columnSizing, setColumnSizing] = useState({});
-	const [columnSizingInfo, setColumnSizingInfo] = useState({});
-	const [expanded, setExpanded] = useState({});
-	const [rowSelection, setRowSelection] = useState({});
-	const [sorting, setSorting] = useState([]);
+	const [columnSizing, setColumnSizing] = useControllableState({
+		defaultValue: {},
+		onChange: onColumnSizingChangeProp,
+		value: columnSizingProp,
+	});
+
+	const [columnSizingInfo, setColumnSizingInfo] = useControllableState({
+		defaultValue: {},
+		onChange: onColumnSizingInfoChangeProp,
+		value: columnSizingInfoProp,
+	});
+
+	const [expanded, setExpanded] = useControllableState({
+		defaultValue: {},
+		onChange: onExpandedChangeProp,
+		value: expandedProp,
+	});
+
+	const [rowSelection, setRowSelection] = useControllableState({
+		defaultValue: {},
+		onChange: onRowSelectionChangedProp,
+		value: rowSelectionProp,
+	});
+
+	const [sorting, setSorting] = useControllableState({
+		defaultValue: [],
+		onChange: onSortingChangeProp,
+		value: sortingProp,
+	});
 
 	const columnMapRef = useRef(new ConfigMap([...ColumnTypes, ...columnTypes]));
 	const tableRef = useRef();

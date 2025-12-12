@@ -452,6 +452,13 @@ function App(props) {
 	const [striped, setStriped] = useState(true);
 	const [treeData, setTreeData] = useState(false);
 
+	// Examples of controllable state usage.
+	// const [columnSizing, setColumnSizing] = useState({});
+	// const [columnSizingInfo, setColumnSizingInfo] = useState({});
+	// const [expanded, setExpanded] = useState({});
+	// const [rowSelection, setRowSelection] = useState({});
+	// const [sorting, setSorting] = useState([]);
+
 	return (
 		<div>
 			<form style={{ display: 'flex', fontFamily: '"Open Sans"', fontSize: 13, gap: 24, marginBottom: 24 }}>
@@ -586,6 +593,17 @@ function App(props) {
 					showNoRowsOverlay={showNoRowsOverlay}
 					striped={striped}
 					treeData={treeData}
+					// Examples of controllable state usage.
+					// columnSizing={columnSizing}
+					// columnSizingInfo={columnSizingInfo}
+					// expanded={expanded}
+					// onColumnSizingChange={setColumnSizing}
+					// onColumnSizingInfoChange={setColumnSizingInfo}
+					// onExpandedChange={setExpanded}
+					// onRowSelectionChanged={setRowSelection}
+					// onSortingChange={setSorting}
+					// rowSelection={rowSelection}
+					// sorting={sorting}
 				/>
 			</div>
 		</div>
