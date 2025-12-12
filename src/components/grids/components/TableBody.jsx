@@ -5,18 +5,24 @@ import ErrorBoundary from '@/components/feedback/ErrorBoundary';
 
 const cellRenderer = (cell) => {
 	const context = cell.getContext();
-	const { classes, onCellClicked, onCellDoubleClicked } = context.table.getMeta();
+
+	const { classes, onCellClicked, onCellDoubleClicked } = context.table.getMeta() ?? {};
+	const { getCellClass, getCellStyle, cellClass, cellStyle } = context.column.getMeta() ?? {};
 
 	return (
 		<td
 			key={cell.id}
 			onClick={(event) => onCellClicked?.({ event, ...context })}
 			onDoubleClick={(event) => onCellDoubleClicked?.({ event, ...context })}
-			className={clsx(cell.column.columnDef?.cellClass, {
-				[classes.wrapText]: cell.column.columnDef.wrapText,
+			className={clsx(context.column.columnDef?.cellClass, cellClass, getCellClass?.(context), {
+				[classes.wrapText]: context.column.columnDef.wrapText,
 			})}
+			style={{
+				...cellStyle,
+				...getCellStyle?.(context),
+			}}
 		>
-			{flexRender(cell.column.columnDef.cell, context)}
+			{flexRender(context.column.columnDef.cell, context)}
 		</td>
 	);
 };

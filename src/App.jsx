@@ -368,6 +368,23 @@ const columns = [
 				type: ['number'],
 				meta: {
 					format: '$0,0.00',
+
+					/**
+					 * @examples of cell style props
+					 */
+					// cellClass: 'custom-cell-class',
+					// cellStyle: {
+					// 	backgroundColor: 'rgba(255, 0, 0, 0.1)',
+					// },
+					// getCellClass: () => ['test', 'another-custom-cell-class'],
+					getCellStyle: (context) => {
+						if (context.getValue() > 125) {
+							return {
+								color: 'red',
+								fontWeight: 'bold',
+							};
+						}
+					},
 				},
 			},
 			{
