@@ -5,7 +5,7 @@ const PREFIX = 'eda-datatable-overlay';
 
 const classes = {
 	root: `${PREFIX}-root`,
-	message: `${PREFIX}-message`,
+	overlayText: `${PREFIX}-overlayText`,
 };
 
 const OverlayRoot = styled('div')(() => ({
@@ -18,7 +18,7 @@ const OverlayRoot = styled('div')(() => ({
 		justifyContent: 'center',
 		position: 'absolute',
 
-		[`.${classes.message}`]: {
+		[`.${classes.overlayText}`]: {
 			backgroundColor: 'var(--ag-background-color)',
 			border: 'var(--ag-borders) var(--ag-border-color)',
 			borderRadius: 'var(--ag-border-radius)',
@@ -31,13 +31,19 @@ const OverlayRoot = styled('div')(() => ({
 }));
 
 const Overlay = (props) => {
-	const { className, message = props.maskMsg ?? 'Loading', messageProps = {}, ...rest } = props;
-	const { className: messageClassName, ...messageRest } = messageProps;
+	const {
+		className,
+		overlayText = props.message ?? props.maskMsg ?? 'Loading',
+		overlayTextProps = {},
+		...rest
+	} = props;
+
+	const { className: overlayTextClassName, ...overlayTextRest } = overlayTextProps;
 
 	return (
 		<OverlayRoot className={clsx(classes.root, className)} {...rest}>
-			<div className={clsx(classes.message, messageClassName)} {...messageRest}>
-				{message}
+			<div className={clsx(classes.overlayText, overlayTextClassName)} {...overlayTextRest}>
+				{overlayText}
 			</div>
 		</OverlayRoot>
 	);

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { isEmpty, omit } from 'lodash';
-import { useUpdateEffect } from 'react-use';
+import { useEffectOnce, useUpdateEffect } from 'react-use';
 import clsx from 'clsx';
 import styled from '@emotion/styled';
 
@@ -348,6 +348,8 @@ const DataTable = React.forwardRef((props, ref) => {
 		getSubRows = (row) => row.children, // return the children array as sub-rows
 		hideHeaderBorder = false,
 		hideHeaders = false,
+		loadingOverlayProps = {},
+		noRowsOverlayProps = {},
 		onCellClicked,
 		onCellDoubleClicked,
 		onGridReady,
@@ -394,10 +396,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		const columns = [...columnsProp];
 
 		if (enableCheckboxSelection) {
-			columns.unshift({
-				id: '__eda_selection_column__',
-				type: ['selection'],
-			});
+			columns.unshift(columnMapRef.current.get('selection'));
 		}
 
 		// Recursively resolve columns and their type inheritence.
@@ -429,6 +428,9 @@ const DataTable = React.forwardRef((props, ref) => {
 		debugHeaders,
 		debugTable,
 		defaultColumn,
+		enableMultiRowSelection: enableMultiRowSelection,
+		enableRowSelection: enableRowSelection, // (row) => row.original.age > 18
+		enableSubRowSelection: false,
 		getCoreRowModel: getCoreRowModel(),
 		getExpandedRowModel: getExpandedRowModel(),
 		getSortedRowModel: getSortedRowModel(),
@@ -438,6 +440,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		onExpandedChange: setExpanded,
 		onRowSelectionChange: setRowSelection,
 		onSortingChange: setSorting,
+		// getRowId: (row) => row.uuid,
 		meta: {
 			classes,
 			enableCheckboxSelection,
@@ -456,16 +459,11 @@ const DataTable = React.forwardRef((props, ref) => {
 			rowSelection,
 			sorting,
 		},
-		enableMultiRowSelection: enableMultiRowSelection,
-		enableRowSelection: enableRowSelection, // (row) => row.original.age > 18
-		enableSubRowSelection: false,
-		// getRowId: (row) => row.uuid,
 	});
 
-	useEffect(() => {
+	useEffectOnce(() => {
 		onGridReady?.(table);
-		// eslint-disable-next-line
-	}, []);
+	});
 
 	useUpdateEffect(() => {
 		onSelectionChanged?.(rowSelection);
@@ -484,12 +482,12 @@ const DataTable = React.forwardRef((props, ref) => {
 				})}
 			>
 				{/* We create the colgroup so that we can support a version of column "flexing". */}
-				<ColumnGroup classes={classes} table={table} />
-				{!hideHeaders && <TableHead classes={classes} table={table} />}
-				<TableBody classes={classes} table={table} />
+				<ColumnGroup table={table} />
+				{!hideHeaders && <TableHead table={table} />}
+				<TableBody table={table} />
 			</DataTableRoot>
-			{showLoadingOverlay && <Overlay message={'Loading...'} />}
-			{showNoRowsOverlay && <Overlay message={'No Rows to Show'} />}
+			{showLoadingOverlay && <Overlay overlayText={'Loading...'} {...loadingOverlayProps} />}
+			{showNoRowsOverlay && <Overlay overlayText={'No Rows to Show'} {...noRowsOverlayProps} />}
 		</DataTableWrapper>
 	);
 });

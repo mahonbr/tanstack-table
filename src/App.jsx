@@ -554,6 +554,8 @@ function App(props) {
 				enableRowSelection={enableRowSelection}
 				hideHeaderBorder={hideHeaderBorder}
 				hideHeaders={hideHeaders}
+				loadingOverlayProps={{ overlayText: 'Loading data, please wait...' }}
+				noRowsOverlayProps={{ overlayText: 'No data available to display.' }}
 				onCellClicked={(context) => console.log('onCellClicked', context)}
 				onCellDoubleClicked={(context) => console.log('onCellDoubleClicked', context)}
 				onGridReady={(table) => console.log('onGridReady', table)}
