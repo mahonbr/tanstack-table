@@ -486,7 +486,7 @@ const DataTable = React.forwardRef((props, ref) => {
 	}, [enableRowSelection]);
 
 	useUpdateEffect(() => {
-		onSelectionChanged?.(rowSelection);
+		onSelectionChanged?.(table.getSelectedRowModel().rows);
 	}, [rowSelection]);
 
 	return (
