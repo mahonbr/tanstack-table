@@ -474,6 +474,18 @@ const DataTable = React.forwardRef((props, ref) => {
 	});
 
 	useUpdateEffect(() => {
+		if (!enableRowSelection) {
+			table.resetExpanded();
+		}
+	}, [enableExpanding]);
+
+	useUpdateEffect(() => {
+		if (!enableRowSelection) {
+			table.resetRowSelection();
+		}
+	}, [enableRowSelection]);
+
+	useUpdateEffect(() => {
 		onSelectionChanged?.(rowSelection);
 	}, [rowSelection]);
 

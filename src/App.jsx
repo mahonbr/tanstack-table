@@ -560,7 +560,7 @@ function App(props) {
 				</div>
 			</form>
 
-			<div style={{ height: 500, _overflow: 'hidden' }}>
+			<div style={{ height: 350 }}>
 				<DataTable
 					columnLines={columnLines}
 					columns={columns}
