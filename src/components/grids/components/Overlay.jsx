@@ -35,7 +35,7 @@ const OverlayRoot = styled('div')(() => ({
 const Overlay = (props) => {
 	const {
 		className,
-		overlayText = props.message ?? props.maskMsg ?? 'Loading',
+		overlayText = props.message ?? props.maskMsg ?? 'Loading...',
 		overlayTextProps = {},
 		...rest
 	} = props;

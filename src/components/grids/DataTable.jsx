@@ -188,7 +188,7 @@ const DataTableRoot = styled('table')(() => ({
 				},
 			},
 
-			/** Header Vertical Alignment */
+			// Header Vertical Alignment
 			'&.ag-bottom-aligned-header': {
 				verticalAlign: 'bottom',
 			},
@@ -201,7 +201,7 @@ const DataTableRoot = styled('table')(() => ({
 				verticalAlign: 'top',
 			},
 
-			/** Cell Horizontal Alignment */
+			// Cell Horizontal Alignment
 			'&.ag-center-aligned-cell': {
 				textAlign: 'center',
 			},
@@ -312,7 +312,8 @@ const DataTableRoot = styled('table')(() => ({
 		},
 
 		/**
-		 * We want to "smooth out" the cursor when resizing columns in order to avoid the "flicker" effect.
+		 * We want to "smooth out" the cursor when resizing columns in order to avoid the "flicker"
+		 * effect.
 		 */
 		[`&:has(th.${classes.resizing})`]: {
 			cursor: 'ew-resize',
@@ -362,6 +363,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		hideHeaderBorder = false,
 		hideHeaders = false,
 		loadingOverlayProps = {},
+		meta = {},
 		noRowsOverlayProps = {},
 		onCellClicked,
 		onCellDoubleClicked,
@@ -409,6 +411,10 @@ const DataTable = React.forwardRef((props, ref) => {
 		tableWrapperProps = slotProps.TableWrapperProps,
 	} = slotProps;
 
+	/**
+	 * We are using the useControllableState hook to manage state that can be either
+	 * controlled or uncontrolled.
+	 */
 	const [columnSizing, setColumnSizing] = useControllableState({
 		defaultValue: {},
 		onChange: onColumnSizingChangeProp,
@@ -443,6 +449,10 @@ const DataTable = React.forwardRef((props, ref) => {
 	const tableRef = useRef();
 	const refs = useMergedRefs(ref, tableRef);
 
+	/**
+	 * We want to resolve the columns with their types and also add the selection column
+	 * if checkbox selection is enabled.
+	 */
 	const resolvedColumns = useMemo(() => {
 		const configs = columnMapRef.current;
 		const columns = [...columnsProp];
@@ -468,7 +478,9 @@ const DataTable = React.forwardRef((props, ref) => {
 		};
 
 		return columns.map(callback);
-		// Need to note about stable references for columnsProp.
+		/**
+		 * @important Need to note about stable references for columnsProp.
+		 */
 	}, [columnsProp, enableCheckboxSelection]);
 
 	const table = useReactTable({
@@ -495,6 +507,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		onSortingChange: setSorting,
 		// getRowId: (row) => row.uuid,
 		meta: {
+			...meta,
 			classes,
 			enableCheckboxSelection,
 			enableClickSelection,
@@ -518,22 +531,34 @@ const DataTable = React.forwardRef((props, ref) => {
 		},
 	});
 
+	/**
+	 * We want to call the onGridReady callback when the grid is ready.
+	 */
 	useEffectOnce(() => {
 		onGridReady?.(table);
 	});
 
+	/**
+	 * If row expanding is disabled, we want to reset the expanded state.
+	 */
 	useUpdateEffect(() => {
-		if (!enableRowSelection) {
+		if (!enableExpanding) {
 			table.resetExpanded();
 		}
 	}, [enableExpanding]);
 
+	/**
+	 * If row selection is disabled, we want to reset the row selection state.
+	 */
 	useUpdateEffect(() => {
 		if (!enableRowSelection) {
 			table.resetRowSelection();
 		}
 	}, [enableRowSelection]);
 
+	/**
+	 * We want to call the onSelectionChanged callback when the selection changes.
+	 */
 	useUpdateEffect(() => {
 		onSelectionChanged?.(table.getSelectedRowModel().rows);
 	}, [rowSelection]);

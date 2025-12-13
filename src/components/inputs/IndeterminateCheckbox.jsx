@@ -9,7 +9,15 @@ const IndeterminateCheckbox = ({ indeterminate, ...rest }) => {
 		}
 	}, [ref, indeterminate]);
 
-	return <input type='checkbox' ref={ref} style={{ cursor: 'pointer' }} {...rest} />;
+	return (
+		<input
+			ref={ref}
+			type={'checkbox'}
+			onClick={(event) => event.stopPropagation()}
+			style={{ cursor: 'pointer' }}
+			{...rest}
+		/>
+	);
 };
 
 export default IndeterminateCheckbox;

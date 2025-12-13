@@ -8,7 +8,7 @@ const createLeafColumnRenderer = ({ columnSizing, table }) => {
 		const minWidth = col.columnDef.minSize ?? table.options.defaultColumn.minSize;
 		const width = columnSizing[col.id] ?? col.columnDef.size ?? col.getSize();
 
-		return <col key={col.id} data-id={`${col.id}`} style={{ maxWidth, minWidth, width }} />;
+		return <col key={col.id} data-id={col.id} style={{ maxWidth, minWidth, width }} />;
 	};
 };
 

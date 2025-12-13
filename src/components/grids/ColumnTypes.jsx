@@ -9,8 +9,8 @@ const ColumnTypes = [
 		{
 			cellClass: 'ag-left-aligned-cell',
 			headerClass: 'ag-left-aligned-header',
-			cell: (info) => {
-				const { getValue, column, row, table } = info;
+			cell: (context) => {
+				const { getValue, column, row, table } = context;
 				const { classes } = table.getMeta();
 				const { valueFormatter } = column.getMeta();
 
@@ -40,7 +40,7 @@ const ColumnTypes = [
 								{row.getIsExpanded() ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
 							</button>
 						)}
-						{valueFormatter?.(info) ?? getValue()}
+						{valueFormatter?.(context) ?? getValue()}
 					</div>
 				);
 			},
@@ -54,9 +54,9 @@ const ColumnTypes = [
 		{
 			cellClass: 'ag-right-aligned-cell',
 			headerClass: 'ag-right-aligned-header',
-			cell: (info) => {
-				const { format = '0,0' } = info.column.getMeta();
-				return number(info.getValue(), format);
+			cell: (context) => {
+				const { format = '0,0' } = context.column.getMeta();
+				return number(context.getValue(), format);
 			},
 		},
 	],
@@ -78,7 +78,6 @@ const ColumnTypes = [
 							checked: table.getIsAllRowsSelected(),
 							indeterminate: table.getIsSomeRowsSelected(),
 							onChange: table.getToggleAllRowsSelectedHandler(),
-							onClick: (event) => event.stopPropagation(),
 						}}
 					/>
 				);
@@ -89,7 +88,6 @@ const ColumnTypes = [
 						checked: row.getIsSelected(),
 						disabled: !row.getCanSelect(),
 						onChange: row.getToggleSelectedHandler(),
-						onClick: (event) => event.stopPropagation(),
 					}}
 				/>
 			),

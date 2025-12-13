@@ -20,7 +20,7 @@ const TableFeatures = {
 		/**
 		 * In order to implement resizing on "flex" columns I need to override the default getSize so
 		 * TanStack's column sizing API works as expected. The column sizing doesn't work if getSize
-		 * returns NaN. If you resize a "flex" column, it converts it to pixel based width.
+		 * returns NaN. Now, if you resize a "flex" column, it converts it to pixel based width.
 		 */
 		const _getSize = column.getSize;
 
