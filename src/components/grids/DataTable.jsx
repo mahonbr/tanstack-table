@@ -11,6 +11,7 @@ import ErrorBoundary from '@/components/feedback/ErrorBoundary';
 import useControllableState from '@/hooks/useControllableState';
 import useMergedRefs from '@/hooks/useMergedRefs';
 
+import { convertColumnDef } from './DataTable.utils';
 import ColumnTypes from './ColumnTypes';
 import DefaultColumnGroup from './components/ColumnGroup';
 import DefaultTableBody from './components/TableBody';
@@ -462,16 +463,23 @@ const DataTable = React.forwardRef((props, ref) => {
 		}
 
 		// Recursively resolve columns and their type inheritence.
-		const callback = (column) => {
+		const callback = (columnIn) => {
+			/**
+			 * I need to add UI props to the column definitions. Those props ideally are added to the
+			 * columnDef meta section; however, I'm allowing the user to enter the configs as a flattened
+			 * structure and I migrate the UI configs to the meta section via the `convertColumnDef`.
+			 */
+			const column = convertColumnDef(columnIn);
+
 			if (column.columns) {
 				column.columns = column.columns.map(callback);
 			}
 
-			if (isEmpty(column.type)) {
+			if (isEmpty(column.meta.type)) {
 				return column;
 			} else {
-				const { accessorKey = column.id, type, ...rest } = column;
-				configs.set(accessorKey, { ...rest, accessorKey, extends: type });
+				const { accessorKey = column.id, ...rest } = column;
+				configs.set(accessorKey, { ...rest, accessorKey, extends: column.meta.type });
 
 				return configs.get(accessorKey);
 			}

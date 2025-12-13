@@ -29,7 +29,6 @@ const TableHead = (props) => {
 					return (
 						<tr key={headerGroup.id}>
 							{headerGroup.headers.map((header) => {
-								const { wrapHeaderText } = header.column.columnDef;
 								const headerProps = {};
 								const isRowSpanned = rowSpanColumnIds.includes(header.column.id);
 
@@ -52,15 +51,23 @@ const TableHead = (props) => {
 									);
 								}
 
+								const { align, headerAlign, headerClass, suppressHeaderMenuButton, wrapHeaderText } =
+									header.column.getMeta() ?? {};
+
 								return (
 									<th
 										key={header.id}
 										colSpan={header.colSpan}
 										{...headerProps}
-										className={clsx(classes.headerCell, header.column.columnDef?.headerClass, {
-											[classes.headerRowColumnGroup]: !isLeafRow,
-											[classes?.resizing]: header.column.getIsResizing(),
-										})}
+										className={clsx(
+											classes.headerCell,
+											headerClass,
+											`ag-${headerAlign ?? align}-aligned-header`,
+											{
+												[classes.headerRowColumnGroup]: !isLeafRow,
+												[classes?.resizing]: header.column.getIsResizing(),
+											}
+										)}
 									>
 										<div
 											onClick={header.column.getToggleSortingHandler()}
@@ -83,7 +90,7 @@ const TableHead = (props) => {
 															<SortIndicatorTool sorted={header.column.getIsSorted()} />
 														)}
 
-														{header.column.columnDef.suppressHeaderMenuButton !== true && (
+														{suppressHeaderMenuButton !== true && (
 															<>
 																<Spacer style={{ minWidth: 6 }} />
 																<MenuTool classes={classes} />

@@ -7,8 +7,6 @@ const ColumnTypes = [
 	[
 		'expander',
 		{
-			cellClass: 'ag-left-aligned-cell',
-			headerClass: 'ag-left-aligned-header',
 			cell: (context) => {
 				const { getValue, column, row, table } = context;
 				const { classes } = table.getMeta();
@@ -45,6 +43,8 @@ const ColumnTypes = [
 				);
 			},
 			meta: {
+				align: 'left',
+				headerAlign: 'left',
 				valueFormatter: ({ getValue }) => getValue(),
 			},
 		},
@@ -52,11 +52,13 @@ const ColumnTypes = [
 	[
 		'number',
 		{
-			cellClass: 'ag-right-aligned-cell',
-			headerClass: 'ag-right-aligned-header',
 			cell: (context) => {
 				const { format = '0,0' } = context.column.getMeta();
 				return number(context.getValue(), format);
+			},
+			meta: {
+				align: 'right',
+				headerAlign: 'right',
 			},
 		},
 	],
@@ -64,11 +66,8 @@ const ColumnTypes = [
 		'selection',
 		{
 			id: '__eda_selection_column__',
-			cellClass: 'ag-center-aligned-cell',
 			enableResizing: false,
-			headerClass: 'ag-center-aligned-header',
 			size: 50,
-			suppressHeaderMenuButton: true,
 			header: ({ table }) => {
 				if (!table.options.enableMultiRowSelection) return;
 
@@ -91,13 +90,20 @@ const ColumnTypes = [
 					}}
 				/>
 			),
+			meta: {
+				align: 'center',
+				headerAlign: 'center',
+				suppressHeaderMenuButton: true,
+			},
 		},
 	],
 	[
 		'text',
 		{
-			cellClass: 'ag-left-aligned-cell',
-			headerClass: 'ag-left-aligned-header',
+			meta: {
+				align: 'left',
+				headerAlign: 'left',
+			},
 		},
 	],
 ];

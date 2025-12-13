@@ -360,7 +360,9 @@ const columns = [
 	// },
 	{
 		header: 'PMPM',
-		headerClass: 'ag-center-aligned-header',
+		meta: {
+			headerAlign: 'center',
+		},
 		columns: [
 			{
 				accessorKey: 'pmpmCurrent',
@@ -415,7 +417,9 @@ const columns = [
 	},
 	{
 		header: 'Expenses',
-		headerClass: 'ag-center-aligned-header',
+		meta: {
+			headerAlign: 'center',
+		},
 		columns: [
 			{
 				accessorKey: 'expenseCurrent',

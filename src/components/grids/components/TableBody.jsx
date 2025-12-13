@@ -6,7 +6,7 @@ import ErrorBoundary from '@/components/feedback/ErrorBoundary';
 const cellRenderer = (cell) => {
 	const context = cell.getContext();
 
-	const { cellClass, cellStyle, getCellClass, getCellStyle } = context.column.getMeta() ?? {};
+	const { align, cellClass, cellStyle, getCellClass, getCellStyle, wrapText } = context.column.getMeta() ?? {};
 	const { classes, onCellClicked, onCellDoubleClicked } = context.table.getMeta() ?? {};
 
 	return (
@@ -14,8 +14,8 @@ const cellRenderer = (cell) => {
 			key={cell.id}
 			onClick={(event) => onCellClicked?.(event, context)}
 			onDoubleClick={(event) => onCellDoubleClicked?.(event, context)}
-			className={clsx(context.column.columnDef?.cellClass, cellClass, getCellClass?.(context), {
-				[classes.wrapText]: context.column.columnDef.wrapText,
+			className={clsx(cellClass, `ag-${align}-aligned-cell`, getCellClass?.(context), {
+				[classes.wrapText]: wrapText,
 			})}
 			style={{
 				...cellStyle,
