@@ -459,7 +459,7 @@ function App(props) {
 	const [enableCheckboxSelection, setEnableCheckboxSelection] = useState(false);
 	const [enableClickSelection, setEnableClickSelection] = useState(false);
 	const [enableMultiRowSelection, setEnableMultiRowSelection] = useState(false);
-	const [enableRowSelection, setEnableRowSelection] = useState(false);
+	const [enableRowSelection, setEnableRowSelection] = useState(undefined);
 	const [hideHeaderBorder, setHideHeaderBorder] = useState(false);
 	const [hideHeaders, setHideHeaders] = useState(false);
 	const [outlined, setOutlined] = useState(false);

@@ -354,7 +354,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		enableClickSelection = false,
 		enableExpanding = props.treeData ?? false,
 		enableMultiRowSelection = false,
-		enableRowSelection = false,
+		enableRowSelection = enableCheckboxSelection || enableClickSelection || enableMultiRowSelection,
 		expanded: expandedProp,
 		getRowClass,
 		getRowStyle,
@@ -381,6 +381,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		rowStyle,
 		showLoadingOverlay = false,
 		showNoRowsOverlay = false,
+		slotProps = {},
 		slots = {},
 		sorting: sortingProp,
 		striped = false,
@@ -399,6 +400,14 @@ const DataTable = React.forwardRef((props, ref) => {
 	} = props;
 
 	const { ColumnGroup = DefaultColumnGroup, TableBody = DefaultTableBody, TableHead = DefaultTableHead } = slots;
+
+	const {
+		columnGroupProps = slotProps.ColumnGroupProps,
+		tableBodyProps = slotProps.TableBodyProps,
+		tableHeadProps = slotProps.TableHeadProps,
+		tableProps = slotProps.TableProps,
+		tableWrapperProps = slotProps.TableWrapperProps,
+	} = slotProps;
 
 	const [columnSizing, setColumnSizing] = useControllableState({
 		defaultValue: {},
@@ -532,14 +541,16 @@ const DataTable = React.forwardRef((props, ref) => {
 	return (
 		<ErrorBoundary>
 			<DataTableWrapper
-				className={clsx(classes.wrapper, {
+				{...tableWrapperProps}
+				className={clsx(classes.wrapper, tableWrapperProps?.className, {
 					[classes.autoHeight]: domLayout === 'autoHeight',
 					[classes.outlined]: outlined,
 				})}
 			>
 				<DataTableRoot
 					ref={refs}
-					className={clsx(classes.root, {
+					{...tableProps}
+					className={clsx(classes.root, tableProps?.className, {
 						[classes.columnLines]: columnLines,
 						[classes.hideHeaderBorder]: hideHeaderBorder,
 						[classes.outlined]: outlined,
@@ -548,9 +559,9 @@ const DataTable = React.forwardRef((props, ref) => {
 					})}
 				>
 					{/* We create the colgroup so that we can support a version of column "flexing". */}
-					<ColumnGroup table={table} />
-					{!hideHeaders && <TableHead table={table} />}
-					<TableBody table={table} />
+					<ColumnGroup table={table} {...columnGroupProps} />
+					{!hideHeaders && <TableHead table={table} {...tableHeadProps} />}
+					<TableBody table={table} {...tableBodyProps} />
 				</DataTableRoot>
 				{showLoadingOverlay && <Overlay overlayText={'Loading...'} {...loadingOverlayProps} />}
 				{showNoRowsOverlay && <Overlay overlayText={'No Rows to Show'} {...noRowsOverlayProps} />}
