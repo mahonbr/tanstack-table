@@ -14,6 +14,10 @@ const TableFeatures = {
 		table.getMeta = () => table.options.meta;
 	},
 
+	createRow: (row, table) => {
+		row.getContext = () => ({ row, table });
+	},
+
 	createColumn: (column, table) => {
 		column.getMeta = () => column.columnDef?.meta;
 
