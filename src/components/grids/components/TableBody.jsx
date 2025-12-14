@@ -1,7 +1,9 @@
 import { flexRender } from '@tanstack/react-table';
+import { omit } from 'lodash';
 import clsx from 'clsx';
 
 import ErrorBoundary from '@/components/feedback/ErrorBoundary';
+import useDeepCompareMemo from '@/hooks/useDeepCompareMemo';
 
 const TableCell = (props) => {
 	const { cell, ...rest } = props;
@@ -11,6 +13,7 @@ const TableCell = (props) => {
 };
 
 const cellRenderer = (cell) => {
+	console.log('TableCell');
 	const context = cell.getContext();
 
 	const { align, cellClass, cellStyle, getCellClass, getCellStyle, wrapText } = context.column.getMeta() ?? {};
@@ -86,9 +89,31 @@ const rowRenderer = (row) => {
 const TableBody = (props) => {
 	const { table } = props;
 
+	/**
+	 * In an effort to make cell rendering more performant I'm removing table options that cause
+	 * unnecessary rerenders. I'm additionally removing the column sizing states so cells aren't
+	 * rerendered during resizing.
+	 *
+	 * @important We may need to add additional model's as we add more features. (e.g. filtering).
+	 */
+	const rows = useDeepCompareMemo(
+		() => table.getRowModel().rows.map(rowRenderer),
+		[
+			omit(table.options, [
+				'getCoreRowModel',
+				'getExpandedRowModel',
+				'getSortedRowModel',
+				'getSubRows',
+				'onStateChange',
+				'state.columnSizing',
+				'state.columnSizingInfo',
+			]),
+		]
+	);
+
 	return (
 		<ErrorBoundary>
-			<tbody>{table.getRowModel().rows.map(rowRenderer)}</tbody>
+			<tbody>{rows}</tbody>
 		</ErrorBoundary>
 	);
 };

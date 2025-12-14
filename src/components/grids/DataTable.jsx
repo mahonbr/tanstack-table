@@ -390,6 +390,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		enableExpanding = props.treeData ?? false,
 		enableMultiRowSelection = false,
 		enableRowSelection = enableCheckboxSelection || enableClickSelection || enableMultiRowSelection,
+		enableSubRowSelection = false,
 		expanded: expandedProp,
 		getRowClass,
 		getRowStyle,
@@ -536,7 +537,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		enableExpanding: enableExpanding,
 		enableMultiRowSelection: enableMultiRowSelection,
 		enableRowSelection: enableRowSelection, // (row) => row.original.age > 18
-		enableSubRowSelection: false,
+		enableSubRowSelection: enableSubRowSelection,
 		getCoreRowModel: getCoreRowModel(),
 		getExpandedRowModel: getExpandedRowModel(),
 		getSortedRowModel: getSortedRowModel(),
@@ -591,11 +592,11 @@ const DataTable = React.forwardRef((props, ref) => {
 	/**
 	 * If row selection is disabled, we want to reset the row selection state.
 	 */
-	useUpdateEffect(() => {
-		if (!enableRowSelection) {
-			table.resetRowSelection();
-		}
-	}, [enableRowSelection]);
+	// useUpdateEffect(() => {
+	// 	if (!enableRowSelection) {
+	// 		table.resetRowSelection();
+	// 	}
+	// }, [enableRowSelection]);
 
 	/**
 	 * We want to call the onSelectionChanged callback when the selection changes.
