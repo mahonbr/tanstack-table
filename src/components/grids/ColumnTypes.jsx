@@ -1,51 +1,35 @@
-import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
-
 import { number } from '@/utils';
 import IndeterminateCheckbox from '@/components/inputs/IndeterminateCheckbox';
+import RowExpanderTool from './components/tools/RowExpanderTool';
+import Typography from '@/components/typography/Typography';
 
 const ColumnTypes = [
 	[
 		'expander',
 		{
 			cell: (context) => {
-				const { getValue, column, row, table } = context;
-				const { classes } = table.getMeta();
+				const { getValue, column, row } = context;
 				const { valueFormatter } = column.getMeta();
 
 				return (
 					<div
 						style={{
-							overflow: 'hidden',
-							paddingLeft: `${row.depth * 2}rem`,
-							textOverflow: 'ellipsis',
-							whiteSpace: 'nowrap',
+							alignItems: 'center',
+							display: 'flex',
+							paddingLeft: `calc(calc(var(--ag-cell-widget-spacing) + var(--ag-icon-size)) * ${row.depth})`,
 						}}
 					>
-						{row.getCanExpand() && (
-							<button
-								className={classes?.headerMenuTool}
-								onClick={(event) => {
-									event.stopPropagation();
-									row.getToggleExpandedHandler()(event);
-								}}
-								style={{
-									alignItems: 'baseline',
-									display: 'inline-flex',
-									padding: 3,
-									verticalAlign: 'middle',
-								}}
-							>
-								{row.getIsExpanded() ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
-							</button>
-						)}
-						{valueFormatter?.(context) ?? getValue()}
+						{row.getCanExpand() && <RowExpanderTool context={context} />}
+
+						<Typography noWrap style={{ flex: 1 }}>
+							{valueFormatter?.(context) ?? getValue()}
+						</Typography>
 					</div>
 				);
 			},
 			meta: {
 				align: 'left',
 				headerAlign: 'left',
-				valueFormatter: ({ getValue }) => getValue(),
 			},
 		},
 	],

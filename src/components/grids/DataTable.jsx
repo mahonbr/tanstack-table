@@ -36,6 +36,8 @@ const classes = {
 	headerPlaceholder: `${PREFIX}-headerPlaceholder`,
 	headerRowColumnGroup: `${PREFIX}-headerRowColumnGroup`,
 
+	rowExpanderTool: `${PREFIX}-rowExpanderTool`,
+
 	// Modifier classes.
 	autoHeight: `${PREFIX}-autoHeight`,
 	columnLines: `${PREFIX}-columnLines`,
@@ -60,6 +62,7 @@ const DataTableWrapper = styled('div')(() => ({
 		'--ag-borders': 'solid 1px',
 		'--ag-card-shadow': '0 1px 4px 1px rgba(186, 191, 199, 0.4)',
 		'--ag-cell-horizontal-padding': '10px',
+		'--ag-cell-widget-spacing': '12px',
 		'--ag-font-family': "'Open Sans', 'Roboto', 'Helvetica', 'Arial', sans-serif",
 		'--ag-font-size': '12px',
 		'--ag-grid-size': '6px', // padding
@@ -67,6 +70,10 @@ const DataTableWrapper = styled('div')(() => ({
 		'--ag-header-column-resize-handle-color': '#DDE2EB',
 		'--ag-header-column-resize-handle-height': '30%',
 		'--ag-header-column-resize-handle-width': '2px',
+		'--ag-icon-button-background-spread': '4px',
+		'--ag-icon-button-border-radius': '1px',
+		'--ag-icon-button-hover-background-color': 'rgba(0, 0, 0, 0.1)',
+		'--ag-icon-size': '16px',
 		'--ag-modal-overlay-background-color': 'rgba(255, 255, 255, 0.66)',
 		'--ag-odd-row-background-color': '#F7F7F8',
 		'--ag-row-height': '28px',
@@ -186,6 +193,24 @@ const DataTableRoot = styled('table')(() => ({
 
 				'&:hover': {
 					backgroundColor: 'rgba(0, 0, 0, 0.1)',
+				},
+			},
+
+			[`.${classes.rowExpanderTool}`]: {
+				borderRadius: 'var(--ag-icon-button-border-radius)',
+				cursor: 'pointer',
+				display: 'inline-flex',
+				marginRight: 'var(--ag-cell-widget-spacing)',
+
+				'&:hover': {
+					backgroundColor: 'var(--ag-icon-button-hover-background-color)',
+					boxShadow:
+						'0 0 0 var(--ag-icon-button-background-spread) var(--ag-icon-button-hover-background-color)',
+				},
+
+				svg: {
+					height: 'var(--ag-icon-size)',
+					width: 'var(--ag-icon-size)',
 				},
 			},
 
