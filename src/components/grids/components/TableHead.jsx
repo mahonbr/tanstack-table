@@ -87,7 +87,12 @@ const TableHead = (props) => {
 												{(isLeafRow || forceSortIndicator) && (
 													<>
 														{header.column.getCanSort() && (
-															<SortIndicatorTool sorted={header.column.getIsSorted()} />
+															<>
+																<Spacer style={{ maxWidth: 8, minWidth: 8 }} />
+																<SortIndicatorTool
+																	sorted={header.column.getIsSorted()}
+																/>
+															</>
 														)}
 
 														{suppressHeaderMenuButton !== true && (

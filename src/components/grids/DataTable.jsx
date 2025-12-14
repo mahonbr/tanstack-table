@@ -79,6 +79,11 @@ const DataTableWrapper = styled('div')(() => ({
 		'--ag-row-height': '28px',
 		'--ag-row-hover-color': 'rgba(33, 150, 243, 0.1)',
 		'--ag-selected-row-background-color': 'rgba(33, 150, 243, 0.3)',
+		'--ag-spacing': '8px',
+
+		// Custom Properties
+		'--ag-tool-shadow':
+			'0 0 0 var(--ag-icon-button-background-spread) var(--ag-icon-button-hover-background-color)',
 
 		boxSizing: 'border-box',
 		flex: 1,
@@ -183,16 +188,20 @@ const DataTableRoot = styled('table')(() => ({
 			},
 
 			[`.${classes.headerMenuTool}`]: {
-				background: 'transparent',
-				border: 'none',
-				borderRadius: '50%',
-				cursor: 'pointer',
-				height: 22,
-				padding: 0,
-				width: 22,
+				display: 'flex',
+				justifyContent: 'center',
 
-				'&:hover': {
-					backgroundColor: 'rgba(0, 0, 0, 0.1)',
+				svg: {
+					borderRadius: 'var(--ag-icon-button-border-radius)',
+					cursor: 'pointer',
+					height: 'var(--ag-icon-size)',
+					minWidth: 'var(--ag-icon-size)',
+					width: 'var(--ag-icon-size)',
+
+					'&:hover': {
+						backgroundColor: 'var(--ag-icon-button-hover-background-color)',
+						boxShadow: 'var(--ag-tool-shadow)',
+					},
 				},
 			},
 
@@ -204,8 +213,7 @@ const DataTableRoot = styled('table')(() => ({
 
 				'&:hover': {
 					backgroundColor: 'var(--ag-icon-button-hover-background-color)',
-					boxShadow:
-						'0 0 0 var(--ag-icon-button-background-spread) var(--ag-icon-button-hover-background-color)',
+					boxShadow: 'var(--ag-tool-shadow)',
 				},
 
 				svg: {

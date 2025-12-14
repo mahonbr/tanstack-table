@@ -1,17 +1,17 @@
 import { IconDotsVertical } from '@tabler/icons-react';
 
-const onMenuClick = (event) => {
+const onClickCallback = (event) => {
 	event.stopPropagation();
 	alert('Menu clicked!');
 };
 
 const MenuTool = (props) => {
-	const { classes, className, ...rest } = props;
+	const { classes, className, Icon = IconDotsVertical, onClick = onClickCallback, ...rest } = props;
 
 	return (
-		<button className={(className, classes?.headerMenuTool)} onClick={onMenuClick} {...rest}>
-			<IconDotsVertical size={16} />
-		</button>
+		<div className={(className, classes?.headerMenuTool)} onClick={onClick} {...rest}>
+			<Icon />
+		</div>
 	);
 };
 
