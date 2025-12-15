@@ -5,6 +5,11 @@ import clsx from 'clsx';
 import ErrorBoundary from '@/components/feedback/ErrorBoundary';
 import useDeepCompareMemo from '@/hooks/useDeepCompareMemo';
 
+/**
+ * In an attempt to optimize rendering performance of table cells, I'm was memoizing the TableCell
+ * but that didn't work as hoped. Instead, it will be important for cells with "heavy" rendering
+ * logic to implement their own memoization.
+ */
 const TableCell = (props) => {
 	const { cell, ...rest } = props;
 	const context = cell.getContext();
@@ -13,7 +18,7 @@ const TableCell = (props) => {
 };
 
 const cellRenderer = (cell) => {
-	console.log('TableCell');
+	// console.log('TableCell');
 	const context = cell.getContext();
 
 	const { align, cellClass, cellStyle, getCellClass, getCellStyle, wrapText } = context.column.getMeta() ?? {};
@@ -21,7 +26,7 @@ const cellRenderer = (cell) => {
 
 	return (
 		<TableCell
-			key={`cell-${cell.id}`}
+			key={`cell-${context.row.id}-${context.column.id}-${cell.id}`}
 			cell={cell}
 			onClick={(event) => onCellClicked?.(event, context)}
 			onDoubleClick={(event) => onCellDoubleClicked?.(event, context)}
@@ -90,9 +95,9 @@ const TableBody = (props) => {
 	const { table } = props;
 
 	/**
-	 * In an effort to make cell rendering more performant I'm removing table options that cause
-	 * unnecessary rerenders. I'm additionally removing the column sizing states so cells aren't
-	 * rerendered during resizing.
+	 * In an effort to make cell rendering more performant I'm removing table options that seem to
+	 * cause unnecessary rerenders. I'm additionally removing the column sizing states so cells
+	 * aren't rerendered during resizing.
 	 *
 	 * @important We may need to add additional model's as we add more features. (e.g. filtering).
 	 */
@@ -102,8 +107,12 @@ const TableBody = (props) => {
 			omit(table.options, [
 				'getCoreRowModel',
 				'getExpandedRowModel',
+				'getFacetedRowModel',
+				'getFilteredRowModel',
+				'getGroupedRowModel',
+				'getPaginationRowModel',
+				'getSelectedRowModel',
 				'getSortedRowModel',
-				'getSubRows',
 				'onStateChange',
 				'state.columnSizing',
 				'state.columnSizingInfo',

@@ -371,6 +371,8 @@ const DataTableRoot = styled('table')(() => ({
 	},
 }));
 
+const getSubRowsCallback = (row) => row.children; // return the children array as sub-rows
+
 const DataTable = React.forwardRef((props, ref) => {
 	const {
 		columnLines = false,
@@ -380,9 +382,9 @@ const DataTable = React.forwardRef((props, ref) => {
 		columnSizingInfo: columnSizingInfoProp,
 		columnTypes = [],
 		data = props.rowData ?? [],
-		debugColumns = false,
-		debugHeaders = false,
-		debugTable = false,
+		// debugColumns = false,
+		// debugHeaders = false,
+		// debugTable = false,
 		domLayout = 'normal',
 		enableCheckboxSelection = false,
 		enableClickSelection = false,
@@ -393,7 +395,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		expanded: expandedProp,
 		getRowClass,
 		getRowStyle,
-		getSubRows = (row) => row.children, // return the children array as sub-rows
+		getSubRows = getSubRowsCallback,
 		hideHeaderBorder = false,
 		hideHeaders = false,
 		loadingOverlayProps = {},
@@ -528,9 +530,9 @@ const DataTable = React.forwardRef((props, ref) => {
 		columnResizeMode,
 		columns: resolvedColumns,
 		data,
-		debugColumns,
-		debugHeaders,
-		debugTable,
+		// debugColumns,
+		// debugHeaders,
+		// debugTable,
 		defaultColumn,
 		enableExpanding: enableExpanding,
 		enableMultiRowSelection: enableMultiRowSelection,
