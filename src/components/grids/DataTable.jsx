@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useImperativeHandle, useMemo, useRef } from 'react';
 
 import { getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { isEmpty } from 'lodash';
@@ -9,7 +9,6 @@ import styled from '@emotion/styled';
 import { ConfigMap } from '@/utils';
 import ErrorBoundary from '@/components/feedback/ErrorBoundary';
 import useControllableState from '@/hooks/useControllableState';
-import useMergedRefs from '@/hooks/useMergedRefs';
 
 import { convertColumnDef } from './DataTable.utils';
 import ColumnTypes from './ColumnTypes';
@@ -71,7 +70,7 @@ const DataTableWrapper = styled('div')(() => ({
 		'--ag-header-column-resize-handle-height': '30%',
 		'--ag-header-column-resize-handle-width': '2px',
 		'--ag-icon-button-background-spread': '4px',
-		'--ag-icon-button-border-radius': '1px',
+		'--ag-icon-button-border-radius': '16px', // '1px',
 		'--ag-icon-button-hover-background-color': 'rgba(0, 0, 0, 0.1)',
 		'--ag-icon-size': '16px',
 		'--ag-modal-overlay-background-color': 'rgba(255, 255, 255, 0.66)',
@@ -482,7 +481,6 @@ const DataTable = React.forwardRef((props, ref) => {
 
 	const columnMapRef = useRef(new ConfigMap([...ColumnTypes, ...columnTypes]));
 	const tableRef = useRef();
-	const refs = useMergedRefs(ref, tableRef);
 
 	/**
 	 * We want to resolve the columns with their types and also add the selection column
@@ -574,6 +572,23 @@ const DataTable = React.forwardRef((props, ref) => {
 	});
 
 	/**
+	 * We need access to the table within the component but we also want the parent component to be able
+	 * to access the table as well. However, I don't want to make the ref a required prop. Consequently,
+	 * if a ref is passed it returns an object that exposes the getTable method which then allows access
+	 * to the table instance and its api.
+	 *
+	 * @example
+	 * `ref.current.getTable()` returns the table instance.
+	 */
+	useImperativeHandle(
+		ref,
+		() => {
+			return { getTable: () => tableRef.current };
+		},
+		[]
+	);
+
+	/**
 	 * We want to call the onGridReady callback when the grid is ready.
 	 */
 	useEffectOnce(() => {
@@ -615,7 +630,7 @@ const DataTable = React.forwardRef((props, ref) => {
 				})}
 			>
 				<DataTableRoot
-					ref={refs}
+					ref={tableRef}
 					{...tableProps}
 					className={clsx(classes.root, tableProps?.className, {
 						[classes.columnLines]: columnLines,
