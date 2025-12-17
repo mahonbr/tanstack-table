@@ -1,17 +1,15 @@
-import React, { useImperativeHandle, useMemo, useRef } from 'react';
+import React, { useRef } from 'react';
 
 import { getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
-import { isEmpty } from 'lodash';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
 import clsx from 'clsx';
 import styled from '@emotion/styled';
 
-import { ConfigMap } from '@/utils';
 import ErrorBoundary from '@/components/feedback/ErrorBoundary';
 import useControllableState from '@/hooks/useControllableState';
+import useMergedRefs from '@/hooks/useMergedRefs';
 
-import { convertColumnDef } from './DataTable.utils';
-import ColumnTypes from './ColumnTypes';
+import ColumnTypesFeature from './features/ColumnTypesFeature';
 import DefaultColumnGroup from './components/ColumnGroup';
 import DefaultTableBody from './components/TableBody';
 import DefaultTableHead from './components/TableHead';
@@ -377,7 +375,7 @@ const DataTable = React.forwardRef((props, ref) => {
 	const {
 		columnLines = false,
 		columnResizeMode = 'onChange',
-		columns: columnsProp = props.columnDefs,
+		columns = props.columnDefs,
 		columnSizing: columnSizingProp,
 		columnSizingInfo: columnSizingInfoProp,
 		columnTypes = [],
@@ -430,10 +428,11 @@ const DataTable = React.forwardRef((props, ref) => {
 			maxSize: 800,
 			minSize: 50,
 			size: 125,
-			// Custom Properties
-			suppressHeaderMenuButton: false,
-			wrapHeaderText: false,
-			wrapText: false,
+			meta: {
+				suppressHeaderMenuButton: false,
+				wrapHeaderText: false,
+				wrapText: false,
+			},
 		},
 	} = props;
 
@@ -481,63 +480,25 @@ const DataTable = React.forwardRef((props, ref) => {
 		value: sortingProp,
 	});
 
-	const columnMapRef = useRef(new ConfigMap([...ColumnTypes, ...columnTypes]));
+
 	const tableRef = useRef();
-
-	/**
-	 * We want to resolve the columns with their types and also add the selection column
-	 * if checkbox selection is enabled.
-	 */
-	const resolvedColumns = useMemo(() => {
-		const configs = columnMapRef.current;
-		const columns = [...columnsProp];
-
-		if (enableCheckboxSelection) {
-			columns.unshift(columnMapRef.current.get('selection'));
-		}
-
-		// Recursively resolve columns and their type inheritence.
-		const callback = (columnIn) => {
-			/**
-			 * I need to add UI props to the column definitions. Those props ideally are added to the
-			 * columnDef meta section; however, I'm allowing the user to enter the configs as a flattened
-			 * structure and I migrate the UI configs to the meta section via the `convertColumnDef`.
-			 */
-			const column = convertColumnDef(columnIn);
-
-			if (column.columns) {
-				column.columns = column.columns.map(callback);
-			}
-
-			if (isEmpty(column.meta.type)) {
-				return column;
-			} else {
-				const { accessorKey = column.id, ...rest } = column;
-				configs.set(accessorKey, { ...rest, accessorKey, extends: column.meta.type });
-
-				return configs.get(accessorKey);
-			}
-		};
-
-		return columns.map(callback);
-		/**
-		 * @important Need to note about stable references for columnsProp.
-		 */
-	}, [columnsProp, enableCheckboxSelection]);
+	const refs = useMergedRefs(ref, tableRef);
 
 	const table = useReactTable({
-		_features: [TableFeatures],
+		_features: [TableFeatures, ColumnTypesFeature],
 		columnResizeMode,
-		columns: resolvedColumns,
+		columns,
+		columnTypes,
 		data,
 		// debugColumns,
 		// debugHeaders,
 		// debugTable,
 		defaultColumn,
-		enableExpanding: enableExpanding,
-		enableMultiRowSelection: enableMultiRowSelection,
-		enableRowSelection: enableRowSelection, // (row) => row.original.age > 18
-		enableSubRowSelection: enableSubRowSelection,
+		enableCheckboxSelection,
+		enableExpanding,
+		enableMultiRowSelection,
+		enableRowSelection, // (row) => row.original.age > 18
+		enableSubRowSelection,
 		getCoreRowModel: getCoreRowModel(),
 		getExpandedRowModel: getExpandedRowModel(),
 		getSortedRowModel: getSortedRowModel(),
@@ -574,46 +535,11 @@ const DataTable = React.forwardRef((props, ref) => {
 	});
 
 	/**
-	 * We need access to the table within the component but we also want the parent component to be able
-	 * to access the table as well. However, I don't want to make the ref a required prop. Consequently,
-	 * if a ref is passed it returns an object that exposes the getTable method which then allows access
-	 * to the table instance and its api.
-	 *
-	 * @example
-	 * `ref.current.getTable()` returns the table instance.
-	 */
-	useImperativeHandle(
-		ref,
-		() => {
-			return { getTable: () => tableRef.current };
-		},
-		[]
-	);
-
-	/**
 	 * We want to call the onGridReady callback when the grid is ready.
 	 */
 	useEffectOnce(() => {
 		onGridReady?.(table);
 	});
-
-	/**
-	 * If row expanding is disabled, we want to reset the expanded state.
-	 */
-	useUpdateEffect(() => {
-		if (!enableExpanding) {
-			table.resetExpanded();
-		}
-	}, [enableExpanding]);
-
-	/**
-	 * If row selection is disabled, we want to reset the row selection state.
-	 */
-	// useUpdateEffect(() => {
-	// 	if (!enableRowSelection) {
-	// 		table.resetRowSelection();
-	// 	}
-	// }, [enableRowSelection]);
 
 	/**
 	 * We want to call the onSelectionChanged callback when the selection changes.
@@ -632,7 +558,7 @@ const DataTable = React.forwardRef((props, ref) => {
 				})}
 			>
 				<DataTableRoot
-					ref={tableRef}
+					ref={refs}
 					{...tableProps}
 					className={clsx(classes.root, tableProps?.className, {
 						[classes.columnLines]: columnLines,

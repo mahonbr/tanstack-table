@@ -1,4 +1,25 @@
 ```javascript
+const ColumnTypesFeature = {
+	createCell: (cell, column, row, table) => {},
+	createColumn: (column, table) => {},
+	createHeader: (header, table) => {},
+	createRow: (row, table) => {},
+	createTable: (table) => {},
+	// getDefaultColumnDef: () => {},
+	// getDefaultOptions: (table) => {},
+	getInitialState: (initialState) => {},
+	getDefaultColumnDef: () => {
+		console.log('getDefaultColumnDef'); // Runs before createColumn.
+		return {};
+	},
+	getDefaultOptions: () => {
+		console.log('getDefaultOptions'); // Runs before createTable.
+		return {};
+	},
+};
+```
+
+```javascript
 const columnHelper = createColumnHelper();
 const columns = [
 	columnHelper.accessor('id', {
