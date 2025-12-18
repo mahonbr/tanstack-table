@@ -11,6 +11,7 @@ const ColumnDefType = {
 	cell: 'mixed',
 	columns: 'array',
 	enableColumnFilter: 'boolean',
+	enableColumnPinning: 'boolean',
 	enableGlobalFilter: 'boolean',
 	enableGrouping: 'boolean',
 	enableHiding: 'boolean',
@@ -39,6 +40,10 @@ const ColumnDefType = {
 		headerAlign: 'left|right|center',
 		onCellClicked: 'function', // Also available on the table so need to address.
 		onCellDoubleClicked: 'function', // Also available on the table so need to address.
+		/**
+		 * @todo Need to handle on column creation.
+		 */
+		pinned: 'left|right',
 		suppressHeaderMenuButton: 'boolean',
 		type: 'string|string[]',
 		valueFormatter: 'function',

@@ -1,7 +1,7 @@
 import { omit } from 'lodash';
 
 /**
- * TableFeatures is a custom feature that injects helper methods to the table and column instances.
+ * HelpersFeature is a custom feature that injects helper methods to the table and column instances.
  *
  * - `createTable(table)`: Adds a `getMeta()` method to the table instance, returning `table.options.meta`.
  * - `createColumn(column)`: Adds a `getMeta()` method to the column instance, returning `column.columnDef?.meta`.
@@ -9,7 +9,7 @@ import { omit } from 'lodash';
  * This allows convenient access to custom metadata (such as classes or value formatters) throughout
  * the table and column lifecycle, especially in cell/column renderers.
  */
-const TableFeatures = {
+const HelpersFeature = {
 	createTable: (table) => {
 		table.getMeta = () => table.options.meta;
 	},
@@ -33,7 +33,11 @@ const TableFeatures = {
 
 			if (Number.isNaN(size)) {
 				const { tableRef } = table.getMeta();
-				const el = tableRef.current.querySelector?.(`[data-id=${column.id}]`);
+				/**
+				 * @todo Need to review for optimization. This querySelector could be expensive if
+				 * there are many columns.
+				 */
+				const el = tableRef.current?.querySelector?.(`[data-id=${column.id}]`); // add more specific selector?
 
 				if (el) {
 					return el.clientWidth;
@@ -60,4 +64,4 @@ const TableFeatures = {
 	},
 };
 
-export default TableFeatures;
+export default HelpersFeature;

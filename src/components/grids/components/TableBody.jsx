@@ -21,21 +21,29 @@ const cellRenderer = (cell) => {
 	// console.log('TableCell');
 	const context = cell.getContext();
 
-	const { align, cellClass, cellStyle, getCellClass, getCellStyle, wrapText } = context.column.getMeta() ?? {};
-	const { classes, onCellClicked, onCellDoubleClicked } = context.table.getMeta() ?? {};
+	const { column, row, table } = context;
+	const { align, cellClass, cellStyle, getCellClass, getCellStyle, wrapText } = column.getMeta() ?? {};
+	const { classes, onCellClicked, onCellDoubleClicked } = table.getMeta() ?? {};
+	const isPinned = column.getIsPinned();
 
 	return (
 		<TableCell
-			key={`cell-${context.row.id}-${context.column.id}-${cell.id}`}
+			key={`cell-${row.id}-${column.id}-${cell.id}`}
 			cell={cell}
 			onClick={(event) => onCellClicked?.(event, context)}
 			onDoubleClick={(event) => onCellDoubleClicked?.(event, context)}
 			className={clsx(cellClass, `ag-${align}-aligned-cell`, getCellClass?.(context), {
+				[classes.pinned]: isPinned,
+				[classes.pinnedFirstRight]: column.getIsFirstColumn('right'),
+				[classes.pinnedLastLeft]: column.getIsLastColumn('left'),
 				[classes.wrapText]: wrapText,
 			})}
 			style={{
 				...cellStyle,
 				...getCellStyle?.(context),
+				left: isPinned === 'left' ? column.getStart('left') : undefined,
+				right: isPinned === 'right' ? column.getAfter('right') : undefined,
+				// width: column.getSize(),
 			}}
 		/>
 	);

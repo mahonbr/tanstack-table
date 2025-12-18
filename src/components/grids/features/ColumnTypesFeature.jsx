@@ -75,9 +75,6 @@ const convertColumnDef = (columnDefIn) => {
 	return columnDefOut;
 };
 
-/**
- * @todo
- */
 const ColumnTypesFeature = {
 	createTable: (table) => {
 		// console.log('ColumnTypesFeature.createTable');
@@ -95,6 +92,9 @@ const ColumnTypesFeature = {
 			const types = table.getRegisteredColumnTypes();
 			const nonDefaultProps = pickBy(rest, (value, key) => value !== defaultColumnDef[key]);
 
+			/**
+			 * @todo Refactor for hydrate with no set performed.
+			 */
 			types.set(accessorKey, {
 				...nonDefaultProps,
 				accessorKey,

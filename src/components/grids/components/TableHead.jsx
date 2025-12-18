@@ -29,50 +29,66 @@ const TableHead = (props) => {
 					return (
 						<tr key={headerGroup.id}>
 							{headerGroup.headers.map((header) => {
-								const headerProps = {};
-								const isRowSpanned = rowSpanColumnIds.includes(header.column.id);
+								const { column } = header;
 
-								let forceSortIndicator = false; // To show sort indicator on spanned header placeholders.
+								const headerContext = header.getContext();
+								const headerProps = {};
+								const isRowSpanned = rowSpanColumnIds.includes(column.id);
+								const isPinned = column.getIsPinned();
+
+								// To show sort indicator on spanned header placeholders.
+								let forceSortIndicator = false;
 
 								if (isRowSpanned) {
 									return null;
 								} else if (header.isPlaceholder && header.subHeaders.length === 1) {
 									headerProps.rowSpan = headerGroups.length - header.depth + 1;
 									forceSortIndicator = true;
-									rowSpanColumnIds.push(header.column.id);
+									rowSpanColumnIds.push(column.id);
 								} else if (header.isPlaceholder) {
 									return (
 										<th
 											key={header.id}
 											className={clsx(classes.headerPlaceholder, {
 												[classes.headerRowColumnGroup]: !isLeafRow,
+												[classes.pinned]: isPinned,
+												[classes.pinnedFirstRight]: column.getIsFirstColumn('right'),
+												[classes.pinnedLastLeft]: column.getIsLastColumn('left'),
 											})}
 										/>
 									);
 								}
 
 								const { align, headerAlign, headerClass, suppressHeaderMenuButton, wrapHeaderText } =
-									header.column.getMeta() ?? {};
+									column.getMeta() ?? {};
 
 								return (
 									<th
 										key={header.id}
 										colSpan={header.colSpan}
 										{...headerProps}
+										style={{
+											left: isPinned === 'left' ? column.getStart('left') : undefined,
+											right: isPinned === 'right' ? column.getAfter('right') : undefined,
+											// width: column.getSize(),
+										}}
 										className={clsx(
 											classes.headerCell,
 											headerClass,
 											`ag-${headerAlign ?? align}-aligned-header`,
 											{
 												[classes.headerRowColumnGroup]: !isLeafRow,
-												[classes?.resizing]: header.column.getIsResizing(),
+												[classes.pinned]: column.getIsPinned(),
+												[classes.pinnedFirstRight]: column.getIsFirstColumn('right'),
+												[classes.pinnedLastLeft]: column.getIsLastColumn('left'),
+												[classes.resizing]: column.getIsResizing(),
 											}
 										)}
 									>
 										<div
-											onClick={header.column.getToggleSortingHandler()}
+											onClick={column.getToggleSortingHandler()}
 											className={clsx(classes.headerCellLabelContainer, {
-												[classes?.sortable]: header.column.getCanSort(),
+												[classes.sortable]: column.getCanSort(),
 											})}
 										>
 											<div className={clsx(classes.headerCellLabel)}>
@@ -81,31 +97,29 @@ const TableHead = (props) => {
 														[classes.wrapText]: wrapHeaderText,
 													})}
 												>
-													{flexRender(header.column.columnDef.header, header.getContext())}
+													{flexRender(column.columnDef.header, headerContext)}
 												</div>
 
 												{(isLeafRow || forceSortIndicator) && (
 													<>
-														{header.column.getCanSort() && (
+														{column.getCanSort() && (
 															<>
 																<Spacer style={{ maxWidth: 8, minWidth: 8 }} />
-																<SortIndicatorTool
-																	sorted={header.column.getIsSorted()}
-																/>
+																<SortIndicatorTool sorted={column.getIsSorted()} />
 															</>
 														)}
 
 														{suppressHeaderMenuButton !== true && (
 															<>
 																<Spacer style={{ minWidth: 6 }} />
-																<MenuTool classes={classes} />
+																<MenuTool classes={classes} header={header} />
 															</>
 														)}
 													</>
 												)}
 											</div>
 										</div>
-										{header.column.getCanResize() && <ResizeHandle {...header.getContext()} />}
+										{column.getCanResize() && <ResizeHandle {...headerContext} />}
 									</th>
 								);
 							})}

@@ -298,6 +298,7 @@ const rowData = [
  */
 const columns = [
 	{
+		id: 'expander',
 		accessorKey: 'category',
 		header: 'Type of Service Long Header Name 1',
 		type: ['expander'],
@@ -310,7 +311,7 @@ const columns = [
 		accessorKey: 'category',
 		header: 'Type of Service Long Header Name 2',
 		minSize: 200,
-		size: '200%',
+		size: 200,
 		type: ['text'],
 		wrapHeaderText: true,
 		wrapText: false,
@@ -460,9 +461,9 @@ const columns = [
 function App(props) {
 	const [columnLines, setColumnLines] = useState(false);
 	const [domLayout, setDomLayout] = useState(false);
-	const [enableCheckboxSelection, setEnableCheckboxSelection] = useState(false);
+	const [enableCheckboxSelection, setEnableCheckboxSelection] = useState(true);
 	const [enableClickSelection, setEnableClickSelection] = useState(false);
-	const [enableMultiRowSelection, setEnableMultiRowSelection] = useState(false);
+	const [enableMultiRowSelection, setEnableMultiRowSelection] = useState(true);
 	const [enableRowSelection, setEnableRowSelection] = useState(undefined);
 	const [hideHeaderBorder, setHideHeaderBorder] = useState(false);
 	const [hideHeaders, setHideHeaders] = useState(false);
@@ -471,7 +472,7 @@ function App(props) {
 	const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
 	const [showNoRowsOverlay, setShowNoRowsOverlay] = useState(false);
 	const [striped, setStriped] = useState(true);
-	const [treeData, setTreeData] = useState(false);
+	const [treeData, setTreeData] = useState(true);
 
 	// Examples of controllable state usage.
 	// const [columnSizing, setColumnSizing] = useState({});

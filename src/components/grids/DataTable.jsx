@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import { forwardRef, useMemo, useRef } from 'react';
 
 import { find } from 'lodash';
 import { getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 
 import { ConfigMap } from '@/utils';
 import ErrorBoundary from '@/components/feedback/ErrorBoundary';
-import useControllableState from '@/hooks/useControllableState';
+import useControlled from '@/hooks/useControlled';
 import useMergedRefs from '@/hooks/useMergedRefs';
 
 import ColumnTypes from './ColumnTypes';
@@ -16,8 +16,8 @@ import ColumnTypesFeature from './features/ColumnTypesFeature';
 import DefaultColumnGroup from './components/ColumnGroup';
 import DefaultTableBody from './components/TableBody';
 import DefaultTableHead from './components/TableHead';
+import HelpersFeature from './features/HelpersFeature';
 import Overlay from './components/Overlay';
-import TableFeatures from './features/TableFeatures';
 
 const baseColumnTypes = new ConfigMap([...ColumnTypes]);
 
@@ -30,30 +30,35 @@ const classes = {
 
 	// Header classes.
 	header: `${PREFIX}-header`,
-	headerCell: `${PREFIX}-headerCell`,
-	headerCellLabel: `${PREFIX}-headerCellLabel`,
-	headerCellLabelContainer: `${PREFIX}-headerCellLabelContainer`,
-	headerCellText: `${PREFIX}-headerCellText`,
-	headerMenuTool: `${PREFIX}-headerMenuTool`,
-	headerPlaceholder: `${PREFIX}-headerPlaceholder`,
-	headerRowColumnGroup: `${PREFIX}-headerRowColumnGroup`,
+	headerCell: `${PREFIX}-header-cell`,
+	headerCellLabel: `${PREFIX}-header-cell-label`,
+	headerCellLabelContainer: `${PREFIX}-header-cell-label-container`,
+	headerCellText: `${PREFIX}-header-cell-text`,
+	headerMenuTool: `${PREFIX}-header-menu-tool`,
+	headerPlaceholder: `${PREFIX}-header-placeholder`,
+	headerRowColumnGroup: `${PREFIX}-header-row-column-group`,
 
 	// Row classes.
-	rowExpanderTool: `${PREFIX}-rowExpanderTool`,
+	rowExpanderTool: `${PREFIX}-row-expander-tool`,
 
-	// Modifier classes.
-	autoHeight: `${PREFIX}-autoHeight`,
-	columnLines: `${PREFIX}-columnLines`,
-	hidden: `${PREFIX}-hidden`,
-	hideHeaderBorder: `${PREFIX}-hideHeaderBorder`,
-	outlined: `${PREFIX}-outlined`,
+	// Feature classes
+	pinned: `${PREFIX}-pinned`,
+	pinnedFirstRight: `${PREFIX}-first-right-pinned`,
+	pinnedLastLeft: `${PREFIX}-last-left-pinned`,
 	resizing: `${PREFIX}-resizing`,
-	rowLines: `${PREFIX}-rowLines`,
 	selectable: `${PREFIX}-selectable`,
 	selected: `${PREFIX}-selected`,
 	sortable: `${PREFIX}-sortable`,
+
+	// Modifier classes.
+	autoHeight: `${PREFIX}-auto-height`,
+	columnLines: `${PREFIX}-column-lines`,
+	hidden: `${PREFIX}-hidden`,
+	hideHeaderBorder: `${PREFIX}-hide-header-border`,
+	outlined: `${PREFIX}-outlined`,
+	rowLines: `${PREFIX}-row-lines`,
 	striped: `${PREFIX}-striped`,
-	wrapText: `${PREFIX}-wrapText`,
+	wrapText: `${PREFIX}-wrap-text`,
 };
 
 const DataTableWrapper = styled('div')(() => ({
@@ -167,9 +172,21 @@ const DataTableRoot = styled('table')(() => ({
 
 		// Row striping.
 		[`&.${classes.striped}`]: {
-			[`tr:nth-of-type(even):not(.${classes.selected}):not(:hover)`]: {
-				td: {
+			tbody: {
+				[`tr:nth-of-type(even):not(.${classes.selected}):not(:hover)`]: {
 					backgroundColor: 'var(--ag-odd-row-background-color)',
+
+					/**
+					 * When we pin a column we add a pseudo element to create the "overlay" effect
+					 * which requires us to explicitly handle striping due to the "overlay" being added.
+					 */
+					'td, th': {
+						[`&.${classes.pinned}`]: {
+							'&:before': {
+								backgroundColor: 'var(--ag-odd-row-background-color)',
+							},
+						},
+					},
 				},
 			},
 		},
@@ -182,6 +199,32 @@ const DataTableRoot = styled('table')(() => ({
 			textAlign: 'left',
 			textOverflow: 'ellipsis',
 			whiteSpace: 'nowrap',
+
+			[`&.${classes.pinned}`]: {
+				position: 'sticky',
+				zIndex: 1,
+
+				/**
+				 * When we pin a column we add a pseudo element to create and "overlay" effect that
+				 * prevents the other row content from "bleeding" through when scrolled horizontally.
+				 */
+				'&:before': {
+					backgroundColor: 'var(--ag-background-color)',
+					content: '""',
+					inset: 0,
+					pointerEvents: 'none',
+					position: 'absolute',
+					zIndex: -1,
+				},
+
+				[`&.${classes.pinnedFirstRight}`]: {
+					borderLeft: 'var(--ag-borders) var(--ag-border-color)',
+				},
+
+				[`&.${classes.pinnedLastLeft}`]: {
+					borderRight: 'var(--ag-borders) var(--ag-border-color)',
+				},
+			},
 
 			// Style for the grouped header rows.
 			[`&.${classes.headerRowColumnGroup}`]: {
@@ -305,21 +348,7 @@ const DataTableRoot = styled('table')(() => ({
 		},
 
 		tr: {
-			'&:hover': {
-				td: {
-					backgroundColor: 'var(--ag-row-hover-color)',
-				},
-			},
-
-			[`&.${classes.selectable}`]: {
-				cursor: 'pointer',
-			},
-
-			[`&.${classes.selected}`]: {
-				td: {
-					backgroundColor: 'var(--ag-selected-row-background-color)',
-				},
-			},
+			backgroundColor: 'var(--ag-background-color)',
 
 			th: {
 				borderBottom: 'var(--ag-borders) var(--ag-border-color)',
@@ -327,8 +356,55 @@ const DataTableRoot = styled('table')(() => ({
 			},
 		},
 
+		tbody: {
+			tr: {
+				'&:hover': {
+					backgroundColor: 'var(--ag-row-hover-color)',
+
+					/**
+					 * When we pin a column we add a pseudo element to create the "overlay" effect
+					 * which requires us to explicitly handle the hover effect due to the "overlay"
+					 * being added. If we don't "remove" the effect from the normal content then we
+					 * "double-dip" on the effect color (if it is partially transparent).
+					 */
+					'td, th': {
+						[`&.${classes.pinned}`]: {
+							backgroundColor: 'var(--ag-background-color)',
+
+							'&:before': {
+								backgroundColor: 'var(--ag-row-hover-color)',
+							},
+						},
+					},
+				},
+
+				[`&.${classes.selectable}`]: {
+					cursor: 'pointer',
+				},
+
+				[`&.${classes.selected}`]: {
+					backgroundColor: 'var(--ag-selected-row-background-color)',
+
+					/**
+					 * When we pin a column we add a pseudo element to create the "overlay" effect
+					 * which requires us to explicitly handle the selected effect due to the "overlay"
+					 * being added. If we don't "remove" the effect from the normal content then we
+					 * "double-dip" on the effect color (if it is partially transparent).
+					 */
+					td: {
+						[`&.${classes.pinned}`]: {
+							backgroundColor: 'var(--ag-background-color)',
+
+							'&:before': {
+								backgroundColor: 'var(--ag-selected-row-background-color)',
+							},
+						},
+					},
+				},
+			},
+		},
+
 		[`.${classes.header}`]: {
-			backgroundColor: 'var(--ag-header-background-color)',
 			position: 'sticky',
 			top: 0,
 			zIndex: 2,
@@ -377,9 +453,10 @@ const DataTableRoot = styled('table')(() => ({
 
 const getSubRowsCallback = (row) => row.children; // return the children array as sub-rows
 
-const DataTable = React.forwardRef((props, ref) => {
+const DataTable = forwardRef((props, ref) => {
 	const {
 		columnLines = false,
+		columnPinning: columnPinningProp,
 		columnResizeMode = 'onChange',
 		columns: columnsProp = props.columnDefs,
 		columnSizing: columnSizingProp,
@@ -392,6 +469,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		domLayout = 'normal',
 		enableCheckboxSelection = false,
 		enableClickSelection = false,
+		enableColumnPinning = false,
 		enableExpanding = props.treeData ?? false,
 		enableMultiRowSelection = false,
 		enableRowSelection = enableCheckboxSelection || enableClickSelection || enableMultiRowSelection,
@@ -407,6 +485,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		noRowsOverlayProps = {},
 		onCellClicked,
 		onCellDoubleClicked,
+		onColumnPinningChange: onColumnPinningChangeProp,
 		onColumnSizingChange: onColumnSizingChangeProp,
 		onColumnSizingInfoChange: onColumnSizingInfoChangeProp,
 		onExpandedChange: onExpandedChangeProp,
@@ -456,39 +535,49 @@ const DataTable = React.forwardRef((props, ref) => {
 	const refs = useMergedRefs(ref, tableRef);
 
 	/**
-	 * We are using the useControllableState hook to manage state that can be either
-	 * controlled or uncontrolled.
+	 * We are using the useControlled hook to manage state that can be either controlled or
+	 * uncontrolled.
 	 */
-	const [columnSizing, setColumnSizing] = useControllableState({
-		defaultValue: {},
+	const [columnPinning, setColumnPinning] = useControlled({
+		controlled: columnPinningProp,
+		default: { left: [], right: [] },
+		onChange: onColumnPinningChangeProp,
+	});
+
+	const [columnSizing, setColumnSizing] = useControlled({
+		controlled: columnSizingProp,
+		default: {},
 		onChange: onColumnSizingChangeProp,
-		value: columnSizingProp,
 	});
 
-	const [columnSizingInfo, setColumnSizingInfo] = useControllableState({
-		defaultValue: {},
+	const [columnSizingInfo, setColumnSizingInfo] = useControlled({
+		controlled: columnSizingInfoProp,
+		default: {},
 		onChange: onColumnSizingInfoChangeProp,
-		value: columnSizingInfoProp,
 	});
 
-	const [expanded, setExpanded] = useControllableState({
-		defaultValue: {},
+	const [expanded, setExpanded] = useControlled({
+		controlled: expandedProp,
+		default: {},
 		onChange: onExpandedChangeProp,
-		value: expandedProp,
 	});
 
-	const [rowSelection, setRowSelection] = useControllableState({
-		defaultValue: {},
+	const [rowSelection, setRowSelection] = useControlled({
+		controlled: rowSelectionProp,
+		default: {},
 		onChange: onRowSelectionChangedProp,
-		value: rowSelectionProp,
 	});
 
-	const [sorting, setSorting] = useControllableState({
-		defaultValue: [],
+	const [sorting, setSorting] = useControlled({
+		controlled: sortingProp,
+		default: [],
 		onChange: onSortingChangeProp,
-		value: sortingProp,
 	});
 
+	/**
+	 * @todo Updates to enabledCheckboxSelection to state will cause a refresh which should call
+	 * createTable again. This shold be handled in a feature.
+	 */
 	const columns = useMemo(() => {
 		const columns = [...columnsProp];
 		const checkboxSelectionColumnDef = baseColumnTypes.get('__eda_selection_column__');
@@ -502,7 +591,7 @@ const DataTable = React.forwardRef((props, ref) => {
 	}, [columnsProp, enableCheckboxSelection]);
 
 	const table = useReactTable({
-		_features: [TableFeatures, ColumnTypesFeature],
+		_features: [HelpersFeature, ColumnTypesFeature],
 		columnResizeMode,
 		columns,
 		columnTypes,
@@ -511,7 +600,11 @@ const DataTable = React.forwardRef((props, ref) => {
 		// debugHeaders,
 		// debugTable,
 		defaultColumn,
+		/**
+		 * @todo Need to implement as a feature so that it can respond to changes in state/props.
+		 */
 		enableCheckboxSelection,
+		enableColumnPinning,
 		enableExpanding,
 		enableMultiRowSelection,
 		enableRowSelection, // (row) => row.original.age > 18
@@ -520,6 +613,7 @@ const DataTable = React.forwardRef((props, ref) => {
 		getExpandedRowModel: getExpandedRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getSubRows,
+		onColumnPinningChange: setColumnPinning,
 		onColumnSizingChange: setColumnSizing,
 		onColumnSizingInfoChange: setColumnSizingInfo,
 		onExpandedChange: setExpanded,
@@ -543,6 +637,7 @@ const DataTable = React.forwardRef((props, ref) => {
 			tableRef,
 		},
 		state: {
+			columnPinning,
 			columnSizing,
 			columnSizingInfo,
 			expanded,

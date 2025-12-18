@@ -14,11 +14,11 @@ const OverlayRoot = styled('div')(() => ({
 	[`&.${classes.root}`]: {
 		alignItems: 'center',
 		backgroundColor: 'var(--ag-modal-overlay-background-color)',
-		bottom: 0,
 		display: 'flex',
 		inset: 0,
 		justifyContent: 'center',
 		position: 'absolute',
+		zIndex: 1300, // theme.zIndex.modal,
 
 		[`.${classes.overlayText}`]: {
 			backgroundColor: 'var(--ag-background-color)',

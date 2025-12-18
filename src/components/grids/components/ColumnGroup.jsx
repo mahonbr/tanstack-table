@@ -27,7 +27,14 @@ const ColumnGroup = (props) => {
 		 * visibility or adding a checkbox selection column).
 		 */
 		const leafColumnRenderer = createLeafColumnRenderer({ columnSizing, table });
-		return <colgroup>{table.getAllLeafColumns().map(leafColumnRenderer)}</colgroup>;
+
+		const visibleLeafColumns = [
+			...table.getLeftVisibleLeafColumns(),
+			...table.getCenterVisibleLeafColumns(),
+			...table.getRightVisibleLeafColumns(),
+		];
+
+		return <colgroup>{visibleLeafColumns.map(leafColumnRenderer)}</colgroup>;
 	}, [table.getAllLeafColumns().length, columnSizing]);
 
 	return <ErrorBoundary>{colgroup}</ErrorBoundary>;
