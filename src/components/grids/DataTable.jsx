@@ -1,20 +1,25 @@
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 
+import { find } from 'lodash';
 import { getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
 import clsx from 'clsx';
 import styled from '@emotion/styled';
 
+import { ConfigMap } from '@/utils';
 import ErrorBoundary from '@/components/feedback/ErrorBoundary';
 import useControllableState from '@/hooks/useControllableState';
 import useMergedRefs from '@/hooks/useMergedRefs';
 
+import ColumnTypes from './ColumnTypes';
 import ColumnTypesFeature from './features/ColumnTypesFeature';
 import DefaultColumnGroup from './components/ColumnGroup';
 import DefaultTableBody from './components/TableBody';
 import DefaultTableHead from './components/TableHead';
 import Overlay from './components/Overlay';
 import TableFeatures from './features/TableFeatures';
+
+const baseColumnTypes = new ConfigMap([...ColumnTypes]);
 
 const PREFIX = 'eda-datatable';
 
@@ -33,6 +38,7 @@ const classes = {
 	headerPlaceholder: `${PREFIX}-headerPlaceholder`,
 	headerRowColumnGroup: `${PREFIX}-headerRowColumnGroup`,
 
+	// Row classes.
 	rowExpanderTool: `${PREFIX}-rowExpanderTool`,
 
 	// Modifier classes.
@@ -375,7 +381,7 @@ const DataTable = React.forwardRef((props, ref) => {
 	const {
 		columnLines = false,
 		columnResizeMode = 'onChange',
-		columns = props.columnDefs,
+		columns: columnsProp = props.columnDefs,
 		columnSizing: columnSizingProp,
 		columnSizingInfo: columnSizingInfoProp,
 		columnTypes = [],
@@ -446,6 +452,9 @@ const DataTable = React.forwardRef((props, ref) => {
 		tableWrapperProps = slotProps.TableWrapperProps,
 	} = slotProps;
 
+	const tableRef = useRef();
+	const refs = useMergedRefs(ref, tableRef);
+
 	/**
 	 * We are using the useControllableState hook to manage state that can be either
 	 * controlled or uncontrolled.
@@ -480,8 +489,17 @@ const DataTable = React.forwardRef((props, ref) => {
 		value: sortingProp,
 	});
 
-	const tableRef = useRef();
-	const refs = useMergedRefs(ref, tableRef);
+	const columns = useMemo(() => {
+		const columns = [...columnsProp];
+		const checkboxSelectionColumnDef = baseColumnTypes.get('__eda_selection_column__');
+
+		// We add the selection column if checkbox selection is enabled and the column is not already present.
+		if (enableCheckboxSelection && !find(columns, { id: checkboxSelectionColumnDef.id })) {
+			columns.unshift(checkboxSelectionColumnDef);
+		}
+
+		return columns;
+	}, [columnsProp, enableCheckboxSelection]);
 
 	const table = useReactTable({
 		_features: [TableFeatures, ColumnTypesFeature],

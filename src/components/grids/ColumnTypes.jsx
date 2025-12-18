@@ -47,7 +47,20 @@ const ColumnTypes = [
 		},
 	],
 	[
-		'selection',
+		'text',
+		{
+			meta: {
+				align: 'left',
+				headerAlign: 'left',
+			},
+		},
+	],
+	/**
+	 * This section is for "reserved" columns that have special functionality in the grid, such as
+	 * selection checkboxes.
+	 */
+	[
+		'__eda_selection_column__',
 		{
 			id: '__eda_selection_column__',
 			enableResizing: false,
@@ -78,15 +91,6 @@ const ColumnTypes = [
 				align: 'center',
 				headerAlign: 'center',
 				suppressHeaderMenuButton: true,
-			},
-		},
-	],
-	[
-		'text',
-		{
-			meta: {
-				align: 'left',
-				headerAlign: 'left',
 			},
 		},
 	],
