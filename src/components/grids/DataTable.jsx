@@ -14,7 +14,7 @@ import DefaultColumnGroup from './components/ColumnGroup';
 import DefaultTableBody from './components/TableBody';
 import DefaultTableHead from './components/TableHead';
 import Overlay from './components/Overlay';
-import TableFeatures from './TableFeatures';
+import TableFeatures from './features/TableFeatures';
 
 const PREFIX = 'eda-datatable';
 
@@ -479,7 +479,6 @@ const DataTable = React.forwardRef((props, ref) => {
 		onChange: onSortingChangeProp,
 		value: sortingProp,
 	});
-
 
 	const tableRef = useRef();
 	const refs = useMergedRefs(ref, tableRef);
