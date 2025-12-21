@@ -14,6 +14,7 @@ import ColumnTypesFeature from './features/ColumnTypesFeature';
 import DefaultColumnGroup from './components/ColumnGroup';
 import DefaultTableBody from './components/TableBody';
 import DefaultTableHead from './components/TableHead';
+import ExtendedPinningFeature from './features/ExtendedPinningFeature';
 import HelpersFeature from './features/HelpersFeature';
 import Overlay from './components/Overlay';
 import useCheckBoxSelection from './hooks/useCheckboxSelection';
@@ -577,7 +578,7 @@ const DataTable = forwardRef((props, ref) => {
 
 	const table = useReactTable({
 		...rest,
-		_features: [..._features, ColumnTypesFeature, HelpersFeature],
+		_features: [..._features, ColumnTypesFeature, ExtendedPinningFeature, HelpersFeature],
 		columnResizeMode,
 		columns,
 		columnTypes,

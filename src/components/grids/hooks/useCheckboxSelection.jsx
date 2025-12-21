@@ -6,9 +6,6 @@ import { produce } from 'immer';
 import { baseColumnTypes } from '../DataTable.utils';
 
 const useCheckBoxSelection = ({ columns: columnsProp, enableCheckboxSelection, setColumnPinning }) => {
-	/**
-	 * @todo Need to account for the column pinning state adding/removing.
-	 */
 	const columns = useMemo(() => {
 		const columnDef = baseColumnTypes.get('__eda_selection_column__');
 
