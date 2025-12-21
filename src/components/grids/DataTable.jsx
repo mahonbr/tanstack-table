@@ -539,37 +539,37 @@ const DataTable = forwardRef((props, ref) => {
 	 */
 	const [columnPinning, setColumnPinning] = useControlled({
 		controlled: columnPinningProp,
-		default: { left: [], right: [] },
+		default: props.initialState?.columnPinning ?? { left: [], right: [] },
 		onChange: onColumnPinningChangeProp,
 	});
 
 	const [columnSizing, setColumnSizing] = useControlled({
 		controlled: columnSizingProp,
-		default: {},
+		default: props.initialState?.columnSizing ?? {},
 		onChange: onColumnSizingChangeProp,
 	});
 
 	const [columnSizingInfo, setColumnSizingInfo] = useControlled({
 		controlled: columnSizingInfoProp,
-		default: {},
+		default: props.initialState?.columnSizingInfo ?? {},
 		onChange: onColumnSizingInfoChangeProp,
 	});
 
 	const [expanded, setExpanded] = useControlled({
 		controlled: expandedProp,
-		default: {},
+		default: props.initialState?.expanded ?? {},
 		onChange: onExpandedChangeProp,
 	});
 
 	const [rowSelection, setRowSelection] = useControlled({
 		controlled: rowSelectionProp,
-		default: {},
+		default: props.initialState?.rowSelection ?? {},
 		onChange: onRowSelectionChangedProp,
 	});
 
 	const [sorting, setSorting] = useControlled({
 		controlled: sortingProp,
-		default: [],
+		default: props.initialState?.sorting ?? [],
 		onChange: onSortingChangeProp,
 	});
 
