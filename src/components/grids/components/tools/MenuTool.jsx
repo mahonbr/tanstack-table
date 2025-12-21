@@ -1,13 +1,8 @@
 import { IconDotsVertical } from '@tabler/icons-react';
 
-// const onClickCallback = (event) => {
-// 	event.stopPropagation();
-// 	alert('Menu clicked!');
-// };
-
 const MenuTool = (props) => {
 	const { classes, className, header, Icon = IconDotsVertical, onClick: onClickProp, ...rest } = props;
-	const { table, column } = header.getContext();
+	const { column } = header.getContext();
 
 	const onClickCallback = (event) => {
 		event.stopPropagation();

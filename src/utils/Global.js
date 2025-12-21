@@ -19,6 +19,28 @@ import {
 } from 'lodash';
 
 /**
+ * An immutable empty array if Object.freeze is supported by the browser.
+ */
+export const emptyArray = Object.freeze ? Object.freeze([]) : [];
+
+/**
+ * A reusable empty function.
+ */
+export const emptyFn = () => {};
+
+/**
+ * An immutable empty object if Object.freeze is supported by the browser.
+ */
+export const emptyObject = Object.freeze ? Object.freeze({}) : {};
+
+/**
+ * A zero length string which will pass a truth test. Useful for passing to methods
+ * which use a truth test to reject <i>falsy</i> values where a string value must be
+ * cleared.
+ */
+export const emptyString = new String();
+
+/**
  * This method creates an object composed of properties that the predicate doesn't return truthy for.
  *
  * @param {Object} object The source object.

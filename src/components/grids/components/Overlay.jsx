@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import clsx from 'clsx';
 
+import * as Global from '@/utils/Global';
 import ErrorBoundary from '@/components/feedback/ErrorBoundary';
 
 const PREFIX = 'eda-datatable-overlay';
@@ -36,7 +37,7 @@ const Overlay = (props) => {
 	const {
 		className,
 		overlayText = props.message ?? props.maskMsg ?? 'Loading...',
-		overlayTextProps = {},
+		overlayTextProps = Global.emptyObject,
 		...rest
 	} = props;
 

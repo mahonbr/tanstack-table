@@ -5,6 +5,7 @@ import { useEffectOnce, useUpdateEffect } from 'react-use';
 import clsx from 'clsx';
 import styled from '@emotion/styled';
 
+import * as Global from '@/utils/Global';
 import ErrorBoundary from '@/components/feedback/ErrorBoundary';
 import useControlled from '@/hooks/useControlled';
 import useMergedRefs from '@/hooks/useMergedRefs';
@@ -451,15 +452,15 @@ const getSubRowsCallback = (row) => row.children; // return the children array a
 
 const DataTable = forwardRef((props, ref) => {
 	const {
-		_features = [],
+		_features = Global.emptyArray,
 		columnLines = false,
 		columnPinning: columnPinningProp,
 		columnResizeMode = 'onChange',
 		columns: columnsProp = props.columnDefs,
 		columnSizing: columnSizingProp,
 		columnSizingInfo: columnSizingInfoProp,
-		columnTypes = [],
-		data = props.rowData ?? [],
+		columnTypes = Global.emptyArray,
+		data = props.rowData ?? Global.emptyArray,
 		domLayout = 'normal',
 		enableCheckboxSelection = false,
 		enableClickSelection = false,
@@ -476,9 +477,9 @@ const DataTable = forwardRef((props, ref) => {
 		getSubRows = getSubRowsCallback,
 		hideHeaderBorder = false,
 		hideHeaders = false,
-		loadingOverlayProps = {},
-		meta = {},
-		noRowsOverlayProps = {},
+		loadingOverlayProps = Global.emptyObject,
+		meta = Global.emptyObject,
+		noRowsOverlayProps = Global.emptyObject,
 		onCellClicked,
 		onCellDoubleClicked,
 		onColumnPinningChange: onColumnPinningChangeProp,
@@ -498,8 +499,8 @@ const DataTable = forwardRef((props, ref) => {
 		rowStyle,
 		showLoadingOverlay = false,
 		showNoRowsOverlay = false,
-		slotProps = {},
-		slots = {},
+		slotProps = Global.emptyObject,
+		slots = Global.emptyObject,
 		sorting: sortingProp,
 		state,
 		striped = false,
