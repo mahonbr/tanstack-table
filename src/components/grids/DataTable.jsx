@@ -1,25 +1,21 @@
-import { forwardRef, useMemo, useRef } from 'react';
+import { forwardRef, useRef } from 'react';
 
-import { find } from 'lodash';
 import { getCoreRowModel, getExpandedRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { useEffectOnce, useUpdateEffect } from 'react-use';
 import clsx from 'clsx';
 import styled from '@emotion/styled';
 
-import { ConfigMap } from '@/utils';
 import ErrorBoundary from '@/components/feedback/ErrorBoundary';
 import useControlled from '@/hooks/useControlled';
 import useMergedRefs from '@/hooks/useMergedRefs';
 
-import ColumnTypes from './ColumnTypes';
 import ColumnTypesFeature from './features/ColumnTypesFeature';
 import DefaultColumnGroup from './components/ColumnGroup';
 import DefaultTableBody from './components/TableBody';
 import DefaultTableHead from './components/TableHead';
 import HelpersFeature from './features/HelpersFeature';
 import Overlay from './components/Overlay';
-
-const baseColumnTypes = new ConfigMap([...ColumnTypes]);
+import useCheckBoxSelection from './hooks/useCheckboxSelection';
 
 const PREFIX = 'eda-datatable';
 
@@ -455,6 +451,7 @@ const getSubRowsCallback = (row) => row.children; // return the children array a
 
 const DataTable = forwardRef((props, ref) => {
 	const {
+		_features = [],
 		columnLines = false,
 		columnPinning: columnPinningProp,
 		columnResizeMode = 'onChange',
@@ -463,16 +460,15 @@ const DataTable = forwardRef((props, ref) => {
 		columnSizingInfo: columnSizingInfoProp,
 		columnTypes = [],
 		data = props.rowData ?? [],
-		// debugColumns = false,
-		// debugHeaders = false,
-		// debugTable = false,
 		domLayout = 'normal',
 		enableCheckboxSelection = false,
 		enableClickSelection = false,
 		enableColumnPinning = false,
 		enableExpanding = props.treeData ?? false,
 		enableMultiRowSelection = false,
-		enableRowSelection = enableCheckboxSelection || enableClickSelection || enableMultiRowSelection,
+		enableRowSelection = props.enableCheckboxSelection ||
+			props.enableClickSelection ||
+			props.enableMultiRowSelection,
 		enableSubRowSelection = false,
 		expanded: expandedProp,
 		getRowClass,
@@ -505,6 +501,7 @@ const DataTable = forwardRef((props, ref) => {
 		slotProps = {},
 		slots = {},
 		sorting: sortingProp,
+		state,
 		striped = false,
 		defaultColumn = {
 			enableMultiSort: true,
@@ -519,6 +516,7 @@ const DataTable = forwardRef((props, ref) => {
 				wrapText: false,
 			},
 		},
+		...rest
 	} = props;
 
 	const { ColumnGroup = DefaultColumnGroup, TableBody = DefaultTableBody, TableHead = DefaultTableHead } = slots;
@@ -574,36 +572,16 @@ const DataTable = forwardRef((props, ref) => {
 		onChange: onSortingChangeProp,
 	});
 
-	/**
-	 * @todo Updates to enabledCheckboxSelection to state will cause a refresh which should call
-	 * createTable again. This shold be handled in a feature.
-	 */
-	const columns = useMemo(() => {
-		const columns = [...columnsProp];
-		const checkboxSelectionColumnDef = baseColumnTypes.get('__eda_selection_column__');
-
-		// We add the selection column if checkbox selection is enabled and the column is not already present.
-		if (enableCheckboxSelection && !find(columns, { id: checkboxSelectionColumnDef.id })) {
-			columns.unshift(checkboxSelectionColumnDef);
-		}
-
-		return columns;
-	}, [columnsProp, enableCheckboxSelection]);
+	const columns = useCheckBoxSelection({ columns: columnsProp, enableCheckboxSelection, setColumnPinning });
 
 	const table = useReactTable({
-		_features: [HelpersFeature, ColumnTypesFeature],
+		...rest,
+		_features: [..._features, ColumnTypesFeature, HelpersFeature],
 		columnResizeMode,
 		columns,
 		columnTypes,
 		data,
-		// debugColumns,
-		// debugHeaders,
-		// debugTable,
 		defaultColumn,
-		/**
-		 * @todo Need to implement as a feature so that it can respond to changes in state/props.
-		 */
-		enableCheckboxSelection,
 		enableColumnPinning,
 		enableExpanding,
 		enableMultiRowSelection,
@@ -619,11 +597,9 @@ const DataTable = forwardRef((props, ref) => {
 		onExpandedChange: setExpanded,
 		onRowSelectionChange: setRowSelection,
 		onSortingChange: setSorting,
-		// getRowId: (row) => row.uuid,
 		meta: {
 			...meta,
 			classes,
-			enableCheckboxSelection,
 			enableClickSelection,
 			getRowClass,
 			getRowStyle,
@@ -637,6 +613,7 @@ const DataTable = forwardRef((props, ref) => {
 			tableRef,
 		},
 		state: {
+			...state,
 			columnPinning,
 			columnSizing,
 			columnSizingInfo,

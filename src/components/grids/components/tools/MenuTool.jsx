@@ -1,5 +1,4 @@
 import { IconDotsVertical } from '@tabler/icons-react';
-import { produce } from 'immer';
 
 // const onClickCallback = (event) => {
 // 	event.stopPropagation();
@@ -14,18 +13,7 @@ const MenuTool = (props) => {
 		event.stopPropagation();
 
 		onClickProp?.(event);
-
-		table.setColumnPinning(
-			produce((draft) => {
-				const pinned = column.getIsPinned();
-
-				if (pinned) {
-					draft[pinned] = draft[pinned].filter((columnId) => columnId !== column.id);
-				} else {
-					draft.left.push(column.id);
-				}
-			})
-		);
+		column.pin(column.getIsPinned() ? false : 'left');
 	};
 
 	return (
