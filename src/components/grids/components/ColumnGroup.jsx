@@ -30,21 +30,20 @@ const ColumnGroup = (props) => {
 	const { table } = props;
 	const { columnPinning, columnSizing } = table.getState();
 
+	const centerLeaves = table.getCenterVisibleLeafColumns();
+	const leftLeaves = table.getLeftVisibleLeafColumns();
+	const rightLeaves = table.getRightVisibleLeafColumns();
+
 	const colgroup = useMemo(() => {
 		/**
 		 * I'm checking the length to ensure we recalc if columns are added/removed (e.g. via column
 		 * visibility or adding a checkbox selection column).
 		 */
 		const leafColumnRenderer = createLeafColumnRenderer({ columnSizing, table });
-
-		const visibleLeafColumns = [
-			...table.getLeftVisibleLeafColumns(),
-			...table.getCenterVisibleLeafColumns(),
-			...table.getRightVisibleLeafColumns(),
-		];
+		const visibleLeafColumns = [...leftLeaves, ...centerLeaves, ...rightLeaves];
 
 		return <colgroup>{visibleLeafColumns.map(leafColumnRenderer)}</colgroup>;
-	}, [table.getAllLeafColumns(), columnPinning, columnSizing]);
+	}, [centerLeaves, columnPinning, columnSizing, leftLeaves, rightLeaves]);
 
 	return <ErrorBoundary>{colgroup}</ErrorBoundary>;
 };
