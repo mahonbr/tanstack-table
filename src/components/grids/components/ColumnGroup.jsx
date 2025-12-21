@@ -1,14 +1,23 @@
-import { useMemo } from 'react';
-
+import { useMemo, useRef } from 'react';
 import ErrorBoundary from '@/components/feedback/ErrorBoundary';
 
-const createLeafColumnRenderer = ({ columnSizing, table }) => {
-	return (col) => {
-		const maxWidth = col.columnDef.maxSize ?? table.options.defaultColumn.maxSize;
-		const minWidth = col.columnDef.minSize ?? table.options.defaultColumn.minSize;
-		const width = columnSizing[col.id] ?? col.columnDef.size ?? col.getSize();
+const Column = (props) => {
+	const { context, ...rest } = props;
+	const ref = useRef(null);
 
-		return <col key={col.id} data-id={col.id} style={{ maxWidth, minWidth, width }} />;
+	context.column.columnDef.meta.columnGroupRef = ref;
+
+	return <col ref={ref} {...rest} />;
+};
+
+const createLeafColumnRenderer = ({ columnSizing, table }) => {
+	return (column) => {
+		const maxWidth = column.columnDef.maxSize ?? table.options.defaultColumn.maxSize;
+		const minWidth = column.columnDef.minSize ?? table.options.defaultColumn.minSize;
+		const width = columnSizing[column.id] ?? column.columnDef.size ?? column.getSize();
+
+		// return <col key={column.id} data-id={column.id} style={{ maxWidth, minWidth, width }} />;
+		return <Column key={column.id} context={{ column }} style={{ maxWidth, minWidth, width }} />;
 	};
 };
 

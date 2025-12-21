@@ -32,12 +32,11 @@ const HelpersFeature = {
 			const size = _getSize();
 
 			if (Number.isNaN(size)) {
-				const { tableRef } = table.getMeta();
-				/**
-				 * @todo Need to review for optimization. This querySelector could be expensive if
-				 * there are many columns.
-				 */
-				const el = tableRef.current?.querySelector?.(`[data-id=${column.id}]`); // add more specific selector?
+				// const { tableRef } = table.getMeta();
+				// const el = tableRef.current?.querySelector?.(`colgroup col[data-id=${column.id}]`);
+
+				const { columnGroupRef } = column.getMeta();
+				const el = columnGroupRef?.current;
 
 				if (el) {
 					return el.clientWidth;
