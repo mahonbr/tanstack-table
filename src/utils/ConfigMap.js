@@ -92,4 +92,42 @@ export class ConfigMap extends Map {
 
 		return merged;
 	}
+
+	/**
+	 * Merge type defaults into a column definition.
+	 *
+	 * Behavior:
+	 * Looks up each type listed in `columnDef.type` (preserving order), resolves their inherited
+	 * configurations, and deep-merges them in inheritance order so that shallower (later) configs
+	 * overwrite deeper (earlier) ones.
+	 *
+	 * Finally, the method deep-merges the provided `columnDef` on top of the accumulated type
+	 * defaults so that explicit fields on `columnDef` win.
+	 *
+	 * @returns
+	 * A new object representing the merged column definition (does not mutate the `columnDef`).
+	 *
+	 * @example
+	 * const col = { type: 'currency', header: 'Price' };
+	 * const resolved = configMap.resolveColumnDef(col);
+	 */
+	resolveColumnDef(columnDef) {
+		const { type: types = columnDef.extends } = columnDef;
+
+		const parents = types ? castArray(types) : [];
+		const stack = [];
+
+		let merged = {};
+
+		/**
+		 * We want to merge the parent configs in order "of inheritance", where deeper configs are
+		 * overwritten by shallower configs.
+		 */
+		for (const parent of parents) {
+			const parentResolved = this._cache?.get(parent) ?? this._resolve(parent, stack);
+			merged = deepMerge(merged, parentResolved);
+		}
+
+		return deepMerge(merged, columnDef);
+	}
 }

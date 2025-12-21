@@ -1,4 +1,4 @@
-import { merge, pickBy } from 'lodash';
+import { isEqual, merge, pickBy } from 'lodash';
 
 import { ConfigMap } from '@/utils';
 import ColumnTypes from '../ColumnTypes';
@@ -92,17 +92,25 @@ const ColumnTypesFeature = {
 			const types = table.getRegisteredColumnTypes();
 			const nonDefaultProps = pickBy(rest, (value, key) => value !== defaultColumnDef[key]);
 
-			/**
-			 * @todo Refactor for hydrate with no set performed.
-			 */
-			types.set(accessorKey, {
-				...nonDefaultProps,
-				accessorKey,
-				extends: column.columnDef.meta.type,
-			});
+			// types.set(accessorKey, {
+			// 	...nonDefaultProps,
+			// 	accessorKey,
+			// 	extends: column.columnDef.meta.type,
+			// });
 
 			// column.columnDef = deepMerge(column.columnDef, types.get(accessorKey));
-			column.columnDef = merge({}, defaultColumnDef, column.columnDef, types.get(accessorKey));
+			// column.columnDef = merge({}, defaultColumnDef, column.columnDef, types.get(accessorKey));
+
+			column.columnDef = merge(
+				{},
+				defaultColumnDef,
+				column.columnDef,
+				types.resolveColumnDef({
+					...nonDefaultProps,
+					accessorKey,
+					extends: column.columnDef.meta.type,
+				})
+			);
 		}
 	},
 };
