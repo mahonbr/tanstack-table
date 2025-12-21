@@ -19,7 +19,7 @@ const createLeafColumnRenderer = ({ columnSizing, table }) => {
  */
 const ColumnGroup = (props) => {
 	const { table } = props;
-	const { columnSizing } = table.getState();
+	const { columnPinning, columnSizing } = table.getState();
 
 	const colgroup = useMemo(() => {
 		/**
@@ -35,7 +35,7 @@ const ColumnGroup = (props) => {
 		];
 
 		return <colgroup>{visibleLeafColumns.map(leafColumnRenderer)}</colgroup>;
-	}, [table.getAllLeafColumns().length, columnSizing]);
+	}, [table.getAllLeafColumns(), columnPinning, columnSizing]);
 
 	return <ErrorBoundary>{colgroup}</ErrorBoundary>;
 };
