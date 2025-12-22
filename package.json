@@ -21,6 +21,7 @@
 		"dayjs": "^1.11.19",
 		"immer": "^11.0.1",
 		"lodash": "^4.17.21",
+		"numeral": "^2.0.6",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-fast-compare": "^3.2.2",
