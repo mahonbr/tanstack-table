@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { flexRender } from '@tanstack/react-table';
 import { Menu } from '@base-ui/react/menu';
 import { useUpdateEffect } from 'react-use';
 
@@ -17,6 +18,19 @@ import styles from './MenuTool.module.css';
 function getOffset({ side }) {
 	return side === 'top' || side === 'bottom' ? 4 : -4;
 }
+
+const CheckboxItem = (props) => {
+	const { label, ...rest } = props;
+
+	return (
+		<Menu.CheckboxItem {...rest}>
+			<Menu.CheckboxItemIndicator className={styles.CheckboxItemIndicator}>
+				<IconCheck className={styles.CheckboxItemIndicatorIcon} />
+			</Menu.CheckboxItemIndicator>
+			<span className={styles.CheckboxItemText}>{label}</span>
+		</Menu.CheckboxItem>
+	);
+};
 
 const MenuItem = (props) => {
 	const { Icon = IconCheck, label, onClick, value } = props;
@@ -105,10 +119,43 @@ const MenuTool = (props) => {
 							<MenuItem onClick={onSortChange} label={'Clear Sort'} value={false} Icon={IconSelector} />
 						)}
 						<Menu.Separator className={styles.Separator} />
-						<Menu.Item disabled className={styles.Item}>
-							Choose Columns
+						<Menu.SubmenuRoot>
+							<Menu.SubmenuTrigger className={styles.SubmenuTrigger}>
+								Choose Columns
+								<IconChevronRight style={{ height: 16, width: 16 }} />
+							</Menu.SubmenuTrigger>
+							<Menu.Portal>
+								<Menu.Positioner
+									alignOffset={getOffset}
+									className={styles.Positioner}
+									sideOffset={getOffset}
+								>
+									<Menu.Popup className={styles.Popup}>
+										{table.getAllLeafColumns().map((column) => {
+											return (
+												<CheckboxItem
+													key={column.id}
+													checked={column.getIsVisible()}
+													className={styles.CheckboxItem}
+													label={flexRender(column.columnDef.header, header.getContext())}
+													onCheckedChange={(visible, event) => {
+														column.toggleVisibility(visible);
+													}}
+												/>
+											);
+										})}
+									</Menu.Popup>
+								</Menu.Positioner>
+							</Menu.Portal>
+						</Menu.SubmenuRoot>
+						<Menu.Item
+							className={styles.Item}
+							onClick={() => {
+								table.resetColumnVisibility();
+							}}
+						>
+							Reset Columns
 						</Menu.Item>
-						<Menu.Item className={styles.Item}>Reset Columns</Menu.Item>
 						<Menu.Separator className={styles.Separator} />
 						<Menu.SubmenuRoot>
 							<Menu.SubmenuTrigger className={styles.SubmenuTrigger}>

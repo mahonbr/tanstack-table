@@ -137,6 +137,7 @@
 	margin: 4px 8px;
 }
 
+.CheckboxItem,
 .RadioItem {
 	align-items: center;
 	cursor: pointer;
@@ -144,6 +145,7 @@
 	font-size: 13px;
 	gap: 8px;
 	grid-template-columns: 16px 1fr;
+	line-height: 16px;
 	padding: 8px 32px 8px 10px;
 
 	&[data-highlighted] {
@@ -163,16 +165,19 @@
 	}
 }
 
+.CheckboxItemIndicator,
 .RadioItemIndicator {
 	grid-column-start: 1;
 }
 
+.CheckboxItemIndicatorIcon,
 .RadioItemIndicatorIcon {
 	display: block;
 	height: 16px;
 	width: 16px;
 }
 
+.CheckboxItemText,
 .RadioItemText {
 	grid-column-start: 2;
 }
