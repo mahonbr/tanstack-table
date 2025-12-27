@@ -69,23 +69,27 @@ const ColumnTypes = [
 				if (!table.options.enableMultiRowSelection) return;
 
 				return (
-					<IndeterminateCheckbox
-						{...{
-							checked: table.getIsAllRowsSelected(),
-							indeterminate: table.getIsSomeRowsSelected(),
-							onChange: table.getToggleAllRowsSelectedHandler(),
-						}}
-					/>
+					<div style={{ display: 'flex', height: 'var(--ag-row-height)', justifyContent: 'center' }}>
+						<IndeterminateCheckbox
+							{...{
+								checked: table.getIsAllRowsSelected(),
+								indeterminate: table.getIsSomeRowsSelected(),
+								onChange: table.getToggleAllRowsSelectedHandler(),
+							}}
+						/>
+					</div>
 				);
 			},
 			cell: ({ row }) => (
-				<IndeterminateCheckbox
-					{...{
-						checked: row.getIsSelected(),
-						disabled: !row.getCanSelect(),
-						onChange: row.getToggleSelectedHandler(),
-					}}
-				/>
+				<div style={{ display: 'flex', justifyContent: 'center' }}>
+					<IndeterminateCheckbox
+						{...{
+							checked: row.getIsSelected(),
+							disabled: !row.getCanSelect(),
+							onChange: row.getToggleSelectedHandler(),
+						}}
+					/>
+				</div>
 			),
 			meta: {
 				align: 'center',

@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 
 import * as Global from '@/utils/Global';
 import ErrorBoundary from '@/components/feedback/ErrorBoundary';
+import ThemeProvider from '@/components/themes/ThemeProvider';
 import useControlled from '@/hooks/useControlled';
 import useMergedRefs from '@/hooks/useMergedRefs';
 
@@ -61,36 +62,6 @@ const classes = {
 
 const DataTableWrapper = styled('div')(() => ({
 	[`&.${classes.wrapper}`]: {
-		// AG Grid CSS variables.
-		'--ag-background-color': '#FFFFFF',
-		'--ag-border-color': '#D9D9D9',
-		'--ag-border-radius': '3px',
-		'--ag-borders': 'solid 1px',
-		'--ag-card-shadow': '0 1px 4px 1px rgba(186, 191, 199, 0.4)',
-		'--ag-cell-horizontal-padding': '10px',
-		'--ag-cell-widget-spacing': '12px',
-		'--ag-font-family': "'Open Sans', 'Roboto', 'Helvetica', 'Arial', sans-serif",
-		'--ag-font-size': '12px',
-		'--ag-grid-size': '6px', // padding
-		'--ag-header-background-color': '#FFFFFF',
-		'--ag-header-column-resize-handle-color': '#DDE2EB',
-		'--ag-header-column-resize-handle-height': '30%',
-		'--ag-header-column-resize-handle-width': '2px',
-		'--ag-icon-button-background-spread': '4px',
-		'--ag-icon-button-border-radius': '16px', // '1px',
-		'--ag-icon-button-hover-background-color': 'rgba(0, 0, 0, 0.1)',
-		'--ag-icon-size': '16px',
-		'--ag-modal-overlay-background-color': 'rgba(255, 255, 255, 0.66)',
-		'--ag-odd-row-background-color': '#F7F7F8',
-		'--ag-row-height': '28px',
-		'--ag-row-hover-color': 'rgba(33, 150, 243, 0.1)',
-		'--ag-selected-row-background-color': 'rgba(33, 150, 243, 0.3)',
-		'--ag-spacing': '8px',
-
-		// Custom Properties
-		'--ag-tool-shadow':
-			'0 0 0 var(--ag-icon-button-background-spread) var(--ag-icon-button-hover-background-color)',
-
 		boxSizing: 'border-box',
 		flex: 1,
 		height: '100%',
@@ -641,32 +612,34 @@ const DataTable = forwardRef((props, ref) => {
 
 	return (
 		<ErrorBoundary>
-			<DataTableWrapper
-				{...tableWrapperProps}
-				className={clsx(classes.wrapper, tableWrapperProps?.className, {
-					[classes.autoHeight]: domLayout === 'autoHeight',
-					[classes.outlined]: outlined,
-				})}
-			>
-				<DataTableRoot
-					ref={refs}
-					{...tableProps}
-					className={clsx(classes.root, tableProps?.className, {
-						[classes.columnLines]: columnLines,
-						[classes.hideHeaderBorder]: hideHeaderBorder,
+			<ThemeProvider>
+				<DataTableWrapper
+					{...tableWrapperProps}
+					className={clsx(classes.wrapper, tableWrapperProps?.className, {
+						[classes.autoHeight]: domLayout === 'autoHeight',
 						[classes.outlined]: outlined,
-						[classes.rowLines]: rowLines,
-						[classes.striped]: striped,
 					})}
 				>
-					{/* We create the colgroup so that we can support a version of column "flexing". */}
-					<ColumnGroup table={table} {...columnGroupProps} />
-					{!hideHeaders && <TableHead table={table} {...tableHeadProps} />}
-					<TableBody table={table} {...tableBodyProps} />
-				</DataTableRoot>
-				{showLoadingOverlay && <Overlay overlayText={'Loading...'} {...loadingOverlayProps} />}
-				{showNoRowsOverlay && <Overlay overlayText={'No Rows to Show'} {...noRowsOverlayProps} />}
-			</DataTableWrapper>
+					<DataTableRoot
+						ref={refs}
+						{...tableProps}
+						className={clsx(classes.root, tableProps?.className, {
+							[classes.columnLines]: columnLines,
+							[classes.hideHeaderBorder]: hideHeaderBorder,
+							[classes.outlined]: outlined,
+							[classes.rowLines]: rowLines,
+							[classes.striped]: striped,
+						})}
+					>
+						{/* We create the colgroup so that we can support a version of column "flexing". */}
+						<ColumnGroup table={table} {...columnGroupProps} />
+						{!hideHeaders && <TableHead table={table} {...tableHeadProps} />}
+						<TableBody table={table} {...tableBodyProps} />
+					</DataTableRoot>
+					{showLoadingOverlay && <Overlay overlayText={'Loading...'} {...loadingOverlayProps} />}
+					{showNoRowsOverlay && <Overlay overlayText={'No Rows to Show'} {...noRowsOverlayProps} />}
+				</DataTableWrapper>
+			</ThemeProvider>
 		</ErrorBoundary>
 	);
 });

@@ -1,0 +1,185 @@
+:root {
+	/* Theme tokens. */
+	--color-common-black: #111111;
+	--color-common-white: #ffffff;
+
+	--color-background-default: #f5f5f5;
+	--color-background-paper: #ffffff;
+
+	--color-text: #231e33;
+	--color-text-on-primary: #ffffff;
+	--color-text-dark: #231e33;
+	--color-text-disabled: #aaaaaa;
+	/* --color-text-primary: #231e33; */
+	/* --color-text-secondary: #11111199; */
+	/* --color-text-disabled: #aaaaaa; */
+	/* --color0text-strong: #231e33; */
+
+	--color-primary: #5009b5;
+	--color-primary-contrast-text: var(--color-text-on-primary);
+	/* --color-primary-dark: #3b00a4; */
+	/* --color-primary-light: #b99aff; */
+	--color-secondary: #44b8f3;
+	--color-secondary-contrast-text: var(--color-text);
+	--color-error: #d90026;
+	--color-error-contrast-text: var(--color-text-on-primary);
+	--color-warning: #f3c246;
+	--color-warning-contrast-text: var(--color-text);
+	--color-info: #6a97df;
+	--color-info-contrast-text: var(--color-text);
+	--color-success: #53b1a3;
+	--color-success-contrast-text: var(--color-text);
+
+	--color-border: #d9d9d9;
+
+	--color-data-0: #5009b5;
+	--color-data-1: #44b8f3;
+	--color-data-2: #794cff;
+	--color-data-3: #00bbba;
+	--color-data-4: #66d6d6;
+	--color-data-5: #6a97df;
+	--color-data-6: #2861bb;
+	--color-data-7: #d9f5f5;
+	--color-data-8: #e1edff;
+	--color-data-9: #eeaa9f;
+	--color-data-10: #f7d5cf;
+	--color-data-11: #d9f5f5;
+	--color-data-12: #e3725f;
+
+	--color-action-active: rgba(0, 0, 0, 0.54);
+	--color-action-hover: rgba(0, 0, 0, 0.04);
+	--color-action-selected: rgba(0, 0, 0, 0.08);
+	--color-action-disabled: rgba(0, 0, 0, 0.26);
+	--color-action-disabledbackground: rgba(0, 0, 0, 0.12);
+	--color-action-focus: rgba(0, 0, 0, 0.12);
+
+	--color-gray-50: #fafafa;
+	--color-gray-100: #f5f5f5;
+	--color-gray-200: #eeeeee;
+	--color-gray-300: #e0e0e0;
+	--color-gray-400: #bdbdbd;
+	--color-gray-500: #9e9e9e;
+	--color-gray-600: #757575;
+	--color-gray-700: #616161;
+	--color-gray-800: #424242;
+	--color-gray-900: #212121;
+	--color-gray-A100: #f5f5f5;
+	--color-gray-A200: #eeeeee;
+	--color-gray-A400: #bdbdbd;
+	--color-gray-A700: #616161;
+
+	--shadows-0: none;
+	--shadows-1: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+		0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+	--shadows-2: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+		0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+	--shadows-3: 0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px 0px rgba(0, 0, 0, 0.14),
+		0px 1px 8px 0px rgba(0, 0, 0, 0.12);
+	--shadows-4: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14),
+		0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+	--shadows-5: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 5px 8px 0px rgba(0, 0, 0, 0.14),
+		0px 1px 14px 0px rgba(0, 0, 0, 0.12);
+	--shadows-6: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14),
+		0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+	--shadows-7: 0px 4px 5px -2px rgba(0, 0, 0, 0.2), 0px 7px 10px 1px rgba(0, 0, 0, 0.14),
+		0px 2px 16px 1px rgba(0, 0, 0, 0.12);
+	--shadows-8: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14),
+		0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+	--shadows-9: 0px 5px 6px -3px rgba(0, 0, 0, 0.2), 0px 9px 12px 1px rgba(0, 0, 0, 0.14),
+		0px 3px 16px 2px rgba(0, 0, 0, 0.12);
+	--shadows-10: 0px 6px 6px -3px rgba(0, 0, 0, 0.2), 0px 10px 14px 1px rgba(0, 0, 0, 0.14),
+		0px 4px 18px 3px rgba(0, 0, 0, 0.12);
+	--shadows-11: 0px 6px 7px -4px rgba(0, 0, 0, 0.2), 0px 11px 15px 1px rgba(0, 0, 0, 0.14),
+		0px 4px 20px 3px rgba(0, 0, 0, 0.12);
+	--shadows-12: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px rgba(0, 0, 0, 0.14),
+		0px 5px 22px 4px rgba(0, 0, 0, 0.12);
+	--shadows-13: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 13px 19px 2px rgba(0, 0, 0, 0.14),
+		0px 5px 24px 4px rgba(0, 0, 0, 0.12);
+	--shadows-14: 0px 7px 9px -4px rgba(0, 0, 0, 0.2), 0px 14px 21px 2px rgba(0, 0, 0, 0.14),
+		0px 5px 26px 4px rgba(0, 0, 0, 0.12);
+	--shadows-15: 0px 8px 9px -5px rgba(0, 0, 0, 0.2), 0px 15px 22px 2px rgba(0, 0, 0, 0.14),
+		0px 6px 28px 5px rgba(0, 0, 0, 0.12);
+	--shadows-16: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14),
+		0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+	--shadows-17: 0px 8px 11px -5px rgba(0, 0, 0, 0.2), 0px 17px 26px 2px rgba(0, 0, 0, 0.14),
+		0px 6px 32px 5px rgba(0, 0, 0, 0.12);
+	--shadows-18: 0px 9px 11px -5px rgba(0, 0, 0, 0.2), 0px 18px 28px 2px rgba(0, 0, 0, 0.14),
+		0px 7px 34px 6px rgba(0, 0, 0, 0.12);
+	--shadows-19: 0px 9px 12px -6px rgba(0, 0, 0, 0.2), 0px 19px 29px 2px rgba(0, 0, 0, 0.14),
+		0px 7px 36px 6px rgba(0, 0, 0, 0.12);
+	--shadows-20: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 20px 31px 3px rgba(0, 0, 0, 0.14),
+		0px 8px 38px 7px rgba(0, 0, 0, 0.12);
+	--shadows-21: 0px 10px 13px -6px rgba(0, 0, 0, 0.2), 0px 21px 33px 3px rgba(0, 0, 0, 0.14),
+		0px 8px 40px 7px rgba(0, 0, 0, 0.12);
+	--shadows-22: 0px 10px 14px -6px rgba(0, 0, 0, 0.2), 0px 22px 35px 3px rgba(0, 0, 0, 0.14),
+		0px 8px 42px 7px rgba(0, 0, 0, 0.12);
+	--shadows-23: 0px 11px 14px -7px rgba(0, 0, 0, 0.2), 0px 23px 36px 3px rgba(0, 0, 0, 0.14),
+		0px 9px 44px 8px rgba(0, 0, 0, 0.12);
+	--shadows-24: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+		0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+	--shadows-25: rgba(0, 0, 0, 0.43) 0px 13px 19px -13px;
+
+	--shape-corner-none: 0;
+	--shape-corner-extraSmall: 4px;
+	--shape-corner-small: 8px;
+	--shape-corner-medium: 12px;
+	--shape-corner-large: 16px;
+	--shape-corner-extraLarge: 28px;
+	--shape-corner-full: 100%;
+
+	--shape-border-radius: var(--shape-corner-extraSmall);
+
+	--typography-family: 'Open Sans', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+	--typography-size: 13px;
+	--typography-weight-light: 300;
+	--typography-weight-regular: 400;
+	--typography-weight-medium: 600;
+	--typography-weight-bold: 700;
+	--typography-size-xxxs: 10px;
+	--typography-size-xxs: 11px;
+	--typography-size-xs: 12px;
+	--typography-size-sm: 13px;
+	--typography-size-md: 14px;
+	--typography-size-lg: 16px;
+	--typography-size-xl: 24px;
+	--typography-size-xxl: 36px;
+
+	--z-index-mobileStepper: 1000;
+	--z-index-fab: 1050;
+	--z-index-speedDial: 1050;
+	--z-index-appBar: 1100;
+	--z-index-drawer: 1200;
+	--z-index-modal: 1300;
+	--z-index-snackbar: 1400;
+	--z-index-tooltip: 1500;
+
+	/* AG Grid CSS variables. */
+	--ag-background-color: var(--color-background-paper);
+	--ag-border-color: var(--color-border);
+	--ag-border-radius: 3px;
+	--ag-borders: solid 1px;
+	--ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
+	--ag-cell-horizontal-padding: 10px;
+	--ag-cell-widget-spacing: 12px;
+	--ag-font-family: var(--typography-family);
+	--ag-font-size: var(--typography-size);
+	--ag-grid-size: 6px;
+	--ag-header-background-color: var(--color-background-paper);
+	--ag-header-column-resize-handle-color: #dde2eb;
+	--ag-header-column-resize-handle-height: 30%;
+	--ag-header-column-resize-handle-width: 2px;
+	--ag-icon-button-background-spread: 4px;
+	--ag-icon-button-border-radius: 16px;
+	--ag-icon-button-hover-background-color: rgba(0, 0, 0, 0.1);
+	--ag-icon-size: 16px;
+	--ag-modal-overlay-background-color: rgba(255, 255, 255, 0.66);
+	--ag-odd-row-background-color: #f7f7f8;
+	--ag-row-height: 28px;
+	--ag-row-hover-color: rgba(33, 150, 243, 0.1);
+	--ag-selected-row-background-color: rgba(33, 150, 243, 0.3);
+	--ag-spacing: 8px;
+
+	/* Custom Properties */
+	/* --ag-tool-shadow: 0 0 0 var(--ag-icon-button-background-spread) var(--ag-icon-button-hover-background-color); */
+	--ag-tool-shadow: var(--shadows-3);
+}
