@@ -5,14 +5,13 @@ import { Menu } from '@base-ui/react/menu';
 import { useUpdateEffect } from 'react-use';
 
 import {
-	IconArrowNarrowDown,
-	IconArrowNarrowUp,
-	IconCheck,
-	IconChevronRight,
-	IconDotsVertical,
-	IconSelector,
-} from '@tabler/icons-react';
-
+	ArrowNarrowDownIcon,
+	ArrowNarrowUpIcon,
+	CheckIcon,
+	ChevronRightIcon,
+	DotsVerticalIcon,
+	SelectorIcon,
+} from '@/components/icons';
 import styles from './MenuTool.module.css';
 
 function getOffset({ side }) {
@@ -25,7 +24,7 @@ const CheckboxItem = (props) => {
 	return (
 		<Menu.CheckboxItem {...rest}>
 			<Menu.CheckboxItemIndicator className={styles.CheckboxItemIndicator}>
-				<IconCheck className={styles.CheckboxItemIndicatorIcon} />
+				<CheckIcon className={styles.CheckboxItemIndicatorIcon} />
 			</Menu.CheckboxItemIndicator>
 			<span className={styles.CheckboxItemText}>{label}</span>
 		</Menu.CheckboxItem>
@@ -50,7 +49,7 @@ const MenuItem = (props) => {
 };
 
 const RadioItem = (props) => {
-	const { Icon = IconCheck, label, value } = props;
+	const { Icon = CheckIcon, label, value } = props;
 
 	return (
 		<Menu.RadioItem closeOnClick className={styles.RadioItem} value={value}>
@@ -63,7 +62,7 @@ const RadioItem = (props) => {
 };
 
 const MenuTool = (props) => {
-	const { classes, className, header, Icon = IconDotsVertical, onClick: onClickProp, ...rest } = props;
+	const { classes, className, header, Icon = DotsVerticalIcon, onClick: onClickProp, ...rest } = props;
 	const { column, table } = header.getContext();
 
 	const [pin, setPin] = useState(column.getIsPinned());
@@ -101,7 +100,7 @@ const MenuTool = (props) => {
 					<Menu.Popup className={styles.Popup} onClick={(event) => event.stopPropagation()}>
 						{sorted !== 'asc' && (
 							<MenuItem
-								Icon={IconArrowNarrowUp}
+								Icon={ArrowNarrowUpIcon}
 								label={'Sort Ascending'}
 								onClick={onSortChange}
 								value={'asc'}
@@ -109,20 +108,20 @@ const MenuTool = (props) => {
 						)}
 						{sorted !== 'desc' && (
 							<MenuItem
-								Icon={IconArrowNarrowDown}
+								Icon={ArrowNarrowDownIcon}
 								label={'Sort Descending'}
 								onClick={onSortChange}
 								value={'desc'}
 							/>
 						)}
 						{sorted !== false && (
-							<MenuItem onClick={onSortChange} label={'Clear Sort'} value={false} Icon={IconSelector} />
+							<MenuItem onClick={onSortChange} label={'Clear Sort'} value={false} Icon={SelectorIcon} />
 						)}
 						<Menu.Separator className={styles.Separator} />
 						<Menu.SubmenuRoot>
 							<Menu.SubmenuTrigger className={styles.SubmenuTrigger}>
 								Choose Columns
-								<IconChevronRight style={{ height: 16, width: 16 }} />
+								<ChevronRightIcon style={{ height: 16, width: 16 }} />
 							</Menu.SubmenuTrigger>
 							<Menu.Portal>
 								<Menu.Positioner
@@ -160,7 +159,7 @@ const MenuTool = (props) => {
 						<Menu.SubmenuRoot>
 							<Menu.SubmenuTrigger className={styles.SubmenuTrigger}>
 								Pin Column
-								<IconChevronRight style={{ height: 16, width: 16 }} />
+								<ChevronRightIcon style={{ height: 16, width: 16 }} />
 							</Menu.SubmenuTrigger>
 							<Menu.Portal>
 								<Menu.Positioner

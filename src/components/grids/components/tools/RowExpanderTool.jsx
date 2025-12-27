@@ -1,7 +1,7 @@
-import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
+import { ChevronDownIcon, ChevronRightIcon } from '@/components/icons';
 
 const RowExpanderTool = (props) => {
-	const { CollapseIcon = IconChevronDown, context, ExpandIcon = IconChevronRight, ...rest } = props;
+	const { CollapseIcon = ChevronDownIcon, context, ExpandIcon = ChevronRightIcon, ...rest } = props;
 
 	const { row, table } = context;
 	const { classes } = table.getMeta();

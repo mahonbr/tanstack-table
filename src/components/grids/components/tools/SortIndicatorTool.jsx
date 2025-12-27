@@ -1,7 +1,7 @@
-import { IconArrowDown, IconArrowUp } from '@tabler/icons-react';
+import { ArrowDownIcon, ArrowUpIcon } from '@/components/icons';
 
 const SortIndicatorTool = (props) => {
-	const { AscendingIcon = IconArrowUp, DescendingIcon = IconArrowDown, sorted, style, ...rest } = props;
+	const { AscendingIcon = ArrowUpIcon, DescendingIcon = ArrowDownIcon, sorted, style, ...rest } = props;
 
 	if (sorted) {
 		const Icon = sorted === 'asc' ? AscendingIcon : DescendingIcon;
