@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 const IndeterminateCheckbox = ({ indeterminate, ...rest }) => {
-	const ref = useRef();
+	const ref = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		if (typeof indeterminate === 'boolean') {
