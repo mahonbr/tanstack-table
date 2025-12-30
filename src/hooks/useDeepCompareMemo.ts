@@ -8,7 +8,7 @@ import { useMemo, useRef } from 'react';
 import fastDeepEqual from 'react-fast-compare';
 
 const useDeepCompareMemo = (callback, dependencies, equalityFn = fastDeepEqual) => {
-	const ref = useRef();
+	const ref = useRef(null);
 
 	if (!ref.current || !equalityFn(dependencies, ref.current)) {
 		ref.current = dependencies;
