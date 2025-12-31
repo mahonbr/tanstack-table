@@ -511,37 +511,37 @@ const DataTable = forwardRef((props, ref) => {
 	 */
 	const [columnPinning, setColumnPinning] = useControlled({
 		controlled: columnPinningProp,
-		default: props.initialState?.columnPinning ?? { left: [], right: [] },
+		defaultValue: props.initialState?.columnPinning ?? { left: [], right: [] },
 		onChange: onColumnPinningChangeProp,
 	});
 
 	const [columnSizing, setColumnSizing] = useControlled({
 		controlled: columnSizingProp,
-		default: props.initialState?.columnSizing ?? {},
+		defaultValue: props.initialState?.columnSizing ?? {},
 		onChange: onColumnSizingChangeProp,
 	});
 
 	const [columnSizingInfo, setColumnSizingInfo] = useControlled({
 		controlled: columnSizingInfoProp,
-		default: props.initialState?.columnSizingInfo ?? {},
+		defaultValue: props.initialState?.columnSizingInfo ?? {},
 		onChange: onColumnSizingInfoChangeProp,
 	});
 
 	const [expanded, setExpanded] = useControlled({
 		controlled: expandedProp,
-		default: props.initialState?.expanded ?? {},
+		defaultValue: props.initialState?.expanded ?? {},
 		onChange: onExpandedChangeProp,
 	});
 
 	const [rowSelection, setRowSelection] = useControlled({
 		controlled: rowSelectionProp,
-		default: props.initialState?.rowSelection ?? {},
+		defaultValue: props.initialState?.rowSelection ?? {},
 		onChange: onRowSelectionChangedProp,
 	});
 
 	const [sorting, setSorting] = useControlled({
 		controlled: sortingProp,
-		default: props.initialState?.sorting ?? [],
+		defaultValue: props.initialState?.sorting ?? [],
 		onChange: onSortingChangeProp,
 	});
 
@@ -643,5 +643,7 @@ const DataTable = forwardRef((props, ref) => {
 		</ErrorBoundary>
 	);
 });
+
+DataTable.displayName = 'DataTable';
 
 export default DataTable;

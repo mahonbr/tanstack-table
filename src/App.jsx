@@ -463,7 +463,7 @@ const columns = [
 	},
 ];
 
-function App(props) {
+function App(/* props */) {
 	const [columnLines, setColumnLines] = useState(false);
 	const [domLayout, setDomLayout] = useState(false);
 	const [enableCheckboxSelection, setEnableCheckboxSelection] = useState(false);

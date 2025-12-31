@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 import { ThemeProvider as ThemeProviderRoot } from '@emotion/react';
 import { Theme } from '@emotion/react';
 
@@ -90,7 +92,7 @@ const baseTheme = {
 	},
 };
 
-const ThemeProvider = (props: { children: React.ReactNode; theme?: ThemeProps }) => {
+const ThemeProvider = (props: { children: ReactNode; theme?: ThemeProps }) => {
 	const { children, theme = baseTheme } = props;
 	return <ThemeProviderRoot theme={theme}>{children}</ThemeProviderRoot>;
 };

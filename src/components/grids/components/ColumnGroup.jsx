@@ -1,22 +1,17 @@
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import ErrorBoundary from '@/components/feedback/ErrorBoundary';
 
 const Column = (props) => {
 	const { context, ...rest } = props;
-	const ref = useRef(null);
-
-	context.column.columnDef.meta.columnGroupRef = ref;
-
-	return <col ref={ref} {...rest} />;
+	return <col data-id={context.column.id} {...rest} />;
 };
 
 const createLeafColumnRenderer = ({ columnSizing, table }) => {
-	return (column) => {
+	return function LeafColumnRenderer(column) {
 		const maxWidth = column.columnDef.maxSize ?? table.options.defaultColumn.maxSize;
 		const minWidth = column.columnDef.minSize ?? table.options.defaultColumn.minSize;
 		const width = columnSizing[column.id] ?? column.columnDef.size ?? column.getSize();
 
-		// return <col key={column.id} data-id={column.id} style={{ maxWidth, minWidth, width }} />;
 		return <Column key={column.id} context={{ column }} style={{ maxWidth, minWidth, width }} />;
 	};
 };
@@ -28,7 +23,7 @@ const createLeafColumnRenderer = ({ columnSizing, table }) => {
  */
 const ColumnGroup = (props) => {
 	const { table } = props;
-	const { columnPinning, columnSizing } = table.getState();
+	const { columnSizing } = table.getState();
 
 	const centerLeaves = table.getCenterVisibleLeafColumns();
 	const leftLeaves = table.getLeftVisibleLeafColumns();
@@ -43,9 +38,11 @@ const ColumnGroup = (props) => {
 		const visibleLeafColumns = [...leftLeaves, ...centerLeaves, ...rightLeaves];
 
 		return <colgroup>{visibleLeafColumns.map(leafColumnRenderer)}</colgroup>;
-	}, [centerLeaves, columnPinning, columnSizing, leftLeaves, rightLeaves]);
+	}, [centerLeaves, columnSizing, leftLeaves, rightLeaves, table]);
 
 	return <ErrorBoundary>{colgroup}</ErrorBoundary>;
 };
+
+ColumnGroup.displayName = 'ColumnGroup';
 
 export default ColumnGroup;

@@ -1,3 +1,5 @@
+import { Ref, RefCallback, useMemo } from 'react';
+
 /**
  * Merges an array of refs into a single memoized callback ref or `null`.
  *
@@ -6,9 +8,8 @@
  * const chartRef = useRef();
  * const refs = useMergedRefs(ref, chartRef)
  */
-import { useMemo } from 'react';
 
-const useMergedRefs = (...refs) => {
+const useMergedRefs = <T,>(...refs: Ref<T>[]): RefCallback<T> | null => {
 	return useMemo(() => {
 		if (refs.every((ref) => ref == null)) {
 			return null;
@@ -23,8 +24,7 @@ const useMergedRefs = (...refs) => {
 				}
 			});
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, refs);
+	}, [refs]);
 };
 
 export default useMergedRefs;

@@ -1,3 +1,5 @@
+import { HTMLAttributes } from 'react';
+
 import clsx from 'clsx';
 import styled from '@emotion/styled';
 
@@ -21,7 +23,7 @@ type TypographyProps = {
 	 * The theme object passed down from the component tree via ThemeProvider.
 	 */
 	theme?: ThemeProps;
-} & React.HTMLAttributes<HTMLSpanElement>;
+} & HTMLAttributes<HTMLSpanElement>;
 
 const classes = {
 	root: `${PREFIX}-root`,

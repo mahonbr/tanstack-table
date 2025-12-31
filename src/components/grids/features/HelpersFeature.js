@@ -32,11 +32,8 @@ const HelpersFeature = {
 			const size = _getSize();
 
 			if (Number.isNaN(size)) {
-				// const { tableRef } = table.getMeta();
-				// const el = tableRef.current?.querySelector?.(`colgroup col[data-id=${column.id}]`);
-
-				const { columnGroupRef } = column.getMeta();
-				const el = columnGroupRef?.current;
+				const { tableRef } = table.getMeta();
+				const el = tableRef.current?.querySelector?.(`colgroup col[data-id=${column.id}]`);
 
 				if (el) {
 					return el.clientWidth;

@@ -1,9 +1,16 @@
+import { CSSProperties, HTMLAttributes } from 'react';
+
 type SpacerProps = {
 	/**
 	 * Direction for flex items (e.g., 'horizontal', 'vertical'). Defaults to 'horizontal'.
 	 */
 	orientation?: 'horizontal' | 'vertical';
-} & React.HTMLAttributes<HTMLDivElement>;
+
+	/**
+	 * Additional CSS styles to apply to the spacer.
+	 */
+	style?: CSSProperties;
+} & HTMLAttributes<HTMLDivElement>;
 
 const Spacer = (props: SpacerProps) => {
 	const { orientation = 'horizontal', style, ...rest } = props;

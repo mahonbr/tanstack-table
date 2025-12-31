@@ -1,4 +1,4 @@
-import { isEqual, merge, pickBy } from 'lodash';
+import { merge, pickBy } from 'lodash';
 
 import { ConfigMap } from '@/utils';
 import ColumnTypes from '../ColumnTypes';

@@ -12,6 +12,7 @@ import {
 	DotsVerticalIcon,
 	SelectorIcon,
 } from '@/components/icons';
+
 import styles from './MenuTool.module.css';
 
 function getOffset({ side }) {
@@ -32,7 +33,7 @@ const CheckboxItem = (props) => {
 };
 
 const MenuItem = (props) => {
-	const { Icon = IconCheck, label, onClick, value } = props;
+	const { Icon = CheckIcon, label, onClick, value } = props;
 
 	return (
 		<Menu.Item
@@ -62,11 +63,13 @@ const RadioItem = (props) => {
 };
 
 const MenuTool = (props) => {
-	const { classes, className, header, Icon = DotsVerticalIcon, onClick: onClickProp, ...rest } = props;
+	const { header, Icon = DotsVerticalIcon, onClick: onClickProp } = props;
 	const { column, table } = header.getContext();
 
-	const [pin, setPin] = useState(column.getIsPinned());
+	const pinned = column.getIsPinned();
 	const sorted = column.getIsSorted();
+
+	const [pin, setPin] = useState(pinned);
 
 	const onClickCallback = (event) => {
 		event.stopPropagation();
@@ -76,11 +79,11 @@ const MenuTool = (props) => {
 	useUpdateEffect(() => {
 		if (column.getIsPinned() === pin) return;
 		column.pin(pin);
-	}, [pin]);
+	}, [column, pin]);
 
 	useEffect(() => {
-		setPin(column.getIsPinned());
-	}, [column.getIsPinned()]);
+		setPin(pinned);
+	}, [pinned]);
 
 	const onSortChange = (value) => {
 		if (value === false) {
@@ -137,7 +140,7 @@ const MenuTool = (props) => {
 													checked={column.getIsVisible()}
 													className={styles.CheckboxItem}
 													label={flexRender(column.columnDef.header, header.getContext())}
-													onCheckedChange={(visible, event) => {
+													onCheckedChange={(visible) => {
 														column.toggleVisibility(visible);
 													}}
 												/>

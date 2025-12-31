@@ -7,7 +7,25 @@
 import { useMemo, useRef } from 'react';
 import fastDeepEqual from 'react-fast-compare';
 
-const useDeepCompareMemo = (callback, dependencies, equalityFn = fastDeepEqual) => {
+interface useDeepCompareMemoProps<T = unknown> {
+	/**
+	 * The callback function to memoize.
+	 */
+	callback: (value: T) => unknown;
+
+	/**
+	 * The dependencies to be deeply compared.
+	 */
+	dependencies: T;
+
+	/**
+	 * The function to compare dependencies.
+	 * @default fastDeepEqual
+	 */
+	equalityFn?: (a: T, b: T) => boolean;
+}
+
+const useDeepCompareMemo = (callback, dependencies, equalityFn = fastDeepEqual): useDeepCompareMemoProps => {
 	const ref = useRef(null);
 
 	if (!ref.current || !equalityFn(dependencies, ref.current)) {
