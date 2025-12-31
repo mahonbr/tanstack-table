@@ -1,23 +1,24 @@
-import js from '@eslint/js';
 import globals from 'globals';
+import js from '@eslint/js';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
+import tsParser from '@typescript-eslint/parser';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
 
 export default [
 	{ ignores: ['dist'] },
 	{
-		files: ['**/*.{js,jsx}'],
+		files: ['**/*.{js,jsx,ts,tsx}'],
 		languageOptions: {
-			ecmaVersion: 2020,
+			ecmaVersion: 'latest',
 			globals: globals.browser,
 			parserOptions: {
-				ecmaVersion: 'latest',
 				ecmaFeatures: { jsx: true },
 				sourceType: 'module',
 			},
 		},
-		settings: { react: { version: '18.3' } },
+		settings: { react: { version: 'detect' } },
 		plugins: {
 			react,
 			'react-hooks': reactHooks,
@@ -30,6 +31,25 @@ export default [
 			...reactHooks.configs.recommended.rules,
 			'react/jsx-no-target-blank': 'off',
 			'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+		},
+	},
+	// TypeScript-specific override: parser + recommended rules
+	{
+		files: ['**/*.{ts,tsx}'],
+		languageOptions: {
+			parser: tsParser,
+			parserOptions: { project: './tsconfig.json' },
+		},
+		plugins: { '@typescript-eslint': tsPlugin },
+		rules: {
+			...tsPlugin.configs.recommended.rules,
+		},
+	},
+	// Disable prop-type validation for plain JSX files (optional when using TS or other patterns)
+	{
+		files: ['**/*.jsx'],
+		rules: {
+			'react/prop-types': 'off',
 		},
 	},
 ];
